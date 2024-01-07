@@ -927,6 +927,10 @@ def getallrecords(_core_id,_isid):
                                 str(datetime.now()),
                                 action.FAILED.value,
                                 "{\"msg\":\"def getallrecords(_core_id,_isid): 401"+"\"}")
+        
+        LiveViewObj = {"isid": f"{_isid}", "status": '401', "time": f"{str(datetime.now())}", "msg": "invalid session"}
+        LiveViewObjString = json.dumps(LiveViewObj)
+        socketio.emit(f's/{_isid}', LiveViewObjString)
         return '401', 401
     try:
        
@@ -953,7 +957,11 @@ def getallrecords(_core_id,_isid):
                 str(datetime.now()),
                 action.SUCCESS.value,
                 "{\"msg\":\"getallrecords(): 200"+"\"}")
-        socketio.emit(f's/{_isid}',f'   {str(datetime.now())}')
+
+        LiveViewObj = {"isid": f"{_isid}", "status": '200', "time": f"{str(datetime.now())}", "msg": "getalltargets()"}
+        LiveViewObjString = json.dumps(LiveViewObj)
+        socketio.emit(f's/{_isid}', LiveViewObjString)
+
         return jsonify(records_data), 200 # Return the records as JSON response
 
     except Exception as e:

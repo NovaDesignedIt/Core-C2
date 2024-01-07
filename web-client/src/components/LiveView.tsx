@@ -11,14 +11,15 @@ interface LiveViewProps {
     SelectedTargets: number[];
 }
 
+interface LiveViewObject {
+    isid: string;
+    status: string;
+    time: string;
+    msg: string;
+  }
+  
 
-interface LogProp {
-    id:string;
-    instanceid:string;
-    Action:string;
-    logtime:string;
-    status:string;
-}
+
 let isColorToggle = false;
 
 const generateRandomColor = () => {
@@ -28,7 +29,7 @@ const generateRandomColor = () => {
 };
 
 const LiveView:React.FC<LiveViewProps> = ({url,core,instance,SelectedTargets}) => {
-    const [LogEvent,SetLogEvents] = React.useState<LogProp[] | any[]>()
+    const [LogEvent,SetLogEvents] = React.useState< LiveViewObject[] >()
     const [stateIndex,setindex] = React.useState<number>(0)
 
 
@@ -39,17 +40,17 @@ const LiveView:React.FC<LiveViewProps> = ({url,core,instance,SelectedTargets}) =
             typeof instance?._instance_id === 'string'
               ? 's/'+instance?._instance_id : '',
             (data: string) => {
-              console.log(data)
               const recv = data !== undefined ? data  : 'undefined'
               //const outtext = inputValue !== undefined ? inputValue :'' 
+                const logobj = JSON.parse(data);
                 if (LogEvent !== undefined) {
                     if(LogEvent.length > 30){
                         LogEvent.pop();
                     }
                     setindex(stateIndex+1)
-                    SetLogEvents([recv,... LogEvent]);
+                    SetLogEvents([ logobj , ... LogEvent]);
                 }else{
-                    SetLogEvents([recv]);
+                    SetLogEvents([logobj]);
                 }
                 // Update your React component state or perform any other action
             });
@@ -83,27 +84,76 @@ const LiveView:React.FC<LiveViewProps> = ({url,core,instance,SelectedTargets}) =
             <List sx={{ gap: '5px',padding:"5px" }} >
                 {
 
-                    (LogEvent !== undefined ? LogEvent.reverse() : []).map((item: any, index: number) =>
+                    (LogEvent !== undefined ? LogEvent.reverse() : []).map((item: LiveViewObject, index: number) =>
                     (
                         (
                             <ListItem
-                                key={item._id}
+                                key={index}
                                 sx={{
                                     ":Hover": { opacity: '0.8' },
-                                    borderRadius: '4px',marginBottom:'2px',  backgroundColor: '#222', gap: '1px',justifyContent:"center"
+                                    borderRadius: '4px',marginBottom:'2px',height:"10%",maxHeight:"10%",  backgroundColor: '#222', gap: '1px',justifyContent:"Left"
                                 }}>
-                                <div style={{ flexDirection: 'column', display: 'flex', }}>
-                                    <ListItemText style={{ color: '#fff' }}>
+                                <div style={{  flexDirection: 'column', display: 'flex',width:"100%",alignContent:'center' }}>
+                                    <div style={{ flexDirection: 'column', display: 'flex',width:"100%", alignContent:'center' }}>
+                                        <div style={{ flexDirection: 'row', display: 'flex',width:"100%" ,gap: '6px' }}>
+                                            
+                                            <ListItemText >
+                                                <Typography
+                                                    style={{
+                                                        fontFamily: '"Ubuntu Mono", monospace',
+                                                        justifyContent:'center',
+                                                        backgroundColor:"green",
+                                                        color: '#fff',
+                                                        width:"30%",
+                                                        padding:'3%',
+                                                        borderRadius:"5px",
+                                                        fontSize: '10px',
+                                                    }}>
+                                                    {item.status}
+                                                </Typography>
+                                            </ListItemText>
+
+                                            <ListItemText style={{ color: '#fff' }}>
+                                                <Typography
+                                                    style={{
+                                                        color: '#fff',
+                                                        fontSize: '7px',
+                                                        marginLeft:'40%',
+                                                    }}>
+                                                    {item.isid}
+                                                </Typography>
+                                            </ListItemText>
+                                        </div>
+
+                                    <ListItemText style={{ color: '#fff',justifyContent:'center',width:'100%' }}>
                                         <Typography
                                             style={{
+                                                fontFamily: '"Ubuntu Mono", monospace',
                                                 color: '#fff',
                                                 fontSize: '10px',
                                             }}>
-                                            {item}
+                                            {item.msg}
                                         </Typography>
                                     </ListItemText>
+
+                                    </div>
+                                <div style={{ flexDirection: 'row', display: 'flex' }}>
+                             
+                                    <ListItemText style={{ color: '#fff' }}>
+                                        <Typography
+                                            style={{
+                                                fontFamily: '"Ubuntu Mono", monospace',
+                                                color: '#fff',
+                                                fontSize: '10px',
+                                            }}>
+                                            {item.time}
+                                        </Typography>
+                                    </ListItemText>
+                                  
+                                </div>
                                 </div>
                             </ListItem>
+
                         )
                     ))}
             </List>
