@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<api>
+    <host name="default" ip="localhost" port="8000"></host>
+    <host name="localhost" ip="127.0.0.1" port="8000"></host>
+    <host name="lan" ip="192.168.2.196" port="8000"></host>
+    <host name="remote" ip="192.168.2.196" port="8000"></host>
+</api>

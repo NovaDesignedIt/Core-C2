@@ -1,0 +1,137 @@
+[
+    {
+    "_core_id": "26f713dd-4ab9-4b65-88c4-ac2792240afe",
+    "_sessiontoken": "292tGEBZwKCdfqJNyuC5Q0ab3",
+    "_config": {
+        "_id": 23,
+        "_session_len": 30,
+        "_theme": 1,
+        "_title": "Config8",
+        "_host_name": "Host8",
+        "_ip_address": "192.168.1.8",
+        "_port": 8088,
+        "_hash_id": 123464,
+        "_core_id": "26f713dd-4ab9-4b65-88c4-ac2792240afe"
+    },
+    "_instances": [
+        {
+            "_id": 3,
+            "_instance_id": "j34h5k3jh5k3j89r8gjrggg",
+            "_instance_name": "phonehome",
+            "_instance_ip": "189.12.123.101",
+            "_instance_url": "https://texax.huton.com",
+            "_Instance_count": 3,
+            "_core_id": "26f713dd-4ab9-4b65-88c4-ac2792240afe",
+            "_targets": []
+        },
+        {
+            "_id": 4,
+            "_instance_id": "j34h5k3jh5k3j4h53545h3k",
+            "_instance_name": "phonehome",
+            "_instance_ip": "189.12.123.101",
+            "_instance_url": "https://texax.huton.com",
+            "_Instance_count": 3,
+            "_core_id": "26f713dd-4ab9-4b65-88c4-ac2792240afe",
+            "_targets": []
+        },
+        {
+            "_id": 5,
+            "_instance_id": "gijfg7j8dg9gwh4njkbfvf4yh",
+            "_instance_name": "phonehome",
+            "_instance_ip": "189.12.123.101",
+            "_instance_url": "https://texax.huton.com",
+            "_Instance_count": 3,
+            "_core_id": "26f713dd-4ab9-4b65-88c4-ac2792240afe",
+            "_targets": []
+        },
+        {
+            "_id": 6,
+            "_instance_id": "07aca8e0-6be5-486d-82c8-e8a28ff8e581",
+            "_instance_name": "telephoneee",
+            "_instance_ip": "134.155.3.145",
+            "_instance_url": "https://chexas.com",
+            "_Instance_count": 3,
+            "_core_id": "26f713dd-4ab9-4b65-88c4-ac2792240afe",
+            "_targets": []
+        },
+        {
+            "_id": 7,
+            "_instance_id": "f9d1dcd5-9861-45cb-ab7d-6b8ad5d4ce74",
+            "_instance_name": "hehehe",
+            "_instance_ip": "134.155.3.145",
+            "_instance_url": "https://chexas.com",
+            "_Instance_count": 3,
+            "_core_id": "26f713dd-4ab9-4b65-88c4-ac2792240afe",
+            "_targets": [
+                {
+                    "_ip": "64.229.246.53",
+                    "_st": -1,
+                    "_dmp": "testballs",
+                    "_in": "i",
+                    "_out": "o",
+                    "_lp": "2023-11-15 18:14:54.833740",
+                    "_id": 1,
+                    "_isid": "f9d1dcd5-9861-45cb-ab7d-6b8ad5d4ce74",
+                    "_zzz": 1,
+                    "_n": "cpu1"
+                },
+                {
+                    "_ip": "127.0.0.1",
+                    "_st": -1,
+                    "_dmp": "dumptruck",
+                    "_in": "iiyyy",
+                    "_out": "oyy",
+                    "_lp": "2023-11-15 18:14:54.834072",
+                    "_id": 2,
+                    "_isid": "f9d1dcd5-9861-45cb-ab7d-6b8ad5d4ce74",
+                    "_zzz": 1,
+                    "_n": "cpu2"
+                },
+                {
+                    "_ip": "127.0.0.1",
+                    "_st": 1,
+                    "_dmp": "dumptruck",
+                    "_in": "omg_in",
+                    "_out": "omg_out",
+                    "_lp": "2023-11-15 18:14:54.842085",
+                    "_id": 4,
+                    "_isid": "f9d1dcd5-9861-45cb-ab7d-6b8ad5d4ce74",
+                    "_zzz": 1,
+                    "_n": "cpu4"
+                }
+            ]
+        }
+    ]
+},
+
+
+
+
+
+
+
+
+
+
+
+/*
+*
+
+$_       SelectedTargets
+
+[
+    23,
+    34,
+    55
+]
+
+
+Example Script find out if your target has wireless interface
+$_          Command(`powershell -command "& {if (Get-NetAdapter | Where-Object { $_.InterfaceDescription -like '*Wireless*' }) { Write-Host 'Your workstation has a wireless interface.' } else { Write-Host 'No wireless interface found on your workstation.' }}"`)
+
+Write a File on target?
+$_          Command("cmd.exe /C ipconfig > %USERPROFILE%\\Desktop\\testing.txt")  
+
+get Enviroment?
+$_          Command('cmd.exe /C echo %USERPROFILE%')
+
