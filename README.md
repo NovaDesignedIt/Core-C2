@@ -20,7 +20,7 @@ The Components
    - Rust ( Comming Soon❗)
 
 4. Clients
-   - React-TypeScript Web Client (TypeScript)
+   - React Web Client (TypeScript)
    - CommandLine Client  (Python🐍)
 
 
@@ -62,7 +62,7 @@ approach.
 The Implant is C++ program that can use various different protocols to beacon to it's handlers. it Primarily reaches out to it's listeners for actions but occasionally directly hits the server for any signification actions  it needs to do. 
 ### Todo
 - [x] Icmp Beacons
-- [x] Startu Program Execution 
+- [x] Startup Program Execution 
 - [x] Handle Process Exfiltrate Results. 
 - [x] Failover beacons (if the server can't be reached through the proxy hit the service directly)
 - [ ] Auto Persistence 
@@ -110,19 +110,19 @@ The Web Client is the more user friendly way to administrate, it features.
 ```typescript
 
 //get help?
-        help()
+   help()
 
 //Example Script find out if your target has wireless interface
-         Command(`powershell -command "& {if (Get-NetAdapter |     Where-Object { $_.InterfaceDescription -like '*Wireless*' }) { Write-Host 'Your workstation has a wireless interface.' } else { Write-Host 'No wireless interface found on your workstation.' }}"`);
+   Command(`powershell -command "& {if (Get-NetAdapter |     Where-Object { $_.InterfaceDescription -like '*Wireless*' }) { Write-Host 'Your workstation has a wireless interface.' } else { Write-Host 'No wireless interface found on your workstation.' }}"`);
 
 //Write a File on target?
-        Command("cmd.exe /C ipconfig > %USERPROFILE%\\Desktop\\testing.txt"); 
+   Command("cmd.exe /C ipconfig > %USERPROFILE%\\Desktop\\testing.txt"); 
 
 //get Enviroment?
-        Command('cmd.exe /C echo %USERPROFILE%');
+   Command('cmd.exe /C echo %USERPROFILE%');
 
 //get Enviroment by ID?
-        CommandById('cmd.exe /C echo %USERPROFILE%',10);
+   CommandById('cmd.exe /C echo %USERPROFILE%',10);
 ```
 
 Example of getting Targets Profile
