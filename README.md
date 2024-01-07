@@ -94,7 +94,7 @@ The Web Client is the more user friendly way to administrate, it features.
    - Map with Topology View for instance/Targets/Proxies using Jquery
    ( in Development❗)
 
-![](/demo.gif "Instance Panel")
+![](assets/demo.gif "Instance Panel")
 
 
 1. Command Line Client
@@ -128,7 +128,7 @@ The Web Client is the more user friendly way to administrate, it features.
 
 Example of getting Targets Profile
 
-![](/shell.gif "Instance Panel")
+![](assets/shell.gif "Instance Panel")
 
 
 
