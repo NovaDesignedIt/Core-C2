@@ -34,7 +34,6 @@ the API here is used to manipulate what i call the **Core** (hence the name). th
 - [x] Insert/Update/Deletes
 - [x] Authentication and sessions
 - [x] Sockets!
-- [ ] Multi Icmp bounce back. (ex: implant sends 1 ping Proxy sends back 4) 
 
 
 #   2. Listener/Proxies
