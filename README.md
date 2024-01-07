@@ -24,7 +24,7 @@ The Components
    - CommandLine Client  (Python🐍)
 
 
-> ⚠️  Still in testing.
+> ⚠️ Links comming soon Still in testing.
 
 #   1. Server 
 the Server is a web api written in Flask to manage the State of the Targets/Clients/Listener and to Manage  incoming callbacks from our Listeners/Proxies.
