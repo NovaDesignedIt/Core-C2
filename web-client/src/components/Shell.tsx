@@ -33,6 +33,8 @@ Exposed Objects:
 
 Commands:
   Command(command:string)
+  CommandById(command:string, id:number)
+  
 
 TypeScript Api - Client Functions:
   async function insertrecord(url:string,core:Core,data:Target): Promise<string> 

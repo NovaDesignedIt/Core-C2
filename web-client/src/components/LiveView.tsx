@@ -28,41 +28,43 @@ const generateRandomColor = () => {
   return color;
 };
 
-const LiveView:React.FC<LiveViewProps> = ({url,core,instance,SelectedTargets}) => {
-    const [LogEvent,SetLogEvents] = React.useState< LiveViewObject[] >()
-    const [stateIndex,setindex] = React.useState<number>(0)
+const LiveView: React.FC<LiveViewProps> = ({ url, core, instance, SelectedTargets }) => {
+    const [LogEvent, SetLogEvents] = React.useState<LiveViewObject[]>()
+    const [stateIndex, setindex] = React.useState<number>(0)
+    const [eventFocused, setEventFocused] = React.useState(false);
 
-
-    React.useEffect(()=>{
-        const socks:Socket = io(`http://${url}/`);
+    React.useEffect(() => {
+        const socks: Socket = io(`http://${url}/`);
         if (socks !== undefined) {
-          socks.on(
-            typeof instance?._instance_id === 'string'
-              ? 's/'+instance?._instance_id : '',
-            (data: string) => {
-              const recv = data !== undefined ? data  : 'undefined'
-              //const outtext = inputValue !== undefined ? inputValue :'' 
-                const logobj = JSON.parse(data);
-                if (LogEvent !== undefined) {
-                    if(LogEvent.length > 30){
-                        LogEvent.pop();
-                    }
-                    setindex(stateIndex+1)
-                    SetLogEvents([ logobj , ... LogEvent]);
-                }else{
-                    SetLogEvents([logobj]);
-                }
-                // Update your React component state or perform any other action
-            });
+            if (!eventFocused) {
+                socks.on(
+                    typeof instance?._instance_id === 'string'
+                        ? 's/' + instance?._instance_id : '',
+                    (data: string) => {
+                        const recv = data !== undefined ? data : 'undefined'
+                        //const outtext = inputValue !== undefined ? inputValue :'' 
+                        const logobj = JSON.parse(data);
+                        if (LogEvent !== undefined) {
+                            if (LogEvent.length > 30) {
+                                LogEvent.pop();
+                            }
+                            setindex(stateIndex + 1)
+                            SetLogEvents([logobj, ...LogEvent]);
+                        } else {
+                            SetLogEvents([logobj]);
+                        }
+                        // Update your React component state or perform any other action
+                    });
+            }
         }
 
 
         return () => {
-     
+
             socks?.disconnect();
         }
 
-    },[LogEvent,SetLogEvents] );
+    }, [LogEvent, SetLogEvents,eventFocused]);
 
 
     return (
@@ -88,9 +90,10 @@ const LiveView:React.FC<LiveViewProps> = ({url,core,instance,SelectedTargets}) =
                     (
                         (
                             <ListItem
+                                onClick={()=>{setEventFocused(!eventFocused)}}
                                 key={index}
                                 sx={{
-                                    ":Hover": { opacity: '0.8' },
+                                    ":Hover": { opacity: '0.8' },cursor:'pointer',
                                     borderRadius: '4px',marginBottom:'2px',height:"10%",maxHeight:"10%",  backgroundColor: '#222', gap: '1px',justifyContent:"Left"
                                 }}>
                                 <div style={{  flexDirection: 'column', display: 'flex',width:"100%",alignContent:'center' }}>
@@ -102,7 +105,7 @@ const LiveView:React.FC<LiveViewProps> = ({url,core,instance,SelectedTargets}) =
                                                     style={{
                                                         fontFamily: '"Ubuntu Mono", monospace',
                                                         justifyContent:'center',
-                                                        backgroundColor:"green",
+                                                        backgroundColor: item.status === "200" ? "green" : "#FD4A4D",
                                                         color: '#fff',
                                                         width:"30%",
                                                         padding:'3%',

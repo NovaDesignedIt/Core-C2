@@ -70,7 +70,7 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core,on
 
   return (
     <div style={{height:"100%"}}>
-      <div style={{ paddingTop: '2%', flexDirection: 'row', justifyContent: 'center', display: 'flex', backgroundColor: '#202c22' }}>
+      <div style={{ paddingTop: '2%',paddingLeft: '5%', flexDirection: 'row', justifyContent: 'Left', display: 'flex', backgroundColor: '#202c22' }}>
         <h6 style={{ color: '#fff' }}>Files</h6>
       </div>
      
@@ -101,13 +101,13 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core,on
                         }
                     }} aria-label="simple table">
                         <TableHead>
-                            <TableRow sx={{ ':Hover': { backgroundColor: "#000" } }}>
+                            <TableRow sx={{ ':Hover': { backgroundColor: "#000" },cursor:'pointer' }}>
                                 <TableCell align="left">File Name</TableCell>
                                 <TableCell align="left">Extension</TableCell>
                                 <TableCell align="left">size</TableCell>
                         
                             </TableRow>
-                            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 },cursor:'pointer' }}>
                                     <TableCell onClick={() =>  setPrompt(true)} align="left" sx={{width:"1%",backgroundColor:"#000",color:"#fff"}}><AddIcon sx={{":Hover":{ color:"#21fd0a"}}}/></TableCell>
                                     <TableCell onClick={() =>  setPrompt(true)}  align="left" sx={{width:"1%",backgroundColor:"#000",color:"#fff"}}><RemoveIcon sx={{":Hover":{ color:"#21fd0a"}}}/></TableCell>
                                     <TableCell align="left" sx={{width:"10px",backgroundColor:"#000",}}></TableCell>
@@ -121,9 +121,9 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core,on
                                     key={index}
                                     selected={index === selectedFile}
                                     onClick={() => { setSelectedFile(index); OnSetFile(file); }}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 },width:"100%" }}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 },cursor:'pointer',width:"100%" }}
                                 >
-                                    <TableCell align="left" sx={{width:"30px"}}>{file._name}</TableCell>
+                                    <TableCell align="left" sx={{width:"30px" }}>{file._name}</TableCell>
                                     <TableCell align="left" sx={{width:"10px"}}>.{file._extension}</TableCell>
                                     <TableCell align="left">{file._size}</TableCell>
 

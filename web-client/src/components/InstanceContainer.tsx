@@ -4,9 +4,26 @@ import BoxMenu from './BoxMenu';
 import Shell from './Shell';
 import React from 'react';
 import InsertForm from './InsertForm'
-import { Stack } from '@mui/material';
+import { Box, Modal, Stack, fabClasses } from '@mui/material';
 import { Core, Instance } from '../api/apiclient';
 import { Visibility } from '@mui/icons-material';
+
+
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    pt: 2,
+    px: 4,
+    pb: 3,
+  };
+
+
 
 
 interface InstanceContainerProps {
@@ -20,7 +37,6 @@ interface InstanceContainerProps {
 
 
 const InstanceContainer: React.FC<InstanceContainerProps> = ({ url, objs, instance, handleSelectedTargets, core, selectedTargets }) => {
-
     const [sizes, setSizes] = React.useState([85, 15]);
     const [sizes2, setSizes2] = React.useState([80, 20]);
     const [action,setSelectedAction] = React.useState(0);
@@ -40,6 +56,10 @@ const InstanceContainer: React.FC<InstanceContainerProps> = ({ url, objs, instan
 
     const GetSelectedAction = (index:number) =>{
         action === index ?  setSelectedAction(0) : setSelectedAction(index);
+    }
+
+    const CloseInsertPanel = () =>  {
+        setSelectedAction(0);
     }
 
 
@@ -70,12 +90,12 @@ const InstanceContainer: React.FC<InstanceContainerProps> = ({ url, objs, instan
                         >
 
                           
-                            <Gridview url={url} core={core} instance={instance} getselectedtargs={handleSelectedTargets} getAction={GetSelectedAction}></Gridview>
-                            {action === 1 &&
-                                <div style={{ visibility: action === 1 ? 'visible' : 'hidden', height: "50%", width: "100%" }}>
-                                    <InsertForm url={url} core={core} instance={instance}></InsertForm>
-                                </div>
+                            {action !== 1 &&
+                             <Gridview url={url} core={core} instance={instance} getselectedtargs={handleSelectedTargets} getAction={GetSelectedAction}></Gridview>
+                            }
 
+                            {action === 1 &&
+                               <InsertForm url={url} core={core} instance={instance} closePanel={CloseInsertPanel}></InsertForm>
                             }
                         </Stack>
 

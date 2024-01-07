@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Checkbox, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Core, Instance, Target,insertrecord } from '../api/apiclient';
-
+import CloseIcon from '@mui/icons-material/Close';
 
 declare module '@mui/material/styles' {
   interface PaletteColor {
@@ -21,9 +21,10 @@ interface DataGridComponents {
   url: string;
   core?: Core; // Include the 'core' prop with the optional (?) modifier
   instance?: Instance;
+  closePanel: ()=>void;
 }
 
-const insertForm: React.FC<DataGridComponents> = ({ url, core, instance }) => {
+const insertForm: React.FC<DataGridComponents> = ({ url, core, instance,closePanel }) => {
   const [_n, setname] = React.useState('');
   const [_it, setInterval] = React.useState('');
   const [CommandText,SetCommandText ] = React.useState('');
@@ -31,13 +32,22 @@ const insertForm: React.FC<DataGridComponents> = ({ url, core, instance }) => {
   const [ofp, setOfp] = React.useState(false);
   const [sleep, setSleep] = React.useState(false);
 
+
+  const handleClose = () => {
+    closePanel() 
+  }
+
   const HandleOFPChange = () => {
     setOfp(!ofp);
     setSleep(false);
   };
   const HandleSleepCheck = () => {
+    if (_it !== undefined && parseInt(_it)  > 1 ){
     setSleep(!sleep);
     setOfp(false);
+    }else{
+      alert('set interval > 1');
+    }
   };
   const HandleNameChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
     setname(e.target.value)
@@ -54,7 +64,9 @@ const insertForm: React.FC<DataGridComponents> = ({ url, core, instance }) => {
       targetData.forEach((item:Target,index:number)=>{
         insertrecord(url,core,item);
       })
+    
       setTargetData([])
+      closePanel()
     }else{
       alert('you have no targets created.')
     }
@@ -63,15 +75,28 @@ const insertForm: React.FC<DataGridComponents> = ({ url, core, instance }) => {
   const HandleAddRecord = async () => {
     const interval: number = _it !== '' ? parseInt(`${_it}`) : 1;
     const record:Target = new Target(
+        //_ip
         instance?._instance_ip,
-        ofp ? 3 : sleep ? 2 : -1,
+        //_state
+        ofp ? 3 
+        : sleep && interval !== undefined && interval > 1 ? 2 
+        : -1,
+        //_dump
         '.',
-        `${CommandText}`,
+        //_in
+        ofp ? `${CommandText}` 
+        : ' ',
+        //_out
         '.',
+        //_lastping
         '.',
+        //_id???
         -1, 
+        //_instanceID
         instance?._instance_id,
+        //_interva;
         interval,
+        //_name
         `${_n}`
     )
 
@@ -84,7 +109,7 @@ const insertForm: React.FC<DataGridComponents> = ({ url, core, instance }) => {
       }
       const updatedData = targetData !== undefined ? [...targetData, record] : [record]
       setTargetData(updatedData);
-      console.log( record._n );
+      console.log( record );
     } else {
       alert('you need atleast a name.')
     }
@@ -139,15 +164,15 @@ const insertForm: React.FC<DataGridComponents> = ({ url, core, instance }) => {
   return (
 
     
-      <div style={{ gap:'0px',flexDirection: 'column', display: "flex", width: '100%', backgroundColor: "#111", paddingLeft: '1%' }}>
+      <div style={{gap:'0px',flexDirection: 'column', display: "flex", width: '100%',height:"100%", backgroundColor: "#111", paddingLeft: '1%' }}>
 
       <div style={{ flexDirection: 'row', display: "flex", height: '15%', width: '100%', backgroundColor: "#111", overflow: 'hidden', padding: '1%' }}>
           <h5 style={{ color: "#fff", width: "100%" }}>Insert New Records into {instance?._instance_name} </h5>
-          <p style={{ color: "#7ff685", width: "100%", justifyContent:"flex-end",display:'flex' }}> Instance ID: {instance !== undefined ? instance._instance_id : ''}</p>
-
+          <p style={{ color: "#7ff685", width: "100%", justifyContent:"flex-center",display:'flex' }}> InstanceID: {instance !== undefined ? instance._instance_id : ''}</p>
+          <CloseIcon onClick={()=>{handleClose()}} sx={{color: "#fff"}}/ >
         </div>
 
-        <div style={{ flexDirection: 'row', display: "flex", width: '70%', backgroundColor: "#111" }}>
+        <div style={{ flexDirection: 'column', display: "flex", width: '70%', backgroundColor: "#111" }}>
           
         <TextField
             required
@@ -172,23 +197,23 @@ const insertForm: React.FC<DataGridComponents> = ({ url, core, instance }) => {
             size='small'
             sx={themeText}></TextField>    
         
-        <div style={{ flexDirection: 'row', display: "flex", height: '100%%', width: '50%', backgroundColor: "#111", overflow: 'hidden', paddingLeft: '1%' }}>
-          <p style={{ verticalAlign:'center',color: "#fff", width: "20%",  height:'100%',padding:'4%' }}>Sleep</p>
-          <div style={{ paddingLeft: "10%" }}>
+ 
+        </div>
+        <div style={{ flexDirection: 'row', display: "flex", height: '100%%', width: '100%', backgroundColor: "#111", overflow: 'hidden', paddingLeft: '1%' }}>
+          <p style={{ verticalAlign:'center',color: "#fff", width: "400px",  height:'100%' }}>Sleep</p>
+          <div style={{ paddingLeft: "0%" }}>
             <Checkbox checked={sleep} onChange={()=> {HandleSleepCheck()}} sx={{ "& .MuiSvgIcon-root": { color: "#7ff685" } }} /></div>
         </div>
-        </div>
 
-
-        <div style={{ flexDirection: 'row', display: "flex", height: '20%', width: '100%', backgroundColor: "#111", overflow: 'hidden', paddingLeft: '1%' }}>
-          <p style={{ color: "#fff", width: "20%" }}>spawn process <strong>O</strong>n <strong>F</strong>irst <strong>P</strong>ing</p>
-          <div style={{ paddingLeft: "3%" }}>
+        <div style={{ flexDirection: 'row', display: "flex", height: '10%%', width: '100%', backgroundColor: "#111", overflow: 'hidden', paddingLeft: '1%' }}>
+          <p style={{ color: "#fff", width: "400px" }}>spawn process <strong>O</strong>n <strong>F</strong>irst <strong>P</strong>ing</p>
+          <div style={{ paddingLeft: "0%" }}>
             <Checkbox checked={ofp} onChange={() => {HandleOFPChange()}} sx={{ "& .MuiSvgIcon-root": { color: "#7ff685" } }} /></div>
         </div>
 
 
       
-        <div style={{ flexDirection: 'row', display: "flex", height: '30%', width: '100%', backgroundColor: "#111", overflow: 'hidden', }}>
+        <div style={{ flexDirection: 'row', display: "flex", height: '30%', width: '95%', backgroundColor: "#111", overflow: 'hidden', }}>
           
           <TextField
             value={CommandText}
@@ -212,7 +237,7 @@ const insertForm: React.FC<DataGridComponents> = ({ url, core, instance }) => {
 
 
 
-      <div style={{ flexDirection: 'row', display: "flex", width: '100%', backgroundColor: "#111", gap: "50%", padding: "1%" }}>
+      <div style={{ flexDirection: 'column', display: "flex", width: '100%', backgroundColor: "#111", gap: "5%", padding: "1%" }}>
         <div style={{ flexDirection: 'row', display: "flex", width: '100%', backgroundColor: "#111", gap: "3%", }}>
           <Button
             onClick={HandleAddRecord}

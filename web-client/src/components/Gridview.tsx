@@ -5,7 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Switch from '@mui/material/Switch';
 import SatelliteAltIcon from '@mui/icons-material/SatelliteAlt';
-import { Alert, Box, Checkbox, DialogContentText, Snackbar, Stack, styled } from '@mui/material';
+import { Alert, Box, Checkbox, DialogContentText, Modal, Snackbar, Stack, styled } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import InsertForm from './InsertForm'
@@ -110,6 +110,7 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
 
   }
 
+
   function CustomToolbar() {
     return (
       <GridToolbarContainer sx={{ width: "100%", wordWrap: "nowrap" }}>
@@ -150,21 +151,25 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
 
 
 
-        <GridToolbarColumnsButton onClick={() => { handleSelectedAction(0) }} />
+        <GridToolbarColumnsButton onClick={() => { handleSelectedAction(0); }} />
 
-        <GridToolbarFilterButton enterDelay={0} onClick={() => { handleSelectedAction(0) }} />
-
-
-        <GridToolbarDensitySelector onClick={() => { handleSelectedAction(0) }} />
-
-
-        <GridToolbarExport onClick={() => { handleSelectedAction(0) }} />
+        <GridToolbarFilterButton enterDelay={0} onClick={() => { handleSelectedAction(0); }} />
+        
+        <GridToolbarDensitySelector 
+          onMouseEnter={() => { setRefresh(false); }}
+          onClick={() => { handleSelectedAction(0); }}
+        />
+        <GridToolbarExport
+          onMouseEnter={() => { setRefresh(false); }}
+          onClick={() => { handleSelectedAction(0); }}
+        />
 
 
 
         <button style={buttonstyle} onClick={(e) => {
           e.preventDefault();
-          alert('DOWNLOADING AGENTS')
+          alert('I HAZ NO IMPLANTZ 4 U')
+          alert('kidding. this is a demo Instance and should probably not unleash these things in the wild.')
         }}>
           <span style={{ marginRight: '5px' }}>
           <SatelliteAltIcon fontSize='small' /> 
@@ -244,7 +249,10 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
   };
   useEffect(() => {
     const intervalId = setInterval(() => {
-      Refresh ? fetchData(instance !== undefined ? instance : new Instance()) : () => { }
+
+      Refresh === true ? fetchData(instance !== undefined ? instance : new Instance()) : () => { }
+
+
     }, 500); // Adjust the interval (in milliseconds) based on your preferred delay
 
     // Cleanup function to clear the interval when the component unmounts or when needed
@@ -291,13 +299,14 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
     }}
     >
 
-      <DataGrid rows={rows} columns={filteredCols} rowHeight={30} columnHeaderHeight={30} checkboxSelection
+      <DataGrid onMenuClose={()=>{setRefresh(true)} } rows={rows} columns={filteredCols} rowHeight={30} columnHeaderHeight={30} checkboxSelection
         style={{ borderRadius: 0, overflow: "hidden" }}
         onRowSelectionModelChange={(details) => { selectedRows(details.toString()) }}
         slots={{
           toolbar: CustomToolbar,
         }}
         sx={{
+         
           boxShadow: 0,
           color: 'rgb(255,255,255)',
           backgroundColor: '#202c22',

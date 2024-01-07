@@ -779,6 +779,11 @@ def getstate(isid,id):
                         str(datetime.now()),
                         action.SUCCESS.value,
                         "{\"msg\":\"getstate(): 200 \"}"+f"\n")
+            
+            LiveViewObj = {"isid": f"{isid}", "status": '200', "time": f"{str(datetime.now())}", "msg": f"def getstate(isid,id):({id})"}
+            LiveViewObjString = json.dumps(LiveViewObj)
+            socketio.emit(f's/{isid}', LiveViewObjString)
+
             return str(targets._st)
     except Exception as e :
         
