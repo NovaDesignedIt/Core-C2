@@ -1431,6 +1431,7 @@ def login_end_point():
         return '500'
 
 
+""" STORAGE """
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -1498,10 +1499,30 @@ def upload_file():
                     "{\"msg\":\"get_image(filename): invalid file type"+"\"}")
     return 'Invalid file type'
 
-@app.route('/dir',methods=['GET'])
-def get_directory_structure():
-    with open('DirectoryStructure.json','r') as f:
-        return f.read()
+#icci
+@app.route('/<_core_id>/dir',methods=['GET'])
+def get_directory_structure(_core_id):
+    if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+    
+        Utility.Log.insert_log(f"{_core_id}",
+                                'invalid session',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.FAILED.value,
+                                "{\"msg\":\"def get_directory_structure(_core_id):401"+"\"}")
+        return '401', 401
+    
+
+    Utility.Log.insert_log("",
+                    'upload_file():',
+                    action.GET.value,
+                    str(datetime.now()),
+                    action.SUCCESS.value,
+                    "{\"msg\":\"def get_directory_structure(_core_id):"+"\"}")
+        
+    DirectoryStructur = Utility.BuildStorageObjects(_core_id)
+    return DirectoryStructur
+        
 
 # # Example usage of the update_field_by_id function
 # record_id = 1  # Replace with the desired record ID

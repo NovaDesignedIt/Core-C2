@@ -30,8 +30,9 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core,on
     // Create a new XMLHttpRequest object
     var xhr = new XMLHttpRequest();
     // Configure it: GET-request for the URL /example-api
-    xhr.open('GET', `http://${url}/dir`, true);
+    xhr.open('GET', `http://${url}/${core?._core_id}/dir`, true);
     // Set up a callback function to handle the response
+    xhr.setRequestHeader( 'authtok', core !== undefined ? core._sessiontoken : '' );
     xhr.onreadystatechange = function () {
       // Check if the request is complete
       if (xhr.readyState === 4) {

@@ -15,14 +15,14 @@ const Files:React.FC<FileViewerProp> = ( {core,file,url} ) => {
     
     <Stack sx={{ height: "100%", width: "100%" }}>
       <Stack
-        sx={{padding: "1%" ,flexDirection:'row', overflow: 'hidden', height: "10%", width: "100%", boxShadow: '0px 2px 7px rgba(0, 0, 0, 0.8)',backgroundColor: "#202c22" }}>
+        sx={{padding: "1%" ,flexDirection:'row',minWidth:"100%", overflow: 'hidden', height: "10%", width: "100%", boxShadow: '0px 2px 7px rgba(0, 0, 0, 0.8)',backgroundColor: "#202c22" }}>
         <Stack
-          sx={{ overflow: 'hidden', height: "100%", width: "100%", backgroundColor: "#202c22"  }}>
-          <label style={{ fontSize: 18, color: "#fff" }}>fileName:  {file !== undefined ? file?._name + '.' + file?._extension : ''}</label>
+          sx={{ overflow: 'hidden', height: "100%", width: "100%", backgroundColor: "#202c22",padding:"10%" }}>
+          {/* <label style={{ fontSize: 18, color: "#fff" }}>fileName:  {file !== undefined ? file?._name + '.' + file?._extension : ''}</label>
           <label style={{ fontSize: 10, color: "#fff" }}>Extension: {file !== undefined ? '.' + file?._extension : ''}</label>
           <label style={{ fontSize: 15, color: "#fff" }}>Full Path: {file !== undefined ? file?._path : ''}</label>
-        </Stack>
-        
+       */}
+          </Stack>
         <Button 
         onClick={()=> alert('downloading')}
         sx={{
@@ -31,7 +31,8 @@ const Files:React.FC<FileViewerProp> = ( {core,file,url} ) => {
         }}>
           <DownloadIcon sx={{
             fontSize: '50px',
-            color: '#fff'
+            color: '#fff',
+            
           }}
           />
         </Button>

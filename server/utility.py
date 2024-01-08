@@ -91,6 +91,14 @@ class User(db.Entity):
     def insert_user(cls,user,core,hashid):
         User(_hash_id=hashid,_core_id=core,_username=user)
         orm.commit()
+
+class Files(db.Entity):
+    _filename = Required(str)
+    _filesize = Required(int)
+    _extension = Required(str)
+    _core_id = Required(str)
+    _id = PrimaryKey(int, auto=True)
+
 """ 
 ATTRIBUTE CLASS.
 """
@@ -526,6 +534,27 @@ def sync_core(corestr):
         print(f"Error decoding JSON: {e}")
         return 'None'
     return 'None'
+
+@orm.db_session
+def BuildStorageObjects(corestr):
+    userfiles = Files.select(lambda i :  i._core_id == corestr)
+    payload = [{}]
+    for f in userfiles:
+        payload.append(
+            {
+                "_path": f"/{f._core_id}/{f._filename}.{f._extension}",
+                "_name":f"{f._filename}",
+                "_size": f"{f._filesize}",
+                "_extension":f"{f._extension}",
+            }
+        )
+    payload_Header = { "_core_id":f"{corestr}","_files":payload}
+    return json.dumps(payload_Header)
+    
+
+
+
+
 
 """
 BUILD THE PAYLOAD

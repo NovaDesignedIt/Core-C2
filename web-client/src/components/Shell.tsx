@@ -132,7 +132,8 @@ const Shell: React.FC<ShellProps> = ({ core, instance,url,selectedTargets })  =>
         try {
           const result = Evaluate(val);
           const output: string | any[] | undefined | any = await result
-          const out = typeof output === 'string' ? output : JSON.stringify(output, null, 2);
+          const out = typeof output === 'string' ? output.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\r/g, '')
+          : JSON.stringify(output, null, 2);
           addCommand({input:val, output:out });
           //out);
           setInputValue(out);

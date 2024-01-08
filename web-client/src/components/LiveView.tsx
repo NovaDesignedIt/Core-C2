@@ -100,16 +100,14 @@ const LiveView: React.FC<LiveViewProps> = ({ url, core, instance, SelectedTarget
                                     <div style={{ flexDirection: 'column', display: 'flex',width:"100%", alignContent:'center' }}>
                                         <div style={{ flexDirection: 'row', display: 'flex',width:"100%" ,gap: '6px' }}>
                                             
-                                            <ListItemText >
+                                            <ListItemText sx={{ borderRadius:"3px",backgroundColor: item.status === "200" ? "green" : "#FD4A4D",}} >
                                                 <Typography
                                                     style={{
                                                         fontFamily: '"Ubuntu Mono", monospace',
                                                         justifyContent:'center',
-                                                        backgroundColor: item.status === "200" ? "green" : "#FD4A4D",
-                                                        color: '#fff',
-                                                        width:"30%",
-                                                        padding:'3%',
-                                                        borderRadius:"5px",
+                                                        display:"flex",
+                                                        color: '#fff',        
+                                                        padding:"0px",                               
                                                         fontSize: '10px',
                                                     }}>
                                                     {item.status}
