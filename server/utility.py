@@ -538,17 +538,16 @@ def sync_core(corestr):
 @orm.db_session
 def BuildStorageObjects(corestr):
     userfiles = Files.select(lambda i :  i._core_id == corestr)
-    payload = [{}]
+    payload = []
     for f in userfiles:
         payload.append(
             {
-                "_path": f"/{f._core_id}/{f._filename}.{f._extension}",
                 "_name":f"{f._filename}",
                 "_size": f"{f._filesize}",
                 "_extension":f"{f._extension}",
             }
         )
-    payload_Header = { "_core_id":f"{corestr}","_files":payload}
+    payload_Header = { "_core_id":f"{corestr}","_files":payload  }
     return json.dumps(payload_Header)
     
 

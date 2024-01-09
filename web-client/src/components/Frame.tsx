@@ -55,14 +55,15 @@ const Frame = () => {
   }
 
   const onSelectInstance = (instance: Instance) => {
-    // Handle the selected content based ont he label
-    console.log(instance);
     setSelectedContent(3);
     setSelectedtarget([]);
     SetInstance(instance);
   };
 
   const HandleLogin = (CORE: Core, url: string) => {
+
+
+
     if (CORE !== undefined) {
       setUrl(url);
       setSelectedCore(CORE);

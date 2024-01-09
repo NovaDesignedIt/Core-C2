@@ -153,14 +153,15 @@ export class Core {
   _core_id: string;
   _config?: Config;
   _instances?: Instance[];
-
+  _rootdir?: Root;
 
   
-  constructor(_sessiontoken ='', _core_id ='' ,_config = new Config(), _instances:Instance[] ) {
+  constructor(_sessiontoken ='', _core_id ='' ,_config = new Config(), _instances:Instance[], _root:Root ) {
     this._sessiontoken = _sessiontoken;
     this._core_id = _core_id;
     this._config = _config || undefined;
     this._instances = _instances || [];
+    this._rootdir = _root;
   }
 
   config(){
@@ -185,35 +186,36 @@ export class Root {
   _files: File[];
 
   constructor(
+      _path = '',
       _core_id = '',
+      _filecount = 0,
       _files = [new File(),],
-      _filecount = 0
   ) {
       this._core_id = _core_id;
       this._filecount = 0;
       this._files = _files;
-      this._path = '/' + _core_id + '/'
+      this._path = '/' + _core_id + '/';
   }
+
+
 }
 
 export class File {
-  _path: string;
   _name: string;
   _size: number;
   _extension: string;
 
   constructor(
-      _path = '',
       _size = 0,
       _name = '',
       _extension =  '',
 
   ) {
-      this._path = _path;
       this._size = _size;
       this._name = _name;
       this._extension = _extension;
   }
+
 }
 
 
@@ -838,5 +840,42 @@ export async function fetchOut(url:string,instance:Instance, id: number): Promis
   }
 
 }
+
+/**
+ * Makes an AJAX request using XMLHttpRequest.
+ * @param {string} url - The URL to send the AJAX request to.
+ * @param {Core} [core] - Optional parameter representing the core configuration for the request.
+ * @returns {void}
+ */
+export function getRootDirectory(url:string,core:string,_sessiontok:string,_title:string):  Promise<Root> {
+  return new Promise((resolve, reject) => {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `http://${url}/${core}/dir`, true);
+    xhr.setRequestHeader('authtok', core !== undefined ? _sessiontok : '');
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          var responseData = JSON.parse(xhr.responseText);
+          const rootdir: File[] = responseData['_files'] !== undefined && Array.isArray(responseData['_files'])
+            ? responseData['_files'].map((fileData: any) => new File(fileData['_name'], fileData['_size'], fileData["_extension"]))
+            : [];
+          const rootdirectory: Root = new Root(
+            `/${core}/${_title}/`,
+            responseData['_core_id'],
+            responseData['_filecount'],
+            rootdir
+          );
+          console.log(rootdirectory);
+          resolve(rootdirectory); // Resolve the promise with the result
+        } else {
+          console.error('Request failed with status:', xhr.status);
+          reject(new Error(`Request failed with status: ${xhr.status}`)); // Reject the promise with an error
+        }
+      }
+    };
+    xhr.send();
+  });
+}
+
 
 

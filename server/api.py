@@ -78,7 +78,7 @@ app.secret_key = 'your_secret_key'
 secrets = 'ziggy'
 
 IMAGE_FOLDER = './upl/ph/'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif','txt','js','sh','bat','php',''}
 app.config['IMAGE_FOLDER'] = IMAGE_FOLDER
 
 """ INSTANCE MANAGER OPERATIONS """ 
@@ -1448,8 +1448,18 @@ def get_image(filename):
     return send_from_directory(app.config['IMAGE_FOLDER'], filename)
 
 @app.route('/<_core_id>/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
+def upload_file(_core_id):
+    if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+    
+        Utility.Log.insert_log(f"{_core_id}",
+                                'invalid session',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.FAILED.value,
+                                "{\"msg\":\"insertinstance(): 401"+"\"}")
+        return '401', 401
+    #print(request.data['file'])
+    if  request.data is None:
         
         Utility.Log.insert_log("",
                     'upload_file():',
@@ -1457,9 +1467,9 @@ def upload_file():
                     str(datetime.now()),
                     action.FAILED.value,
                     "{\"msg\":\"get_image(filename): no file"+"\"}")
-        return redirect(request.url)
+        return '403', 403
 
-    file = request.files['file']
+    file = request.data['file']
 
     if file.filename == '':
         
@@ -1469,7 +1479,7 @@ def upload_file():
                     str(datetime.now()),
                     action.FAILED.value,
                     "{\"msg\":\"get_image(filename): filename empty"+"\"}")
-        return redirect(request.url)
+        return '403', 403
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -1479,17 +1489,36 @@ def upload_file():
         # Ensure the directory exists
         os.makedirs(os.path.dirname(app.config['IMAGE_FOLDER']), exist_ok=True)
         
-        with open(fpath, 'wb') as fw:
-            
-            Utility.Log.insert_log("",
-                    'upload_file():',
-                    action.GET.value,
-                    str(datetime.now()),
-                    action.SUCCESS.value,
-                    "{\"msg\":\"get_image(filename): extension rejected"+"\"}")
-            fw.write(file.stream.read())
+        upload_folder = f'/upl/{_core_id}_files'
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder)
 
-        return 'File uploaded successfully'
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(upload_folder, filename)
+        file.save(file_path)
+
+
+
+        _, file_extension = os.path.splitext(filename)
+
+        # Get the file size
+        file_size = os.path.getsize(file_path)
+
+        Utility.Files(_filename=filename,
+                      core_id=_core_id,
+                      _extension=file_extension,
+                      _filesize = file_size
+                      )
+        orm.commit()
+        
+        Utility.Log.insert_log("",
+                'upload_file():',
+                action.GET.value,
+                str(datetime.now()),
+                action.SUCCESS.value,
+                "{\"msg\":\"get_image(filename): extension rejected"+"\"}")
+        
+        return '200'
     
     Utility.Log.insert_log("",
                     'upload_file():',
@@ -1497,7 +1526,7 @@ def upload_file():
                     str(datetime.now()),
                     action.ERROR.value,
                     "{\"msg\":\"get_image(filename): invalid file type"+"\"}")
-    return 'Invalid file type'
+    return '405'
 
 #icci
 @app.route('/<_core_id>/dir',methods=['GET'])
@@ -1514,7 +1543,7 @@ def get_directory_structure(_core_id):
     
 
     Utility.Log.insert_log("",
-                    'upload_file():',
+                    'def get_directory_structure(_core_id):',
                     action.GET.value,
                     str(datetime.now()),
                     action.SUCCESS.value,

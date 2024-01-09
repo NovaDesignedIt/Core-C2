@@ -4,7 +4,7 @@ import { FormatUnderlined } from '@mui/icons-material';
 import { Alert, Box, Button, Snackbar, TextField, Typography, withStyles } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { SetStateAction, useEffect, useState } from 'react';
-import  { Core, Config, Instance,Target} from '../api/apiclient';
+import  { Core, Config, Instance,Target, Root, getRootDirectory} from '../api/apiclient';
  
 export default function LoginHome({ onSetCore = (core: Core,url:string) => { } }) {
     const [password, setPassword] = useState('user');
@@ -25,17 +25,22 @@ export default function LoginHome({ onSetCore = (core: Core,url:string) => { } }
         setOpen(true);
     };
 
-    const TryLogin = () => {
-        const HandleCore = (corev: any) => {
+    const TryLogin =   () => {
+
+        const HandleCore = async (corev: any) => {
 
             const sessiontok:string = corev["_sessiontoken"].toString();
             const corid:string  = corev["_core_id"].toString();
-            const configuration:Config = corev["_config"];
+            const configuration :Config = corev["_config"];
             const instances:Instance[] = corev["_instances"];
-
-            const c = new Core(sessiontok,corid,configuration,instances);
-            console.log(c);
+            const title = configuration._title !== undefined ? configuration._title : '_'
+            const directoryStructure:Root = await getRootDirectory(address,corid,sessiontok,title);
+            console.log("thisis it",directoryStructure)
+            const rdir = directoryStructure !== undefined  ? directoryStructure : new Root()
+         
+            const c = new Core(sessiontok,corid,configuration,instances,rdir);
             onSetCore(c,address);
+
         };
 
         const url = `http://${address}/auth`;

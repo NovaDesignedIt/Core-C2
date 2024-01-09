@@ -110,7 +110,7 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
                   }}
                 />
               </ListItemButton>
-              <Divider />
+              <Divider key={999} />
               <ListItem key={2} component="div" disablePadding>
                 <ListItemButton
                   onClick={() => handleItemClick(6)}
@@ -171,7 +171,7 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
                   </IconButton>
                 </Tooltip>
               </ListItem>
-              <Divider />
+              <Divider  key={888} />
               <Box
                 key={10}
                 sx={{
