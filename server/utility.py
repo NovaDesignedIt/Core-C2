@@ -93,7 +93,7 @@ class User(db.Entity):
         orm.commit()
 
 class Files(db.Entity):
-    _filename = Required(str)
+    _filename = Required(str,unique=True)
     _filesize = Required(int)
     _extension = Required(str)
     _core_id = Required(str)

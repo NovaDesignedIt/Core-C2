@@ -1448,6 +1448,7 @@ def get_image(filename):
     return send_from_directory(app.config['IMAGE_FOLDER'], filename)
 
 @app.route('/<_core_id>/upload', methods=['POST'])
+@orm.db_session
 def upload_file(_core_id):
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
     
@@ -1469,7 +1470,7 @@ def upload_file(_core_id):
                     "{\"msg\":\"get_image(filename): no file"+"\"}")
         return '403', 403
 
-    file = request.data['file']
+    file = request.files['file']
 
     if file.filename == '':
         
@@ -1489,7 +1490,7 @@ def upload_file(_core_id):
         # Ensure the directory exists
         os.makedirs(os.path.dirname(app.config['IMAGE_FOLDER']), exist_ok=True)
         
-        upload_folder = f'/upl/{_core_id}_files'
+        upload_folder = f'upl/{_core_id}_files'
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
 
@@ -1504,10 +1505,11 @@ def upload_file(_core_id):
         # Get the file size
         file_size = os.path.getsize(file_path)
 
-        Utility.Files(_filename=filename,
-                      core_id=_core_id,
-                      _extension=file_extension,
-                      _filesize = file_size
+        Utility.Files(
+                    _filename=filename,
+                    _core_id=_core_id,
+                    _extension=file_extension,
+                    _filesize = file_size
                       )
         orm.commit()
         
@@ -1516,7 +1518,7 @@ def upload_file(_core_id):
                 action.GET.value,
                 str(datetime.now()),
                 action.SUCCESS.value,
-                "{\"msg\":\"get_image(filename): extension rejected"+"\"}")
+                "{\"msg\":\"get_image(filename): fileuploaded"+"\"}")
         
         return '200'
     

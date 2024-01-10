@@ -1,4 +1,4 @@
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import * as React from 'react';
 import { Core, Root, File, getRootDirectory } from '../api/apiclient';
 import AddIcon from '@mui/icons-material/Add';
@@ -22,8 +22,9 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core,on
   const [root, SetRoot] = React.useState(core?._rootdir?._files);
   const [selectedFile,setSelectedFile] = React.useState(-1);
   const [promptOpen,setPrompt] = React.useState(false);
+  const [SelectedFiles,SetSelectedFiles] = React.useState<File[]>([]);
     
-  console.log(core?._rootdir?._files)
+  //console.log(core?._rootdir?._files)
 
   const OnSetFile = (file:File) => {
     
@@ -52,22 +53,50 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core,on
       });
 
       if (response.ok) {
-        console.log('File uploaded successfully');
+        console.error('Success uploading file:', response.statusText);
       } else {
         console.error('Error uploading file:', response.statusText);
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error uploading file:', error.message);
     }
   };
 
-  useEffect(() => {
+  async function refreshDirectory(){
+
+    const r: Root = await getRootDirectory(
+      url,
+      core?._core_id !== undefined ? core?._core_id : '',
+      core?._sessiontoken !== undefined ? core?._sessiontoken : '',
+      core?._config?._title !== undefined ? core?._config?._title : '',
+    )
+
+
+    SetRoot(r._files);
+
+  }
+
+  React.useEffect(() => {
     // This code will run once when the component mounts
-   
+  
     
   }, []); // The empty dependency array ensures that this effect runs only once
 
 
+  const handleCheckboxChange = (event:any,f:File) => {
+    SelectedFiles.length === 0
+    ? SetSelectedFiles([f])
+    : SetSelectedFiles((prevSelectedFiles) => {
+        if (event.target.checked) {
+          // Add index to the list if checked
+          return [...prevSelectedFiles, f];
+        } else {
+          // Remove index from the list if unchecked
+          return prevSelectedFiles.filter((item) => item == f);
+        }
+      });
+    
+  };
 
 
 
@@ -105,14 +134,16 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core,on
                     }} aria-label="simple table">
                         <TableHead>
                             <TableRow sx={{ ':Hover': { backgroundColor: "#000" },cursor:'pointer' }}>
+                            <TableCell align="left" sx={{width:"10px" }}></TableCell>
                                 <TableCell align="left">File Name</TableCell>
                                 <TableCell align="left">Extension</TableCell>
                                 <TableCell align="left">size</TableCell>
                         
                             </TableRow>
                             <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 },cursor:'pointer' }}>
+                                    <TableCell align="left" sx={{width:"10px" }}></TableCell>
                                     <TableCell onClick={() =>  setPrompt(true)} align="left" sx={{width:"1%",backgroundColor:"#000",color:"#fff"}}><AddIcon sx={{":Hover":{ color:"#21fd0a"}}}/></TableCell>
-                                    <TableCell onClick={() => alert('deleting Files')}  align="left" sx={{width:"1%",backgroundColor:"#000",color:"#fff"}}><RemoveIcon sx={{":Hover":{ color:"#21fd0a"}}}/></TableCell>
+                                    <TableCell onClick={() => console.log(`deleting Files`, SelectedFiles)}  align="left" sx={{width:"1%",backgroundColor:"#000",color:"#fff"}}><RemoveIcon sx={{":Hover":{ color:"#21fd0a"}}}/></TableCell>
                                     <TableCell align="left" sx={{width:"10px",backgroundColor:"#000",}}></TableCell>
                                 </TableRow>
                         </TableHead>
@@ -124,18 +155,29 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core,on
                                     key={index}
                                     selected={index === selectedFile}
                                     onClick={() => { setSelectedFile(index); OnSetFile(f); }}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 },cursor:'pointer',width:"100%" }}
-                                >
-                                    <TableCell align="left" sx={{width:"30px" }}>{f._name}</TableCell>
-                                    <TableCell align="left" sx={{width:"10px"}}>.{f._extension}</TableCell>
-                                    <TableCell align="left">{f._size}</TableCell>
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer', width: "100%" }}
+                              >
+                                <TableCell 
+                                align="left" sx={{ width: "1%" }}>
+                                  <FormControlLabel
+                                    label=""
+                                    sx={{
+                                      color: "#fff",
+                                      "& .MuiCheckbox-root .MuiSvgIcon-root": { color: "#fff" },
+                                      "& .MuiCheckbox-root": { color: "#fff" }
+                                    }}
+                                    control={<Checkbox onChange={(e)=>{handleCheckboxChange(e,f)}}  />}
+                                  /></TableCell>
+                                <TableCell align="left" sx={{ width: "30px" }}>{f._name}</TableCell>
+                                <TableCell align="left" sx={{ width: "10px" }}>{f._extension}</TableCell>
+                                <TableCell align="left">{f._size}</TableCell>
 
-                                </TableRow>
+                              </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                     
-                </TableContainer>
+      </TableContainer>
 
       <Dialog
         onBackdropClick={() => setPrompt(false)}
@@ -151,21 +193,21 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core,on
           <div style={{ width: '100%', height: '80%', borderStyle: 'dotted', borderColor: '#fff', borderWidth: '2px', padding: "3%", justifyContent: 'center', display: 'flex', verticalAlign: 'center' }}>
             {
               file === null ? <FileUploadIcon sx={{ fontSize: '250px', color: "#555" }} /> :
-              <FileUploadIcon sx={{ fontSize: '250px', color: "#7ff685" }} />
+                <FileUploadIcon sx={{ fontSize: '250px', color: "#7ff685" }} />
             }
           </div>
           <div style={{ width: "100%", flexDirection: 'row', display: 'flex', justifyContent: 'center', padding: "3%" }}>
 
             <input type="file" onChange={handleFileChange}
               style={{ color: "#fff", width: "50%", }} />
-            <Button onClick={handleUpload}
+            <Button onClick={async ()=>{handleUpload();setPrompt(false);refreshDirectory()}}
               sx={{ backgroundColor: "#405742", color: "#fff", width: "50%", boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', }}> Upload </Button>
           </div>
         </DialogContent>
       </Dialog>
 
 
-                </div>
+    </div>
   );
 
 }

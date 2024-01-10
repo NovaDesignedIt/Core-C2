@@ -37,7 +37,6 @@ export default function LoginHome({ onSetCore = (core: Core,url:string) => { } }
             const directoryStructure:Root = await getRootDirectory(address,corid,sessiontok,title);
             console.log("thisis it",directoryStructure)
             const rdir = directoryStructure !== undefined  ? directoryStructure : new Root()
-         
             const c = new Core(sessiontok,corid,configuration,instances,rdir);
             onSetCore(c,address);
 

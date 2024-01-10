@@ -857,7 +857,7 @@ export function getRootDirectory(url:string,core:string,_sessiontok:string,_titl
         if (xhr.status === 200) {
           var responseData = JSON.parse(xhr.responseText);
           const rootdir: File[] = responseData['_files'] !== undefined && Array.isArray(responseData['_files'])
-            ? responseData['_files'].map((fileData: any) => new File(fileData['_name'], fileData['_size'], fileData["_extension"]))
+            ? responseData['_files'].map((fileData: any) => new File(fileData['_size'],fileData['_name'],  fileData["_extension"]))
             : [];
           const rootdirectory: Root = new Root(
             `/${core}/${_title}/`,

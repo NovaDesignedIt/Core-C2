@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Stack } from '@mui/material';
-import {Core,File,Root,CoreObjects} from '../api/apiclient';
+import {Core,File,Root,CoreObjects,getRootDirectory } from '../api/apiclient';
 import DownloadIcon from '@mui/icons-material/Download';
 
 export interface FileViewerProp {
