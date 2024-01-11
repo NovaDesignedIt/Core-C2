@@ -841,6 +841,110 @@ export async function fetchOut(url:string,instance:Instance, id: number): Promis
 
 }
 
+
+/**
+ * Downloads files from the specified URL.
+ * @param {url} - The URL for the download endpoint.
+ * @param {files} - An array of file names to be downloaded.
+ * @param {core} - An optional Core object.
+ * @returns A Promise that resolves when the download is complete.
+ */
+export async function downloadFiles(url:string,files:string[],core?:Core){
+
+  try {
+    console.log(JSON.stringify(files));
+
+    //alert(typeof instance)
+    const apiUrl = `http://${url}/${core?._core_id}/upload/gf`;
+ 
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'authtok': core?._sessiontoken !== undefined ? core?._sessiontoken : '',
+      },
+      body: JSON.stringify(files),
+    });
+    
+
+
+    if (response.ok || response.status == 200) {
+      return response;
+    } else if (response.status === 401) {
+      return '401';
+    } else if (response.status === 404) {
+      return '404';
+    } else {
+      return '500';
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return '500';
+  }
+
+
+}
+
+
+/**
+ * Deletes files from the specified URL.
+ * @param {url} - The URL for the delete endpoint.
+ * @param {files} - An array of file names to be deleted.
+ * @param {core} - An optional Core object.
+ * @returns A Promise that resolves when the deletion is complete.
+ */
+export  async function deleteFiles(url:string,files:string[],core?:Core){
+
+  try {
+    console.log(JSON.stringify(files));
+
+    //alert(typeof instance)
+    const apiUrl = `http://${url}/${core?._core_id}/uploads/del`;
+ 
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'authtok': core?._sessiontoken !== undefined ? core?._sessiontoken : '',
+      },
+      body: JSON.stringify(files),
+    });
+    
+    //console.log(JSON.stringify(target))
+
+    if (response.ok || response.status == 200) {
+      return '200';
+    } else if (response.status === 401) {
+      return '401';
+    } else if (response.status === 404) {
+      return '404';
+    } else {
+      return '500';
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return '500';
+  }
+
+
+
+}
+
+/**
+ * getFileContent from the specified URL.
+ * @param {url} - The URL for the delete endpoint.
+ * @param {files} - An array of file names to be deleted.
+ * @param {core} - An optional Core object.
+ * @returns A Promise that resolves when the deletion is complete.
+ */
+export async function getFileContent(url:string,filename:string,core?:Core) {
+
+
+
+
+}
+
+
 /**
  * Makes an AJAX request using XMLHttpRequest.
  * @param {string} url - The URL to send the AJAX request to.

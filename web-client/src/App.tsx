@@ -39,9 +39,6 @@ const styles = () => ({
 function App() {
   return (
     <Frame></Frame>
-    //<SocketsExample></SocketsExample>
-    //<CameraContainer></CameraContainer>
-
   );
 }
 

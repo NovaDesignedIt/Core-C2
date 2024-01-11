@@ -1,5 +1,5 @@
 import sys
-from flask import Flask,request,abort, send_from_directory,session,jsonify,redirect,render_template,url_for
+from flask import Flask,request,abort, send_file, send_from_directory,session,jsonify,redirect,render_template,url_for
 from datetime import datetime
 from pony import orm
 import json
@@ -12,6 +12,7 @@ from Utility import Attribute as attribute
 from Utility import ActionType as action
 from Utility import _state as state
 from flask_socketio import SocketIO
+from zipfile import ZipFile
 
 host=''
 port=0
@@ -78,7 +79,7 @@ app.secret_key = 'your_secret_key'
 secrets = 'ziggy'
 
 IMAGE_FOLDER = './upl/ph/'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif','txt','js','sh','bat','php',''}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif','txt','js','sh','bat','php'}
 app.config['IMAGE_FOLDER'] = IMAGE_FOLDER
 
 """ INSTANCE MANAGER OPERATIONS """ 
@@ -1431,9 +1432,19 @@ def login_end_point():
         return '500'
 
 
-""" STORAGE """
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    # Check for the specified extensions
+    if '.' in filename:
+        extension = filename.rsplit('.', 1)[1].lower()
+        if extension in ALLOWED_EXTENSIONS:
+            return True
+    
+    # Check for any 1-10 letter extension
+    if '.' in filename and 1 <= len(filename.rsplit('.', 1)[1]) <= 10:
+        return True
+    
+    return False
+
 
 @app.route('/<_core_id>/upl/ph/<filename>')
 def get_image(filename):
@@ -1446,6 +1457,31 @@ def get_image(filename):
                     "{\"msg\":\"get_image(filename): getting image"+"\"}")
     # Use send_from_directory to serve the image from the specified directory
     return send_from_directory(app.config['IMAGE_FOLDER'], filename)
+
+@app.route('/<_core_id>/upload/gf', methods=['POST'])
+@orm.db_session
+def download_files(_core_id):
+    if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+        Utility.Log.insert_log(f"{_core_id}",
+                                'invalid session',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.FAILED.value,
+                                "{\"msg\":\"insertinstance(): 401"+"\"}")
+        return '401', 401
+    data = request.get_json() 
+    directory_path =f'upl/{_core_id}_files'
+    if len(data) > 0 : 
+        zip_path = f'/{directory_path}/{_core_id}_compressed.zip'
+        with ZipFile(zip_path, 'w') as zipf:
+            for file_name in data:
+                file_path = os.path.join(directory_path, file_name)
+                zipf.write(file_path, file_name)
+        response = send_file(zip_path, as_attachment=True, download_name=f'{_core_id}_compressed.zip')
+        os.remove(zip_path)
+        return response, 200
+    else:
+        return '500', 500
 
 @app.route('/<_core_id>/upload', methods=['POST'])
 @orm.db_session
@@ -1481,6 +1517,19 @@ def upload_file(_core_id):
                     action.FAILED.value,
                     "{\"msg\":\"get_image(filename): filename empty"+"\"}")
         return '403', 403
+
+
+    filetemp = Utility.Files.select(lambda i : i._filename == file.filename).first()
+
+    if filetemp :
+        Utility.Log.insert_log("",
+                    'upload_file():',
+                    action.GET.value,
+                    str(datetime.now()),
+                    action.FAILED.value,
+                    "{\"msg\":\"get_image(filename): File already exists"+"\"}")
+        return  '405 File exists'
+    
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -1529,6 +1578,49 @@ def upload_file(_core_id):
                     action.ERROR.value,
                     "{\"msg\":\"get_image(filename): invalid file type"+"\"}")
     return '405'
+
+
+
+
+@app.route('/<_core_id>/uploads/del', methods=['POST'])
+@orm.db_session
+def delete_files(_core_id):
+
+    if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+        Utility.Log.insert_log(f"{_core_id}",
+                                'invalid session',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.FAILED.value,
+                                "{\"msg\":\"def delete_files(_core_id): 401"+"\"}")
+        return '401', 401
+    data = request.get_json() 
+    directory_path =f'upl/{_core_id}_files'
+    if len(data) > 0 : 
+        for file_name in data:
+            file_path = os.path.join(directory_path, file_name)
+            try:
+                os.remove(file_path)
+                print(f"File {file_name} deleted successfully.")
+                f = Utility.Files.select(lambda i : i._filename == file_name).first()
+                f.delete()
+                orm.commit()
+                Utility.Log.insert_log("",
+                    'delete_files():',
+                    action.GET.value,
+                    str(datetime.now()),
+                    action.SUCCESS.value,
+                    "{\"msg\":\"def delete_files(_core_id):"+"\"}")
+            except OSError as e:
+                errorstr = f"msg:def delete_files(_core_id) Error deleting {file_name}: {e.strerror}"
+                Utility.Log.insert_log("",
+                    'delete_files():',
+                    action.GET.value,
+                    str(datetime.now()),
+                    action.ERROR.value,
+                    errorstr)
+                return '500', 500
+    return '200', 200
 
 #icci
 @app.route('/<_core_id>/dir',methods=['GET'])
