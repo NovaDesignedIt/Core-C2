@@ -55,13 +55,14 @@ interface SideBarProps{
 const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: Instance) => { }, onSelectContent = (index: react.SetStateAction<number>) => { },  core } ) => {
   const [open, setOpen] = react.useState(false);
   const [sublistOpen, setSublistOpen] = react.useState(false);
-
+  const [selectedInstance, SetSelectedInstance] = react.useState<Instance>();
   const handleSublistToggle = () => {
     setSublistOpen(!sublistOpen);
   };
 
   const HandleInstanceSelection = (instance:Instance) => {
     onSelectInstance(instance);
+    SetSelectedInstance(instance);
   }
 
   const handleDropDownMenu = () =>{
@@ -245,7 +246,8 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
                                       core._instances.map((item_instance: Instance) => (
                                         <ListItemButton
                                           key={item_instance._id}
-                                          sx={{ py: 0.5, minHeight: 32, pl: 4, backgroundColor: "#405742", ':hover, :focus': { backgroundColor: "#2f4131" } }}
+                                          selected={selectedInstance?._instance_id === item_instance?._instance_id}
+                                          sx={{ py: 0.5, minHeight: 32, pl: 4, backgroundColor: "#405742", ':hover,  :selected': { backgroundColor: "#111 " } }}
                                           onClick={() => HandleInstanceSelection(item_instance)}
                                         >
                                           <FaDatabase style={{fontSize:'10px',marginRight:"5px"}} />
