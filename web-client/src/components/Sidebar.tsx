@@ -66,7 +66,7 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
   }
 
   const handleDropDownMenu = () =>{
-     core !== undefined ? setOpen(!open) : null;
+     core !== undefined ? setOpen(!open) : setOpen(false);
   }
 
   const handleItemClick = (index: react.SetStateAction<number>) => {
@@ -195,7 +195,7 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
                   }}
                 >
                   <ListItemText
-                    primary="ET-C2"
+                    primary="Interface"
                     primaryTypographyProps={{
                       fontSize: 15,
                       fontWeight: 'medium',

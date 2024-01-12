@@ -64,7 +64,7 @@ const Files: React.FC<FileViewerProp> = ({ core, file, url }) => {
               @app.route('/<_core_id>/upl/ph/<filename>')
               def get_image(filename):      
                   Utility.Log.insert_log("",
-                  .....*/
+                  ..... */
              
             await fetch(`http://${url}/${core?._core_id}/upl/ph/${file !== undefined ? file._name : ''}`,{
                 method: 'GET',

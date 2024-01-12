@@ -1225,6 +1225,19 @@ def updatemanyrecordsbyfield(_core_id,field,value,new_value):
     # Return '500' in case of any error during the update
 """ SESSION MANAGEMENT """
 
+@app.route('/ss/<_core_id>', methods=['GET'])
+@orm.db_session
+def CheckingSession(_core_id):
+    if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+        Utility.Log.insert_log(f"{_core_id}",
+                                'invalid session',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.FAILED.value,
+                                "{\"msg\":\"CheckingSession(_core_id): 401"+"\"}")
+        return '401', 401
+    return '200', 200
+
 def compare_tokens(session_token):
     if Utility.Sessions.session_exists(session_token):
         return '200'

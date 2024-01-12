@@ -31,11 +31,30 @@ const Frame = () => {
   const [sizes, setSizes] = react.useState([15, 85]);
   const [url, setUrl] = react.useState('');
 
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-  const handleContentSelection = (index: react.SetStateAction<number>) => {
-    // Handle the selected content based on the label
-    index = core === undefined && (index === 6 || index === 5) ? -1 : index
-    setSelectedContent(index);
+  const handleContentSelection = async (index: react.SetStateAction<number>) => {
+    //is logged in?
+    const result = await fetch(`http://${url}/ss/${core !== undefined ? core?._core_id : ''}`, {
+      method: 'GET',
+      headers: {
+        'authtok': core !== undefined ?  core?._sessiontoken : ''
+      },
+    });
+
+     if (result.status === 401) {
+        setSelectedCore(undefined)
+        setOpen(true);
+        setSelectedContent(-1);
+     }else {
+      index = core === undefined && (index === 6 || index === 5) ? -1 : index
+      setSelectedContent(index);
+     }
+
+
+    
 
   };
 
@@ -86,7 +105,7 @@ const Frame = () => {
           <Stack sx={{ height: "100%", bgcolor: "#172219" }} overflow={"hidden"}>
             <Sidebar onSelectInstance={onSelectInstance} onSelectContent={handleContentSelection} core={core} />
           </Stack>
-          <Stack direction="column" height="90%" width="100%" maxWidth={"100"} overflow="hidden" >
+          <Stack direction="column" height="100%" width="100%" maxWidth={"100"} overflow="hidden" >
             {selectedContent === -1 && <LoginHome
               onSetCore={HandleLogin}
             />}
@@ -111,7 +130,11 @@ const Frame = () => {
 
         </Splitter>
       </Stack>
-
+      <Snackbar open={open} autoHideDuration={2500} onClose={handleClose}>
+        <Alert onClose={handleClose} variant="filled" severity="error" sx={{ width: '100%' }}>
+          Logged Out
+        </Alert >
+      </Snackbar>
       <footer style={{ position: "fixed", paddingTop: 0, bottom: 0, width: "100%", minHeight: "10vh", backgroundColor: 'rgb(17,22,19)' }}></footer>
     </Box>
   );

@@ -4,7 +4,7 @@ import { FormatUnderlined } from '@mui/icons-material';
 import { Alert, Box, Button, Snackbar, TextField, Typography, withStyles } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { SetStateAction, useEffect, useState } from 'react';
-import  { Core, Config, Instance,Target, Root, getRootDirectory} from '../api/apiclient';
+import  { Core, Config, Instance,Target, Root, getRootDirectory, User} from '../api/apiclient';
  
 export default function LoginHome({ onSetCore = (core: Core,url:string) => { } }) {
     const [password, setPassword] = useState('user');
@@ -28,7 +28,6 @@ export default function LoginHome({ onSetCore = (core: Core,url:string) => { } }
     const TryLogin =   () => {
 
         const HandleCore = async (corev: any) => {
-
             const sessiontok:string = corev["_sessiontoken"].toString();
             const corid:string  = corev["_core_id"].toString();
             const configuration :Config = corev["_config"];
@@ -36,15 +35,16 @@ export default function LoginHome({ onSetCore = (core: Core,url:string) => { } }
             const title = configuration._title !== undefined ? configuration._title : '_'
             const directoryStructure:Root = await getRootDirectory(address,corid,sessiontok,title);
             console.log("thisis it",directoryStructure)
+            const users:User[] = corev["_users"];
             const rdir = directoryStructure !== undefined  ? directoryStructure : new Root()
-            const c = new Core(sessiontok,corid,configuration,instances,rdir);
+            const current_user = users.find(i => i._username === username);
+            const user:string = current_user !== undefined ? current_user._username : ""   ;  
+            const c = new Core(sessiontok,corid,configuration,instances,rdir,users,user);
             onSetCore(c,address);
-
         };
 
         const url = `http://${address}/auth`;
         const payload = { 'value': username + '&' + password }
-
         // Make the POST request
         fetch(url, {
             method: 'POST',

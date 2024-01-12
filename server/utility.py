@@ -85,9 +85,8 @@ class User(db.Entity):
     _hash_id = orm.PrimaryKey(str)
     _username = orm.Required(str)
     _AuthToken = orm.Optional(str, unique=True)
-    _core_id = orm.Required(int)
+    _core_id = orm.Required(str)
 
-    @orm.db_session
     def insert_user(cls,user,core,hashid):
         User(_hash_id=hashid,_core_id=core,_username=user)
         orm.commit()
@@ -256,15 +255,11 @@ class Hashtable(db.Entity):
             # Check if the user exists and the password is correct
             if htpwd and cls.exists(username, password, htpwd._password):
                 c = htpwd._core_id
-                b = True  # Assuming successful authentication
-                print(c, b)
+                b = True  #successful authentication
                 return c, b
             else:
-                # User does not exist or password is incorrect
-                print("Authentication failed")
                 return None, False
         except Exception as e:
-            # Handle exceptions and print detailed error messages
             print(f"Authentication error: {e}")
             return None, False
 
@@ -550,11 +545,6 @@ def BuildStorageObjects(corestr):
     payload_Header = { "_core_id":f"{corestr}","_files":payload  }
     return json.dumps(payload_Header)
     
-
-
-
-
-
 """
 BUILD THE PAYLOAD
 """
@@ -580,7 +570,17 @@ def return_core(core_id,sessiontoken):
                 #core
                 configJson = {}
                 InstanceJson = []
+                usersJson = []
                 config_object = orm.select(c for c in Configuration if c._core_id == core_id).first()
+                users = orm.select(c for c in User if c._core_id == core_id)
+                if users : 
+                    for i in users :
+                        usersJson.append({
+                                "_hash_id" : i._hash_id,
+                                "_username" :  i._username,
+                                "_AuthToken" :  i._AuthToken,
+                                "_core_id" :  i._core_id
+                        })
                 if config_object:
                     config_dict = {
                         "_id": config_object._id,
@@ -623,9 +623,8 @@ def return_core(core_id,sessiontoken):
                                 "_targets": targetlist           
                                 }
                                 )
-                coreJson = {"_core_id" :core._core_id,"_sessiontoken":sessiontoken ,"_config" :configJson,"_instances":InstanceJson }
-                #return InstanceJson
-                #print(coreJson)
+                
+                coreJson = {"_core_id" :core._core_id,"_sessiontoken":sessiontoken ,"_config" :configJson, "_users":usersJson, "_instances":InstanceJson}
                 return json.dumps(coreJson)
     except Exception as e:
         print(f"Error: {e}")

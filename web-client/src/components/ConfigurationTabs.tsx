@@ -4,37 +4,19 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { Config, Core } from '../api/apiclient'
-import { Button, Stack } from '@mui/material';
+import { Avatar, Button, Stack } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import BuildIcon from '@mui/icons-material/Build';
+import { purple } from '@material-ui/core/colors';
+import { Typography } from '@material-ui/core';
 
 interface StyledTabProps {
     label: string;
 }
-
-
-const StyledTabs = styled((props: StyledTabProps) => (
-    <Tabs
-        {...props}
-        TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}
-    />
-))({
-    '& .MuiTabs-indicator': {
-        display: 'flex',
-        width: "100%",
-        
-        justifyContent: 'center',
-        backgroundColor: 'transparent',
-    },
-    '& .MuiTabs-indicatorSpan': {
-        maxWidth: 50,
-        width: '100%',
-        backgroundColor:"#fff",
-        opacity:"0.2"
-    },
-});
-
+interface StyledTabsProps {
+    children:React.ReactNode;
+}
 
 const StyledTab = styled((props: StyledTabProps) => (
     <Tab disableRipple {...props} 
@@ -70,6 +52,35 @@ onSelectTab : (index: React.SetStateAction<number>) => void;
 
 const CustomizedTabs:React.FC<TabConfigurationProp> = ( {core ,onSelectTab}) => {
     const [value, setValue] = React.useState(0);
+    const user  = React.useRef(core !== undefined ?  core._user  : "" );
+
+    const StyledTabs = styled((props: StyledTabsProps) => (
+        <Tabs
+            {...props}
+            variant="scrollable"
+            value={value}
+            onChange={handleChange}
+            TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan"
+            /> }}
+        />
+    ))
+    
+    ({
+        '& .MuiTabs-indicator': {
+            display: 'flex',
+            width: "100%",
+            
+            justifyContent: 'center',
+            backgroundColor: 'transparent',
+        },
+        '& .MuiTabs-indicatorSpan': {
+            maxWidth: 50,
+            width: '100%',
+            backgroundColor:"#fff",
+            opacity:"0.2"
+        },
+    });
+    
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         //alert(newValue);
@@ -77,38 +88,40 @@ const CustomizedTabs:React.FC<TabConfigurationProp> = ( {core ,onSelectTab}) => 
         setValue(newValue);
     };
     const themebutton = {
-        backgroundColor: '#202c22',
-        color: '#21fd0a',
+        border:" 1px solid #5E8061",
+        ":selected":{ backgroundColor:"Transparent"},
+        color: '#5E8061',
         ":hover": {
-            backgroundColor: '#202c22',
+            color: '#21fd0a',
+            border:" 1px solid #21fd0a"
+
         }
         
     }
     return (
         <Box sx={{ width: '100%' }}>
-
             <Box sx={{ bgcolor: '#202c22' }}>
-                <StyledTabs
-                    variant="scrollable"
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="styled tabs example">
-                    <StyledTab label="General"/>
-                        
-                    <StyledTab label="Instances"/>
-                    {/* <div style={{ marginLeft: 'auto',height:"100%", display:'flex'}}>
-                        <div style={{ width: "100%", flexDirection: 'row', display: 'flex' }}> */}
-                           <div style={{ marginLeft:'auto', display:'flex',padding:6}}>
-                            <Button
-                            onClick={()=> alert('syncing cores')}
-                                sx={themebutton}
-                            >
-                                Sync/Save Core
-                                <CloudSyncIcon />
-                            </Button>
-                            </div>
-                        {/* </div>
-                    </div> */}
+                <StyledTabs>
+                    <StyledTab label="General" />
+                    <StyledTab label="Instances" />
+                    <div style={{ display: 'flex', padding: 12,marginTop:"5px", gap: "15%" }}>
+                        <Avatar sx={{ backgroundColor: "purple",cursor:"pointer" }}>{user.current.substring(0, 2)}</Avatar>
+                        <p style={{ color: "white",padding:"5%",cursor:"pointer" }}>
+                            {user.current}
+                        </p>
+                    </div>
+                    <div style={{ marginLeft: 'auto', display: 'flex', padding: 6 }}>
+
+                        <Button
+                            variant='outlined'
+                            onClick={() => alert('syncing cores')}
+                            sx={themebutton}>
+                            save
+                            <CloudSyncIcon/>
+                        </Button>
+                      
+
+                    </div>
                 </StyledTabs>
             </Box>
         </Box>

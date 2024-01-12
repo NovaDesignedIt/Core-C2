@@ -45,6 +45,26 @@ export class Target {
   }
 }
 
+export class User {
+  _hash_id  :string;
+  _username  :string;
+  _AuthToken:  string;
+  _core_id : string;
+
+  constructor(   
+  _hash_id = "",
+  _username = "",
+  _AuthToken = "",
+  _core_id= "" 
+  )
+{
+   this._core_id =_core_id 
+   this._hash_id =_hash_id 
+   this._username =_username 
+   this._AuthToken =_AuthToken 
+}
+}
+
 export class Instance {
   _id: number;
   _instance_id: string;
@@ -154,14 +174,17 @@ export class Core {
   _config?: Config;
   _instances?: Instance[];
   _rootdir?: Root;
-
+  _users?:User[];
+  _user:string;
   
-  constructor(_sessiontoken ='', _core_id ='' ,_config = new Config(), _instances:Instance[], _root:Root ) {
+  constructor(_sessiontoken ='', _core_id ='' ,_config = new Config(), _instances:Instance[],_root:Root,_users:User[],user:string){
     this._sessiontoken = _sessiontoken;
     this._core_id = _core_id;
     this._config = _config || undefined;
     this._instances = _instances || [];
     this._rootdir = _root;
+    this._users = _users;
+    this._user = user;
   }
 
   config(){
