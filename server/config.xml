@@ -4,4 +4,5 @@
     <host name="localhost" ip="127.0.0.1" port="8000"></host>
     <host name="lan" ip="192.168.2.196" port="8000"></host>
     <host name="remote" ip="192.168.2.196" port="8000"></host>
+    <host name="nate" ip="10.0.0.54" port="8000"></host>
 </api>

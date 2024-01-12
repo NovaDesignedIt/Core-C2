@@ -43,14 +43,19 @@ const Files: React.FC<FileViewerProp> = ({ core, file, url }) => {
   const fetchFileContent = async () => {
     try {
       if (file?._extension !== undefined && !imageExtensions.includes(file._extension)) {
-        const response = await fetch(`http://${url}/upl/${core?._core_id}_files/${file !== undefined ? file._name : ''}`);
+        const response = await fetch(`http://${url}/upl/${core?._core_id}_files/${file !== undefined ? file._name : ''}`,{
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'authtok': core?._sessiontoken !== undefined ? core?._sessiontoken : '',
+      }});
 
         if (!response.ok) {
           throw new Error(`Failed to fetch file: ${response.status} ${response.statusText}`);
         }
 
         const content = await response.text();
-        
+        console.log(content);
         setFileContent(content);
       }
     } catch (error: any) {
@@ -69,7 +74,7 @@ const Files: React.FC<FileViewerProp> = ({ core, file, url }) => {
   return (
     <Stack sx={{ height: "100%", width: "100%", backgroundColor: "#000" }}>
       <Stack
-        sx={{ padding: '1%', flexDirection: 'row', minWidth: "100%", height: "15%", width: "100%", boxShadow: '0px 2px 7px rgba(0, 0, 0, 0.8)', backgroundColor: "#202c22" }}>
+        sx={{ padding: '1%', flexDirection: 'row', minWidth: "100%",minHeight: "60px",maxHeight: "60px", height: "15%", width: "100%", boxShadow: '0px 2px 7px rgba(0, 0, 0, 0.8)', backgroundColor: "#202c22" }}>
         <label style={{ fontSize: 20, color: "#fff" }}>{file !== undefined ? file?._name : ''}</label>
       </Stack>
 

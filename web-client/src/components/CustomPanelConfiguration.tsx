@@ -27,8 +27,8 @@ const handleSelectTab = (index:React.SetStateAction<number>) => {
                 direction="column"
                 sx={{
                   width: "100%", height: "100%",
-                  backgroundColor: "#000",
-                
+                  backgroundColor: "#111",
+
                 }}
                 overflow="scroll"
                 autoComplete="off"

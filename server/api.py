@@ -1467,7 +1467,7 @@ def download_files(_core_id):
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}")
+                                "{\"msg\":\"download_files(): 401"+"\"}")
         return '401', 401
     data = request.get_json() 
     directory_path =f'upl/{_core_id}_files'
@@ -1481,6 +1481,13 @@ def download_files(_core_id):
         os.remove(zip_path)
         return response, 200
     else:
+        Utility.Log.insert_log("",
+            'login_end_point():',
+            action.GET.value,
+            str(datetime.now()),
+            action.ERROR.value,
+            "{\"msg\":\"download_files(_core_id): 500"+"\"}")
+            # Do something else if the condition is false
         return '500', 500
 
 @app.route('/<_core_id>/upload', methods=['POST'])
@@ -1626,7 +1633,6 @@ def delete_files(_core_id):
 @app.route('/<_core_id>/dir',methods=['GET'])
 def get_directory_structure(_core_id):
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-    
         Utility.Log.insert_log(f"{_core_id}",
                                 'invalid session',
                                 action.INSERT.value,
@@ -1634,7 +1640,7 @@ def get_directory_structure(_core_id):
                                 action.FAILED.value,
                                 "{\"msg\":\"def get_directory_structure(_core_id):401"+"\"}")
         return '401', 401
-    
+  
 
     Utility.Log.insert_log("",
                     'def get_directory_structure(_core_id):',
@@ -1646,6 +1652,39 @@ def get_directory_structure(_core_id):
     DirectoryStructur = Utility.BuildStorageObjects(_core_id)
     return DirectoryStructur
         
+
+@app.route('/upl/<_core_id>/<filename>', methods=['GET']) 
+def getfilecontent(_core_id,filename):
+    if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+        Utility.Log.insert_log(f"{_core_id}",
+                                'invalid session',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.FAILED.value,
+                                "{\"msg\":\"def getfilecontent(_core_id,filename):401"+"\"}")
+        return '401', 401
+    try:
+        current_path = os.getcwd()
+        upload_folder = f'{current_path}/upl/{_core_id}'
+        with open(f'{upload_folder}/{filename}', 'r') as f:
+            Utility.Log.insert_log("",
+                    'def getfilecontent(_core_id,filename)::',
+                    action.GET.value,
+                    str(datetime.now()),
+                    action.SUCCESS.value,
+                    "{\"msg\":\"def getfilecontent(_core_id,filename)::"+"\"}")
+            return f.read(), 200
+    except Exception as e:
+        Utility.Log.insert_log("",
+            'getfilecontent():',
+            action.GET.value,
+            str(datetime.now()),
+            action.ERROR.value,
+            "{\"msg\":\"def getfilecontent(_core_id,filename): 500, exception: \""+f"{e}"+"\"}")
+            # Do something else if the condition is false
+    return '500', 500
+    
+
 
 # # Example usage of the update_field_by_id function
 # record_id = 1  # Replace with the desired record ID

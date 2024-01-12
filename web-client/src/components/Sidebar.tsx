@@ -21,7 +21,7 @@ import ViewInArIcon from '@mui/icons-material/ViewInAr';
 import Collapse from '@mui/material/Collapse';
 import { GiPlanetCore } from "react-icons/gi";
 import { Instance, Core } from '../api/apiclient';
-
+import { FaDatabase } from "react-icons/fa6";
 import WebStoriesIcon from '@mui/icons-material/WebStories';
 {/*sx={{color:"#21fd0a"}}*/ }
 const data = [
@@ -248,7 +248,7 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
                                           sx={{ py: 0.5, minHeight: 32, pl: 4, backgroundColor: "#405742", ':hover, :focus': { backgroundColor: "#2f4131" } }}
                                           onClick={() => HandleInstanceSelection(item_instance)}
                                         >
-                                        <WebStoriesIcon sx={{padding:"5px"}} fontSize='small'/>
+                                          <FaDatabase style={{fontSize:'10px',marginRight:"5px"}} />
                                           {/* Sublist item content */}
                                           <ListItemText
                                             primary={ item_instance["_instance_name"]}

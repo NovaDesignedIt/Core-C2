@@ -99,12 +99,12 @@ const ConfigGeneralComp:React.FC<ConfigGeneralProp> = ({ core }) => {
 
   return (
     
-    <div style={{ display: 'flex', flexDirection: 'row', width: "100%", height: "100%", backgroundColor: "#000" }}>
+    <Stack sx={{ borderStyle:'none',padding:"0%",display: 'flex', flexDirection: 'row', width: "100%", height: "100%"}}>
       
     
         {/* *********************************** Corepanel **************************************** */}
 
-        <Stack spacing={'3%'} sx={{ width: "100%", height: "100%", backgroundColor: "#444", padding: "2%", overflow:'scroll' }}>
+        <Stack spacing={'3%'} sx={{ width: "100%", height: "100%", padding: "2%", overflow:'scroll' }}>
         <h6 style={{ color: "#fff" }}> {core?._config?._title} 👤</h6>
           {/* <h6 style={{ color: "#fff" }}> core id: {core?._core_id}</h6> */}
           <TextField
@@ -207,7 +207,7 @@ const ConfigGeneralComp:React.FC<ConfigGeneralProp> = ({ core }) => {
 
 
         {/* ************************************ logs *************************************** */}
-        <Stack spacing={'4%'} sx={{ width: "100%", height: "100%", backgroundColor: "#444", padding: "2%", overflow:'scroll' }}>
+        <Stack spacing={'4%'} sx={{ width: "100%", height: "100%", padding: "2%", overflow:'scroll' }}>
 
 
 
@@ -323,7 +323,7 @@ const ConfigGeneralComp:React.FC<ConfigGeneralProp> = ({ core }) => {
    
 
 
-    </div>
+    </Stack>
   );
 
 }
