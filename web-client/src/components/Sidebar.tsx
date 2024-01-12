@@ -111,15 +111,17 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
                   }}
                 />
               </ListItemButton>
-              <Divider key={999} />
+              <Divider />
               <ListItem key={2} component="div" disablePadding>
                 <ListItemButton
+                
                   onClick={() => handleItemClick(6)}
                   sx={{ height: 56 }}>
                   <ListItemIcon>
 
                        </ListItemIcon>
                   <ListItemText
+
                     primary="core Overview"
                     secondary={ core === undefined  ? "login to fetch core." : ""}
                     secondaryTypographyProps={{
@@ -244,7 +246,7 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
                                   {
                                     open && sublistOpen && core?._instances !== undefined ?
                                       core._instances.map((item_instance: Instance) => (
-                                        <ListItemButton
+                                      <ListItemButton
                                           key={item_instance._id}
                                           selected={selectedInstance?._instance_id === item_instance?._instance_id}
                                           sx={{ py: 0.5, minHeight: 32, pl: 4, backgroundColor: "#405742", ':hover,  :selected': { backgroundColor: "#111 " } }}

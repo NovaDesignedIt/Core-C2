@@ -1445,18 +1445,30 @@ def allowed_file(filename):
     
     return False
 
-
 @app.route('/<_core_id>/upl/ph/<filename>')
-def get_image(filename):
-    
+
+def get_image(_core_id,filename):
     Utility.Log.insert_log("",
                     'get_image():',
                     action.GET.value,
                     str(datetime.now()),
                     action.GET.value,
                     "{\"msg\":\"get_image(filename): getting image"+"\"}")
+    
+    file_extension = os.path.splitext(filename)[1]
+    mimetype_mapping = {
+        'jpg': 'image/jpeg',
+        'png': 'image/png',
+        'webp': 'image/webp',
+        'bmp': 'image/bmp',
+        # Add more formats as needed
+    }
+
+    # Use the provided image format to get the corresponding mimetype
+    mimetype = mimetype_mapping.get(file_extension, 'image/jpeg')
+
     # Use send_from_directory to serve the image from the specified directory
-    return send_from_directory(app.config['IMAGE_FOLDER'], filename)
+    return send_file(f'./upl/{_core_id}_files/{filename}', mimetype=mimetype)
 
 @app.route('/<_core_id>/upload/gf', methods=['POST'])
 @orm.db_session
@@ -1666,6 +1678,7 @@ def getfilecontent(_core_id,filename):
     try:
         current_path = os.getcwd()
         upload_folder = f'{current_path}/upl/{_core_id}'
+
         with open(f'{upload_folder}/{filename}', 'r') as f:
             Utility.Log.insert_log("",
                     'def getfilecontent(_core_id,filename)::',

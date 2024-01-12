@@ -213,6 +213,16 @@ const Shell: React.FC<ShellProps> = ({ core, instance,url,selectedTargets })  =>
       delete (window as any).core;
       delete (window as any).instance;
       delete (window as any).url;
+      delete (window as any).deleterecordbyid;
+      delete (window as any).insertrecord;
+      delete (window as any).getrecordsbyfield;
+      delete (window as any).getrecordbyid;
+      delete (window as any).getallrecords;
+      delete (window as any).updatesinglerecordbyid;
+      delete (window as any).updatemanyrecordsbyfield;
+      delete (window as any).selectedTargets;
+      delete (window as any).Command;
+      delete (window as any).CommandById;
     };
     
   }, [

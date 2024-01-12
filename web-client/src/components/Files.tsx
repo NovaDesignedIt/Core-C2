@@ -39,6 +39,7 @@ const themeTextBlack = {
 const Files: React.FC<FileViewerProp> = ({ core, file, url }) => {
   const [selectFile, SetSelectedFile] = React.useState('');
   const [fileContent, setFileContent] = React.useState('');
+  const [ImageUrl, setImageURL] = React.useState('');
 
   const fetchFileContent = async () => {
     try {
@@ -55,8 +56,23 @@ const Files: React.FC<FileViewerProp> = ({ core, file, url }) => {
         }
 
         const content = await response.text();
-        console.log(content);
         setFileContent(content);
+       
+      }else{  
+              /*
+              python back-end-point 
+              @app.route('/<_core_id>/upl/ph/<filename>')
+              def get_image(filename):      
+                  Utility.Log.insert_log("",
+                  .....*/
+             
+            await fetch(`http://${url}/${core?._core_id}/upl/ph/${file !== undefined ? file._name : ''}`,{
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'authtok': core?._sessiontoken !== undefined ? core?._sessiontoken : '',
+            }}).then(response => setImageURL(response.url) )
+            .catch(error => console.error('Error fetching image URL:', error));
       }
     } catch (error: any) {
       console.error('Error:', error.message);
@@ -83,7 +99,7 @@ const Files: React.FC<FileViewerProp> = ({ core, file, url }) => {
 
         {
         imageExtensions.includes(file?._extension !== undefined ? file?._extension : '') ?
-          <img src={`http://${url}/upl/${core?._core_id}_files/${file !== undefined ? file._name : ''}`} />
+          <img src={ImageUrl} />
           :
           <TextField
             value={
