@@ -87,6 +87,7 @@ const CustomizedTabs:React.FC<TabConfigurationProp> = ( {core ,onSelectTab}) => 
         onSelectTab(newValue);
         setValue(newValue);
     };
+    
     const themebutton = {
         border:" 1px solid #5E8061",
         ":selected":{ backgroundColor:"Transparent"},
@@ -94,12 +95,11 @@ const CustomizedTabs:React.FC<TabConfigurationProp> = ( {core ,onSelectTab}) => 
         ":hover": {
             color: '#21fd0a',
             border:" 1px solid #21fd0a"
-
         }
-        
     }
+
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%', height:"8%" }}>
             <Box sx={{ bgcolor: '#202c22' }}>
                 <StyledTabs>
                     <StyledTab label="General" />

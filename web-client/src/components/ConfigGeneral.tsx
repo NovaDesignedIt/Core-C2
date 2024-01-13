@@ -99,13 +99,13 @@ const ConfigGeneralComp:React.FC<ConfigGeneralProp> = ({ core }) => {
 
   return (
     
-    <Stack sx={{ borderStyle:'none',padding:"0%",display: 'flex', flexDirection: 'row', width: "100%", height: "100%"}}>
+    <Stack sx={{ borderStyle:'none',padding:"0%",display: 'flex',backgroundColor:"#000", flexDirection: 'row', width: "100%", height: "100%"}}>
       
     
         {/* *********************************** Corepanel **************************************** */}
 
         <Stack spacing={'3%'} sx={{ width: "100%", height: "100%", padding: "2%", overflow:'scroll' }}>
-        <h6 style={{ color: "#fff" }}> {core?._config?._title} 👤</h6>
+        <h6 style={{ color: "#fff" }}> {core?._config?._title}</h6>
           {/* <h6 style={{ color: "#fff" }}> core id: {core?._core_id}</h6> */}
           <TextField
             variant={'outlined'}
@@ -152,7 +152,7 @@ const ConfigGeneralComp:React.FC<ConfigGeneralProp> = ({ core }) => {
 
           <Alert sx={{boxShadow: '0px 2px 7px rgba(0, 0, 0, 0.8)'}}
           severity="info">Set server settings using the utility on the server where your Instance hosted.  <a href='https://github.com/NovaDesignedIt/' target="_blank" rel="noopener noreferrer">get it over at here <GitHubIcon sx={{fontSize:17}} /></a></Alert>
-        <h6 style={{ color: "#fff" }}>Listener Configuration 👂</h6>
+        <h6 style={{ color: "#fff" }}>Listener Configuration</h6>
           <div style={{boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', display: 'flex', flexDirection: 'column', backgroundColor: "#333", padding: '5px' }}>
             <h6 style={{ color: "#fff" }}>Listener</h6>
             <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
@@ -211,7 +211,7 @@ const ConfigGeneralComp:React.FC<ConfigGeneralProp> = ({ core }) => {
 
 
 
-          <h6 style={{ color: "#fff" }}>log settings 📒</h6>
+          <h6 style={{ color: "#fff" }}>log settings</h6>
 
           <TextField
             fullWidth={true}
