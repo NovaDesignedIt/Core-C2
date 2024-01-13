@@ -1272,6 +1272,17 @@ def checksessions(session_token):
 
 """ ATHENTICATION MANAGER OPERATIONS """
 
+@app.route('/cc', methods=['POST'])
+@orm.db_session
+def create_core():
+    data = request.get_json()
+    print('#*'*100)
+    print(data)
+    return "200", 200
+    
+    
+
+
 @app.route('/<_core_id>/c/u', methods=['POST'])
 @orm.db_session
 def create_user(_core_id):
@@ -1285,7 +1296,9 @@ def create_user(_core_id):
                                 action.FAILED.value,
                                 "{\"msg\":\"insertinstance(): 401"+"\"}")
         return '401', 401
+    
     data = request.get_json()
+
     if 'password' not in data or 'username' not in data or 'hash_id' not in data:
         
         Utility.Log.insert_log("",

@@ -960,10 +960,23 @@ export  async function deleteFiles(url:string,files:string[],core?:Core){
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the deletion is complete.
  */
-export async function getFileContent(url:string,filename:string,core?:Core) {
+export async function CreateCore(url:string,coreStructure:any) {
 
+  const response =  await fetch(`http://${url}/cc`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json", // Specify the content type as JSON
+    },
+    body: JSON.stringify({ "these": "nuts" }), // Convert the object to a JSON string
+  }).then(
+    (data)=> {
+      return data.status
+    }
+  ).catch((error:Error)=> { 
+    console.log(error);
+  })
 
-
+  console.log(response);
 
 }
 

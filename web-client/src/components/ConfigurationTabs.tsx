@@ -19,12 +19,16 @@ interface StyledTabsProps {
 }
 
 const StyledTab = styled((props: StyledTabProps) => (
-    <Tab disableRipple {...props} 
+    <Tab disableRipple {...props} iconPosition='start'  sx= {{'&:MuiButtonBase-root .MuiTab-root':{
+        maxHeight:"200px",
+        height:"5px"
+    }}}
         icon={  props.label === 'General'  ?
          <SettingsIcon fontSize='small' sx={{ color: "#7ff685" , height: '15px' }}></SettingsIcon> :
            props.label === 'Instances' ?  <BuildIcon fontSize='small' sx={{ color: "#7ff685" , height: '15px' }}></BuildIcon> : 
         <></>
     }
+ 
      />
 ))
 
@@ -38,9 +42,12 @@ const StyledTab = styled((props: StyledTabProps) => (
         color: '#fff',
         backgroundColor:"#5E8061"
     },
+    
+    
     '&.Mui-focusVisible': {
         backgroundColor: 'rgba(100, 95, 228, 0.32)',
     },
+   
     
 }));
 
@@ -57,30 +64,36 @@ const CustomizedTabs:React.FC<TabConfigurationProp> = ( {core ,onSelectTab}) => 
     const StyledTabs = styled((props: StyledTabsProps) => (
         <Tabs
             {...props}
-            variant="scrollable"
             value={value}
+
             onChange={handleChange}
-            TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan"
-            /> }}
+            TabIndicatorProps={{
+                children: <span className="MuiTabs-indicatorSpan"
+                />
+            }}
         />
     ))
-    
-    ({
-        '& .MuiTabs-indicator': {
-            display: 'flex',
-            width: "100%",
-            
-            justifyContent: 'center',
-            backgroundColor: 'transparent',
-        },
-        '& .MuiTabs-indicatorSpan': {
-            maxWidth: 50,
-            width: '100%',
-            backgroundColor:"#fff",
-            opacity:"0.2"
-        },
-    });
-    
+
+        ({
+            '&:MuiButtonBase-root .MuiTab-root':{
+                maxHeight:"200px",
+                height:"5px"
+            },
+
+            '& .MuiTabs-indicator': {
+                display: 'flex',
+                width: "100%",
+                justifyContent: 'start',
+                backgroundColor: 'transparent',
+            },
+            '& .MuiTabs-indicatorSpan': {
+                maxWidth: 50,
+                width: '100%',
+                backgroundColor: "#fff",
+                opacity: "0.2"
+            },
+        });
+
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         //alert(newValue);
@@ -89,42 +102,43 @@ const CustomizedTabs:React.FC<TabConfigurationProp> = ( {core ,onSelectTab}) => 
     };
     
     const themebutton = {
+        height:"100%",
+        width:"100%",
         border:" 1px solid #5E8061",
-        ":selected":{ backgroundColor:"Transparent"},
         color: '#5E8061',
         ":hover": {
             color: '#21fd0a',
             border:" 1px solid #21fd0a"
-        }
+        },
+        
+        "&:hover":{backgroundColor:"transparent" }
     }
 
     return (
-        <Box sx={{ width: '100%', height:"8%" }}>
-            <Box sx={{ bgcolor: '#202c22' }}>
+
+
                 <StyledTabs>
                     <StyledTab label="General" />
                     <StyledTab label="Instances" />
-                    <div style={{ display: 'flex', padding: 12,marginTop:"5px", gap: "15%" }}>
-                        <Avatar sx={{ backgroundColor: "purple",cursor:"pointer" }}>{user.current.substring(0, 2)}</Avatar>
-                        <p style={{ color: "white",padding:"5%",cursor:"pointer" }}>
+                    <div style={{ display: 'flex', padding: 5, gap: "15%" }}>
+                        <Avatar sx={{ backgroundColor: "purple",cursor:"pointer", marginTop:"8px" }}>{user.current.substring(0, 2)}</Avatar>
+                        <p style={{ color: "white",padding:"5%",cursor:"pointer", marginTop:"10px"}}>
                             {user.current}
                         </p>
                     </div>
                     <div style={{ marginLeft: 'auto', display: 'flex', padding: 6 }}>
-
                         <Button
                             variant='outlined'
+                            disableRipple disableFocusRipple
                             onClick={() => alert('syncing cores')}
                             sx={themebutton}>
                             save
                             <CloudSyncIcon/>
                         </Button>
-                      
-
                     </div>
                 </StyledTabs>
-            </Box>
-        </Box>
+    
+
 
     );
 }

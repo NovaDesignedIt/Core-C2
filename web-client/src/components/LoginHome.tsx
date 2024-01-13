@@ -1,8 +1,10 @@
 
 import { Alert, Button, Snackbar, TextField, Typography } from '@mui/material';
 import { SetStateAction, useState } from 'react';
-import { Core, Config, Instance, Root, getRootDirectory, User } from '../api/apiclient';
+import { Core, Config, Instance, Root, getRootDirectory, User, CreateCore } from '../api/apiclient';
 import CloseIcon from '@mui/icons-material/Close';
+
+
 export default function LoginHome({ onSetCore = (core: Core, url: string) => { } }) {
     const [password, setPassword] = useState('user');
     const [username, setUsername] = useState('super');
@@ -76,6 +78,10 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
                 setColor('#FF5F5F')
             });
     }
+    async function HandleCreateCore() {
+        await CreateCore("192.168.2.196:8000", JSON.stringify({ "these": "nuts" }));
+        SetIsCreating(false)
+    }
 
     const handleuser = (event: { target: { value: SetStateAction<string>; }; }) => {
         setUsername(event.target.value)
@@ -142,7 +148,7 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
                 display: 'flex'
 
             }}>
-                
+
                 <div id='Login-panel'
                     style={{
                         borderRadius: "2px",
@@ -153,12 +159,14 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
                         justifyContent: 'center',
                         alignItems: 'center',
                         display: 'flex',
+                        minHeight: !IsCreating ? "350px" : "550px" ,
                         boxShadow: '0px 5px 9px rgba(0, 0, 0, 0.7)'
                     }}>
 
                     <div style={{
                         gap: '5px',
                         padding: 0,
+                        minHeight: "40%",
                         justifyContent: 'center',
                         alignItems: 'center',
                         display: 'flex',
@@ -168,17 +176,17 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
                     }}>
                         {!IsCreating ?
                             <>
-                                     <Typography
-                                        sx={{
-                                            textAlign:"center",
-                                            color: "#fff",
-                                            fontSize: 25,
-                                            fontWeight: 'medium',
-                                            letterSpacing: 0,
-                                            width: "100%"
-                                        }}
-                                    >Login to Core
-                                    </Typography>
+                                <Typography
+                                    sx={{
+                                        textAlign: "center",
+                                        color: "#fff",
+                                        fontSize: 25,
+                                        fontWeight: 'medium',
+                                        letterSpacing: 0,
+                                        width: "100%"
+                                    }}
+                                >Login to Core
+                                </Typography>
                                 <div style={{ marginBottom: 10, width: "80%" }}>
                                     <TextField
                                         required
@@ -231,10 +239,10 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
 
 
                             <>
-                                <div style={{ marginBottom: 10, width: "50%",flexDirection:"row",display:"flex"}}>
+                                <div style={{ marginBottom: 10, width: "80%", flexDirection: "row", display: "flex" }}>
                                     <Typography
                                         sx={{
-                                            textAlign:"center",
+                                            textAlign: "center",
                                             color: "#fff",
                                             fontSize: 25,
                                             fontWeight: 'medium',
@@ -243,10 +251,25 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
                                         }}
                                     >Creating Core
                                     </Typography>
-                                    <CloseIcon sx={{marginTop:"5px",cursor:"pointer"}} onClick={()=>{SetIsCreating(false)}} />
+                                    <CloseIcon sx={{ marginTop: "5px", cursor: "pointer" }} onClick={() => { SetIsCreating(false) }} />
                                 </div>
 
-                                <div style={{ marginBottom: 10, width: "50%" }}>
+                                <div style={{ marginBottom: 10, width: "80%" }}>
+                                    <TextField
+                                        required
+                                        id="title filled-required"
+                                        placeholder="title"
+                                        fullWidth={true}
+                                        onChange={handlehostname}
+                                        InputLabelProps={{ sx: { color: "#777" } }}
+                                        inputProps={{ sx: { color: "#fff" } }}
+                                        size='small'
+                                        sx={themeText}></TextField>
+
+
+                                </div>
+
+                                <div style={{ marginBottom: 10, width: "80%" }}>
                                     <TextField
                                         required
                                         id="hostname filled-required"
@@ -261,11 +284,22 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
 
                                 </div>
 
-                                <div style={{ marginBottom: 10, width: "50%" }}>
+                                <div style={{ marginBottom: 10, width: "80%",flexDirection:"row",display:"flex",gap:"3%"}}>
                                     <TextField
                                         required
-                                        id="hostname filled-required"
-                                        placeholder="hostname"
+                                        id="address filled-required"
+                                        placeholder="Ip address"
+                                        fullWidth={true}
+                                        onChange={handlehostname}
+                                        InputLabelProps={{ sx: { color: "#777" } }}
+                                        inputProps={{ sx: { color: "#fff" } }}
+                                        size='small'
+                                        sx={themeText}></TextField>
+
+                                         <TextField
+                                        required
+                                        id="port filled-required"
+                                        placeholder="port"
                                         fullWidth={true}
                                         onChange={handlehostname}
                                         InputLabelProps={{ sx: { color: "#777" } }}
@@ -274,11 +308,26 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
                                         sx={themeText}></TextField>
                                 </div>
 
-                                <div style={{ marginBottom: 10, width: "50%" }}>
+
+
+                                <div style={{ marginBottom: 10, width: "80%" }}>
                                     <TextField
                                         required
-                                        id="hostname filled-required"
-                                        placeholder="hostname"
+                                        id="username filled-required"
+                                        placeholder="username"
+                                        fullWidth={true}
+                                        onChange={handlehostname}
+                                        InputLabelProps={{ sx: { color: "#777" } }}
+                                        inputProps={{ sx: { color: "#fff" } }}
+                                        size='small'
+                                        sx={themeText}></TextField>
+                                </div>
+
+                                <div style={{ marginBottom: 10, width: "80%" }}>
+                                    <TextField
+                                        required
+                                        id="password filled-required"
+                                        placeholder="password"
                                         fullWidth={true}
                                         onChange={handlehostname}
                                         InputLabelProps={{ sx: { color: "#777" } }}
@@ -289,7 +338,22 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
 
                                 </div>
 
-                               
+                                <div style={{ marginBottom: 10, width: "80%" }}>
+                                    <TextField
+                                        required
+                                        id="confirm password filled-required"
+                                        placeholder=" confirm password"
+                                        fullWidth={true}
+                                        onChange={handlehostname}
+                                        InputLabelProps={{ sx: { color: "#777" } }}
+                                        inputProps={{ sx: { color: "#fff" } }}
+                                        size='small'
+                                        sx={themeText}></TextField>
+
+
+                                </div>
+
+
                             </>
 
 
@@ -309,10 +373,11 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
                             }
                             <Button
                                 variant="outlined"
-                                onClick={() => { SetIsCreating(true); }}
+                                disableRipple disableFocusRipple
+                                onClick={() => { IsCreating && HandleCreateCore() || SetIsCreating(true) }}
                                 sx={{
                                     width: "100%", border: "1px solid transparent", color: "#fff",
-                                    ":hover,focus": { border: "1px solid transparent", color: "#00BF3F" }
+                                    "&:hover,focus": { border: "1px solid transparent", color: "#00BF3F", backgroundColor: "transparent" }
                                 }}
                             >
                                 Create Core
