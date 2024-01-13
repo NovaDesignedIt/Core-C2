@@ -13,7 +13,7 @@ interface ConfigurationProp {
 
 const StoreComponent: React.FC<ConfigurationProp> = ({ core, url }) => {
     const [file, setFile] = React.useState(new File());
-    const [sizes, setSizes] = React.useState([80, 20]);
+    const [sizes, setSizes] = React.useState([50, 50]);
     const onFileSelected = (file: File) => {
         setFile(file)
     }

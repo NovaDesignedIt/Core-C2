@@ -48,26 +48,53 @@ class Core:
     instance_id = orm.Required(str)
     _id = orm.PrimaryKey(int,auto=True)
 
+
+# Define the Targ entity using Pony ORM
 class Target(db.Entity):
     _id = orm.PrimaryKey(int, auto=True)
-    _st = orm.Required(int)
-    _dmp = orm.Required(str)
-    _ip = orm.Required(str)
+    _st = orm.Required(int, auto=True)
+    _dmp = orm.Optional(str)
+    _ip = orm.Optional(str)
     _in = orm.Optional(str)
     _out = orm.Optional(str)
-    _lp = orm.Required(str)
+    _lp = orm.Optional(str)
+    _isid = orm.Required(str)
     _zzz = orm.Required(int)
     _n = orm.Optional(str)
-    _isid = orm.Required(str)
+
+    def assign_value(self, field, value):
+        if field == '_id':
+                self._id = value  
+        elif field == '_st':
+                    self._st = value  
+        elif field == '_dmp':
+                    self._dmp = value  
+        elif field == '_ip':
+                    self._ip = value  
+        elif field == '_in':
+                    self._in = value  
+        elif field == '_out':
+                    self._out = value  
+        elif field == '_lp':
+                    self._lp = value  
+        elif field == '_isid':
+                    self._isid = value  
+        elif field == '_zzz':
+                    self._zzz = value  
+        elif field == '_n':
+                    self._n = value  
+        else:
+            return(f"Invalid field: {field}")
 
 class Instance(db.Entity):
     _id = orm.PrimaryKey(int, auto=True)
-    _core_id = orm.Required(str)
-    _instance_id = orm.Required(str,unique=True)
-    _instance_name = orm.Required(str)
-    _instance_ip = orm.Required(str)
-    _instance_url = orm.Required(str)
-    _Instance_count = orm.Required(int)
+    _instance_id = orm.Optional(str,unique=True)
+    _instance_name = orm.Optional(str)
+    _instance_ip = orm.Optional(str)
+    _instance_url = orm.Optional(str)
+    _Instance_count = orm.Optional(int)
+    _core_id = orm.Optional(str)
+
 
 #dummy inserts below
 class Configuration(db.Entity):
@@ -78,18 +105,40 @@ class Configuration(db.Entity):
     _host_name = orm.Required(str)
     _ip_address = orm.Required(str)
     _port = orm.Required(int)
-    _hash_id = orm.Required(int)
+    _hash_id = orm.Required(str)
     _core_id = orm.Required(str)
+    
+    @orm.db_session
+    def insert_Configuration(
+                            session_len,
+                            theme,
+                            title,
+                            host_name,
+                            ip_address,
+                            port,
+                            hash_id,
+                            core_id):
+        Configuration( 
+                        _session_len  = session_len,
+                        _theme  = theme,
+                        _title  = title,
+                        _host_name  = host_name,
+                        _ip_address  = ip_address,
+                        _port  = port,
+                        _hash_id  = hash_id,
+                        _core_id  = core_id)
+        orm.commit()
 
 class User(db.Entity):
-    _hash_id = orm.PrimaryKey(str)
+    _hash_id = orm.Required(str)
     _username = orm.Required(str)
-    _AuthToken = orm.Optional(str, unique=True)
+    _AuthToken = orm.Optional(str)
     _core_id = orm.Required(str)
-
-    def insert_user(cls,user,core,hashid):
-        User(_hash_id=hashid,_core_id=core,_username=user)
-        orm.commit()
+    _id = orm.PrimaryKey(int,auto=True)
+    
+    @orm.db_session
+    def insert_user(hashid,user,core):
+        User(_hash_id=hashid,_core_id=core,_username=user,_AuthToken="")
 
 class Files(db.Entity):
     _filename = Required(str,unique=True)
@@ -175,7 +224,7 @@ class Log(db.Entity):
 
 class Core(db.Entity):
     _core_id = orm.PrimaryKey(str )
-    _id = orm.Required(int)
+    _id = orm.Required(int, auto=True)
     
     @orm.db_session
     def insert_core(core_id):
@@ -452,7 +501,7 @@ def validateAuthToken(auth_token):
     if session:
         # Check if the session has not expired
         session_expiry_time = datetime.strptime(session._session_expiry_time, '%Y-%m-%d %H:%M:%S')
-        current_time = datetime.now()
+        current_time = datetime.datetime.now()
 
         if current_time < session_expiry_time:
             return True  # Auth token is valid
@@ -544,7 +593,31 @@ def BuildStorageObjects(corestr):
         )
     payload_Header = { "_core_id":f"{corestr}","_files":payload  }
     return json.dumps(payload_Header)
-    
+
+
+@orm.db_session
+def create_user(username,password,_core_id):
+    if Hashtable.Authenticate(password,username)[1]:
+        return  False
+    try:
+        Hashtable.insert_core_user(username,password,_core_id)
+        Log.insert_log(f"{_core_id}",
+                'create_user():',
+                ActionType.GET.value,
+                datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                ActionType.SUCCESS.value,
+                "{\"msg\":\"create_user(): 201 {'message': 'user created successfully'}"+"\"}")
+        return  True
+    except Exception as e:
+        print(e)
+        Log.insert_log(f"{_core_id}",
+                'create_user():',
+                ActionType.GET.value,
+                datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                ActionType.ERROR.value,
+                "{\"msg\":\"def create_user(): 201\"}")
+    return False
+
 """
 BUILD THE PAYLOAD
 """

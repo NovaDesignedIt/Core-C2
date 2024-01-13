@@ -967,7 +967,7 @@ export async function CreateCore(url:string,coreStructure:any) {
     headers: {
       "Content-Type": "application/json", // Specify the content type as JSON
     },
-    body: JSON.stringify({ "these": "nuts" }), // Convert the object to a JSON string
+    body:coreStructure, // Convert the object to a JSON string
   }).then(
     (data)=> {
       return data.status

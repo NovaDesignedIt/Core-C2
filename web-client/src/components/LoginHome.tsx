@@ -14,6 +14,14 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
     const [open, setOpen] = useState(false);
     const [IsCreating, SetIsCreating] = useState(false);
 
+    const [titlecc , settitle ] = useState('title');
+    const [hostnamecc , sethostname ] = useState('host.name.com');
+    const [addresscc , setaddress ] = useState('10.0.0.52');
+    const [portcc , setport ] = useState('4444');
+    const [usernamecc , setusername ] = useState('username');
+    const [passwordcc , setpassword ] = useState('password');
+    const [confirmcc , setconfirm ] = useState('password');
+
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return;
@@ -79,8 +87,53 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
             });
     }
     async function HandleCreateCore() {
-        await CreateCore("192.168.2.196:8000", JSON.stringify({ "these": "nuts" }));
+
+        const fields = [
+            { value: titlecc, message: 'Title is required' },
+            { value: hostnamecc, message: 'Hostname is required' },
+            { value: addresscc, message: 'Address is required' },
+            { value: portcc, message: 'Port is required' },
+            { value: usernamecc, message: 'Username is required' },
+            { value: passwordcc, message: 'Password is required' },
+            { value: confirmcc, message: 'Confirm Password is required' },
+        ];
+        
+        for (const field of fields) {
+            if (field.value === '') {
+                console.log(field.message);
+                return;
+            }
+        }
+        
+        if (confirmcc !== passwordcc) {
+            console.log('Password and Confirm Password do not match');
+            return;
+        }
+
+        const CoreRequest = {
+            "_title": titlecc,
+            "_hostname": hostnamecc,
+            "_address": addresscc,
+            "_port": portcc,
+            "_username": usernamecc,
+            "_password": passwordcc,
+            "_confirm": confirmcc
+        }
+
+        await CreateCore("192.168.2.196:8000", JSON.stringify(CoreRequest));
+        
         SetIsCreating(false)
+        setPassword('')
+        setAddress('')
+        settitle('')
+        sethostname('')
+        setaddress('')
+        setport('')
+        setusername('')
+        setpassword('')
+        setconfirm('')
+
+
     }
 
     const handleuser = (event: { target: { value: SetStateAction<string>; }; }) => {
@@ -96,12 +149,37 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
         setAddress(event.target.value)
     }
 
+    const Handletitlecc =  (event: { target: { value: SetStateAction<string>; }; }) => {
+        settitle(event.target.value);
+    }
+    const Handlehostnamecc =  (event: { target: { value: SetStateAction<string>; }; }) => {
+        sethostname(event.target.value);
+    }
+    const Handleaddresscc =  (event: { target: { value: SetStateAction<string>; }; }) => {
+        setaddress(event.target.value);
+    }
+    const Handleportcc =  (event: { target: { value: SetStateAction<string>; }; }) => {
+        setport(event.target.value);
+    }
+    const Handleusernamecc =  (event: { target: { value: SetStateAction<string>; }; }) => {
+        setusername(event.target.value);
+    }
+    const Handlepasswordcc =  (event: { target: { value: SetStateAction<string>; }; }) => {
+        setpassword(event.target.value);
+    }
+    const Handleconfirmcc =  (event: { target: { value: SetStateAction<string>; }; }) => {
+        setconfirm(event.target.value);
+    }
+
+
     const login = () => {
         username !== '' && password !== '' ? TryLogin() : alert(':(')
     }
 
-    const handleEnterKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
+    const handleEnterKeyPress = (e:any) => {
+       
+        if (e.key === 'Enter') {
+            e.preventDefault();
             login()
         }
     };
@@ -115,7 +193,7 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
     }
     //declare the const and add the material UI style
     const themeText = {
-
+        borderRadius:"3px",
         backgroundColor: "#333",
         "&:Hover,focus": {
             backgroundColor: "#555"
@@ -135,8 +213,14 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
         inputProps: {
             style: { fontFamily: 'nunito', },
         },
-        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.7)'
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)'
     }
+
+
+
+
+
+
     return (
         <>
             <div style={{
@@ -147,9 +231,11 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
                 alignItems: 'center',
                 display: 'flex'
 
-            }}>
+            }}
+            >
 
                 <div id='Login-panel'
+                    onKeyDown={(e)=>{handleEnterKeyPress(e)}}
                     style={{
                         borderRadius: "2px",
                         backgroundColor: '#628565',
@@ -190,6 +276,7 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
                                 <div style={{ marginBottom: 10, width: "80%" }}>
                                     <TextField
                                         required
+                                        value={address}
                                         id="hostname filled-required"
                                         placeholder="hostname"
                                         fullWidth={true}
@@ -206,6 +293,7 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
 
                                     <TextField
                                         required
+                                        value={username}
                                         className='usercls'
                                         id="username filled-required"
                                         placeholder="username"
@@ -221,6 +309,7 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
 
                                     <TextField
                                         required
+                                        value={password}
                                         type='password'
                                         placeholder="password"
                                         className='pwdcls'
@@ -230,8 +319,6 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
                                         inputProps={{ sx: { color: "#111" } }}
                                         size='small'
                                         sx={themeText}></TextField>
-
-
                                 </div>
                             </>
                             :
@@ -257,107 +344,151 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
                                 <div style={{ marginBottom: 10, width: "80%" }}>
                                     <TextField
                                         required
-                                        id="title filled-required"
+                                        value={titlecc}
+                                        id="titlecc filled-required"
                                         placeholder="title"
                                         fullWidth={true}
-                                        onChange={handlehostname}
+                                        onChange={Handletitlecc}
                                         InputLabelProps={{ sx: { color: "#777" } }}
-                                        inputProps={{ sx: { color: "#fff" } }}
+                                        inputProps={{ sx: { color: "red" } }}
                                         size='small'
-                                        sx={themeText}></TextField>
-
-
+                                        sx={{
+                                            ...themeText,
+                                            input: {
+                                                //color: titlecc === '' ? 'pink' : '#fff',
+                                                color: '#fff',
+                                            }
+                                        }}></TextField>
                                 </div>
 
                                 <div style={{ marginBottom: 10, width: "80%" }}>
                                     <TextField
                                         required
-                                        id="hostname filled-required"
+                                        value={hostnamecc}
+                                        id="hostnamecc filled-required"
                                         placeholder="hostname"
                                         fullWidth={true}
-                                        onChange={handlehostname}
+                                        onChange={Handlehostnamecc}
                                         InputLabelProps={{ sx: { color: "#777" } }}
                                         inputProps={{ sx: { color: "#fff" } }}
                                         size='small'
-                                        sx={themeText}></TextField>
-
-
+                                           sx={{
+                                            ...themeText,
+                                            border :  hostnamecc  === '' ? "1px solid #FF474B" :  "1px solid transparent",
+                                            input: {
+                                                //color: titlecc === '' ? 'pink' : '#fff',
+                                                color: '#fff',
+                                            }
+                                        }}></TextField>
                                 </div>
 
                                 <div style={{ marginBottom: 10, width: "80%",flexDirection:"row",display:"flex",gap:"3%"}}>
                                     <TextField
                                         required
-                                        id="address filled-required"
+                                        value={addresscc}
+                                        id="addresscc filled-required"
                                         placeholder="Ip address"
                                         fullWidth={true}
-                                        onChange={handlehostname}
+                                        onChange={Handleaddresscc}
                                         InputLabelProps={{ sx: { color: "#777" } }}
                                         inputProps={{ sx: { color: "#fff" } }}
                                         size='small'
-                                        sx={themeText}></TextField>
+                                           sx={{
+                                            ...themeText,
+                                            border :  addresscc  === '' ? "1px solid #FF474B" :  "1px solid transparent",
+                                            input: {
+                                                //color: titlecc === '' ? 'pink' : '#fff',
+                                                color: '#fff',
+                                            }
+                                        }}></TextField>
 
-                                         <TextField
+                                    <TextField
                                         required
-                                        id="port filled-required"
+                                        value={portcc}
+                                        id="portcc filled-required"
                                         placeholder="port"
                                         fullWidth={true}
-                                        onChange={handlehostname}
+                                        onChange={Handleportcc}
                                         InputLabelProps={{ sx: { color: "#777" } }}
                                         inputProps={{ sx: { color: "#fff" } }}
                                         size='small'
-                                        sx={themeText}></TextField>
+                                           sx={{
+                                            ...themeText,
+                                            border :  portcc  === '' ? "1px solid #FF474B" :  "1px solid transparent",
+                                            input: {
+                                                //color: titlecc === '' ? 'pink' : '#fff',
+                                                color: '#fff',
+                                            }
+                                        }}></TextField>
                                 </div>
-
-
 
                                 <div style={{ marginBottom: 10, width: "80%" }}>
                                     <TextField
                                         required
-                                        id="username filled-required"
+                                        value={usernamecc}
+                                        id="usernamecc filled-required"
                                         placeholder="username"
                                         fullWidth={true}
-                                        onChange={handlehostname}
+                                        onChange={Handleusernamecc}
                                         InputLabelProps={{ sx: { color: "#777" } }}
                                         inputProps={{ sx: { color: "#fff" } }}
                                         size='small'
-                                        sx={themeText}></TextField>
+                                           sx={{
+                                            ...themeText,
+                                            border :  usernamecc  === '' ? "1px solid #FF474B" :  "1px solid transparent",
+                                            input: {
+                                                //color: titlecc === '' ? 'pink' : '#fff',
+                                                color: '#fff',
+                                            }
+                                        }}></TextField>
                                 </div>
 
                                 <div style={{ marginBottom: 10, width: "80%" }}>
                                     <TextField
                                         required
-                                        id="password filled-required"
+                                        value={passwordcc}
+                                        type="password"
+                                        id="passw-cc filled-required"
                                         placeholder="password"
                                         fullWidth={true}
-                                        onChange={handlehostname}
+                                        onChange={Handlepasswordcc}
                                         InputLabelProps={{ sx: { color: "#777" } }}
                                         inputProps={{ sx: { color: "#fff" } }}
                                         size='small'
-                                        sx={themeText}></TextField>
-
-
+                                           sx={{
+                                            ...themeText,
+                                            border :  passwordcc  !== '' ?
+                                                              "1px solid transparent" :  "1px solid #FF474B",
+                                            input: {
+                                                //color: titlecc === '' ? 'pink' : '#fff',
+                                                color: '#fff',
+                                            }
+                                        }}></TextField>
                                 </div>
 
                                 <div style={{ marginBottom: 10, width: "80%" }}>
                                     <TextField
                                         required
-                                        id="confirm password filled-required"
-                                        placeholder=" confirm password"
+                                        type="password"
+                                        value={confirmcc}
+                                        id="confirm-cc password filled-required"
+                                        placeholder="confirm password"
                                         fullWidth={true}
-                                        onChange={handlehostname}
+                                        onChange={Handleconfirmcc}
                                         InputLabelProps={{ sx: { color: "#777" } }}
                                         inputProps={{ sx: { color: "#fff" } }}
                                         size='small'
-                                        sx={themeText}></TextField>
-
-
+                                           sx={{
+                                            ...themeText,
+                                            border :  confirmcc  !== '' ?
+                                                          passwordcc !== confirmcc ? "1px solid #FF474B" :  "1px solid transparent" :  "1px solid transparent",
+                                            input: {
+                                                //color: titlecc === '' ? 'pink' : '#fff',
+                                                color: '#fff',
+                                            }
+                                        }}></TextField>
                                 </div>
-
-
                             </>
-
-
-
                         }
                         <div style={{ marginBottom: 10, width: "80%" }}>
                             {!IsCreating &&

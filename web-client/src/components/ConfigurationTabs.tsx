@@ -65,7 +65,7 @@ const CustomizedTabs:React.FC<TabConfigurationProp> = ( {core ,onSelectTab}) => 
         <Tabs
             {...props}
             value={value}
-
+            sx={{minHeight :"70px"}}
             onChange={handleChange}
             TabIndicatorProps={{
                 children: <span className="MuiTabs-indicatorSpan"

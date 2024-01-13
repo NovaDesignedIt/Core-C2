@@ -16,68 +16,11 @@ from zipfile import ZipFile
 
 host=''
 port=0
-
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="http://localhost:5173")
-
-
-
-# Create a database instance (replace 'your_database_name' with your actual database name)
-db = orm.Database("sqlite", "server.db")
-
-# Define the Targ entity using Pony ORM
-class Target(db.Entity):
-    _id = orm.PrimaryKey(int, auto=True)
-    _st = orm.Required(int, auto=True)
-    _dmp = orm.Optional(str)
-    _ip = orm.Optional(str)
-    _in = orm.Optional(str)
-    _out = orm.Optional(str)
-    _lp = orm.Optional(str)
-    _isid = orm.Required(str)
-    _zzz = orm.Required(int)
-    _n = orm.Optional(str)
-
-    def assign_value(self, field, value):
-        if field == '_id':
-                self._id = value  
-        elif field == '_st':
-                    self._st = value  
-        elif field == '_dmp':
-                    self._dmp = value  
-        elif field == '_ip':
-                    self._ip = value  
-        elif field == '_in':
-                    self._in = value  
-        elif field == '_out':
-                    self._out = value  
-        elif field == '_lp':
-                    self._lp = value  
-        elif field == '_isid':
-                    self._isid = value  
-        elif field == '_zzz':
-                    self._zzz = value  
-        elif field == '_n':
-                    self._n = value  
-        else:
-            return(f"Invalid field: {field}")
-
-class Instance(db.Entity):
-    _id = orm.PrimaryKey(int, auto=True)
-    _instance_id = orm.Optional(str,unique=True)
-    _instance_name = orm.Optional(str)
-    _instance_ip = orm.Optional(str)
-    _instance_url = orm.Optional(str)
-    _Instance_count = orm.Optional(int)
-    _core_id = orm.Optional(str)
-
-
-
-db.generate_mapping(create_tables=True)
 app.secret_key = 'your_secret_key'
 secrets = 'ziggy'
-
 IMAGE_FOLDER = './upl/ph/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif','txt','js','sh','bat','php'}
 app.config['IMAGE_FOLDER'] = IMAGE_FOLDER
@@ -100,7 +43,7 @@ def getinstancebyfield(_core_id,field, value):
     try:
         with orm.db_session:
             # Retrieve records based on the specified field and its value from the Target entity
-            records = Instance.select(lambda t: getattr(t, field) == value)[:]
+            records = Utility.Instance.select(lambda t: getattr(t, field) == value)[:]
             # Check if any records match the criteria
             if records:
                 # Convert the records to a list of dictionaries and return it as JSON response
@@ -165,13 +108,13 @@ def insertinstance(_core_id):
         instance_count = data.get('_Instance_count')
         core_id = data.get('_core_id')
         # Create a new Instance object and insert it into the database
-        Instance(_instance_id=instance_id,
+        Utility.Instance(_instance_id=instance_id,
                                 _instance_name=instance_name,
                                 _instance_ip=instance_ip,
                                 _instance_url=instance_url,
                                 _Instance_count=instance_count,
                                 _core_id=core_id)
-        db.commit()  # Commit the transactionType to save the record in the database
+        Utility.db.commit()  # Commit the transactionType to save the record in the database
         
         Utility.Log.insert_log(f"{_core_id}",
                                instance_name,
@@ -207,7 +150,7 @@ def getinstancebyid(_core_id,record_id):
         with orm.db_session:
             #print(record_id)
             # Retrieve the record by ID from the Target entity
-            target_record = Instance.select(lambda s: s._id == record_id and s._core_id == _core_id).first()
+            target_record = Utility.Instance.select(lambda s: s._id == record_id and s._core_id == _core_id).first()
             
             if target_record:
                 # Convert the record to a dictionary and return it as JSON response
@@ -268,7 +211,7 @@ def getallinstance(_core_id):
     try:
         with orm.db_session:
             # Retrieve all records from the Target entity
-            records = Instance.select(lambda s: s._core_id == _core_id)
+            records = Utility.Instance.select(lambda s: s._core_id == _core_id)
             # Convert the records to a list of dictionaries and return it as JSON response
             record_data = [{
             "_instance_id": record._instance_id,
@@ -313,7 +256,7 @@ def deleteinstancebyid(_core_id,record_id):
     try:
         with orm.db_session:
             # Retrieve the record by ID
-            instance = Instance.get(_id=record_id)
+            instance = Utility.Instance.get(_id=record_id)
             # Check if the record exists
             if instance:
                 # Delete the record from the database
@@ -363,7 +306,7 @@ def updatesingleInstancebyid(_core_id,id, field, value):
     try:
         with orm.db_session:
             # Retrieve the record by ID directly from the Targ entity
-            instance = Instance.get(_id=id)
+            instance = Utility.Instance.get(_id=id)
             print(f"id: {id} field: {field} value:{value}")
             # Check if the record exists
             if instance:
@@ -414,9 +357,9 @@ def updatemanyinstancebyfield(_core_id,field,value,new_value):
     try:
         with orm.db_session:
             # Retrieve records based on the specified field and its current value
-            instances = Instance.select(lambda t: getattr(t, field) == value)[:]
+            instances = Utility.Instance.select(lambda t: getattr(t, field) == value)[:]
             # Check if any records match the criteria
-            if Instance:
+            if instances:
                 # Update the specified field with the new value for all matching records
                 for index, record in enumerate(instances):
                     print("Iteration:", index + 1)  # Add 1 because index is zero-based
@@ -472,7 +415,7 @@ def insertrecord(_core_id):
         data = request.get_json()  # Assuming the client sends JSON data in the request body
         with orm.db_session:
             # Create a new Target entity using the provided JSON data
-            new_record = Target(_st=data.get('_st'),
+            new_record = Utility.Target(_st=data.get('_st'),
                               _dmp=data.get('_dmp'),
                               _ip=data.get('_ip'),
                               _in=data.get('_in'),
@@ -518,7 +461,7 @@ def getrecordsbyfield(_core_id,field, value):
     try:
         with orm.db_session:
             # Retrieve records based on the specified field and its value from the Target entity
-            records = Target.select(lambda t: getattr(t, field) == value)[:]
+            records = Utility.Target.select(lambda t: getattr(t, field) == value)[:]
             # Check if any records match the criteria
             if records:
                 # Convert the records to a list of dictionaries and return it as JSON response
@@ -595,7 +538,7 @@ def command(_core_id,_isid):
             if target['_isid'] == _isid :
                 command = target['_in'] 
                 id = target['_id'] 
-                targ = orm.select(i for i in Target if i._id == target['_id']).first()
+                targ = orm.select(i for i in Utility.Target if i._id == target['_id']).first()
                 targ._ip = target['_ip'] 
                 targ._st = target['_st'] 
                 targ._dmp = target['_dmp'] 
@@ -660,7 +603,7 @@ def handle_message(msg):
     #print('Received message: **************************' + msg)
     obj = json.loads(msg)
     with orm.db_session:
-        targ = orm.select(c for c in Target if c._isid == obj['_isid'] and c._id == obj['_id']).first()
+        targ = orm.select(c for c in Utility.Target if c._isid == obj['_isid'] and c._id == obj['_id']).first()
         if targ :
             targ._st = Utility._state.COMMAND.value
             targ._in = obj['_msg']
@@ -670,7 +613,7 @@ def handle_message(msg):
 @orm.db_session
 def getcmd(isid,id):
     try:
-        targets  = Target.select(lambda i : i._isid == isid and int(i._id) == int(id)).first()
+        targets  = Utility.Target.select(lambda i : i._isid == isid and int(i._id) == int(id)).first()
         if targets is not None:
             with orm.db_session:
                 command = getattr(targets,attribute.IN.value)
@@ -701,7 +644,7 @@ def getcmd(isid,id):
 @orm.db_session
 def setout(isid,id):
     try:
-        targets  = Target.select(lambda i : i._isid == isid and int(i._id) == int(id)).first()
+        targets  = Utility.Target.select(lambda i : i._isid == isid and int(i._id) == int(id)).first()
         if targets is not None:
             with orm.db_session:
                 data = str(request.data)
@@ -737,7 +680,7 @@ def getout(isid,id):
     try:
 
         out=''
-        targets  = orm.select(i for i in Target if  i._isid == isid and int(i._id) == int(id)).first()
+        targets  = orm.select(i for i in Utility.Target if  i._isid == isid and int(i._id) == int(id)).first()
         with orm.db_session: 
             if targets is not None:
                 Utility.Log.insert_log(f"{isid}",
@@ -763,7 +706,7 @@ def getout(isid,id):
 @orm.db_session 
 def getstate(isid,id):
     try:
-        targets  = orm.select(i for i in Target if i._isid == isid and int(i._id) == int(id)).first()
+        targets  = orm.select(i for i in Utility.Target if i._isid == isid and int(i._id) == int(id)).first()
         if targets is not None:
             targets._lp = str(datetime.now())
             orm.commit()
@@ -813,7 +756,7 @@ def getTargets(_core_id,isid):
                                             "{\"msg\":\"idef getTargets(_core_id,isid): 401"+"\"}")
                     return '401', 401
             #print(isid)
-            targets  = Target.select(lambda i : i._isid == isid)
+            targets  = Utility.Target.select(lambda i : i._isid == isid)
             #print(len(targets))
             if targets is None :
                 
@@ -878,7 +821,7 @@ def getrecordbyid(_core_id,record_id):
     try:
         with orm.db_session:
             # Retrieve the record by ID from the Target entity
-            target_record = Target.get(_id=record_id)
+            target_record = Utility.Target.get(_id=record_id)
 
             if target_record is not None:
                 # Convert the record to a dictionary and return it as JSON response
@@ -941,7 +884,7 @@ def getallrecords(_core_id,_isid):
     try:
        
         # Retrieve all records from the Target entity
-        records = orm.select(i for i in Target if i._isid == _isid )
+        records = orm.select(i for i in Utility.Target if i._isid == _isid )
         
         # Convert the records to a list of dictionaries and return it as JSON response
         records_data = [{
@@ -998,7 +941,7 @@ def deleterecordbyid(_core_id,record_id):
     try:
         with orm.db_session:
             # Retrieve the record by ID
-            target_record = Target.get(_id=record_id)
+            target_record = Utility.Target.get(_id=record_id)
             # Check if the record exists
             if target_record:
                 # Delete the record from the database
@@ -1052,7 +995,7 @@ def sleepAgent(_isid, _id, sleep,interval):
 
     try:
         # Retrieve the record by ID directly from the Targ entity
-        target_record = orm.select(i for i in Target if i._id ==_id and i._isid==_isid).first()
+        target_record = orm.select(i for i in Utility.Target if i._id ==_id and i._isid==_isid).first()
         # Check if the record exists
         if target_record:
             # Update the specified field with the new value
@@ -1106,7 +1049,7 @@ def updatesinglerecordbyid(_core_id,id, field, value):
         return '401', 401
     
     # Retrieve the record by ID directly from the Targ entity
-    target_record = orm.select(i for i in Target if i._id == id).first()
+    target_record = orm.select(i for i in Utility.Target if i._id == id).first()
     print(f"id: {id} field: {field} value:{value}")
     # Check if the record exists
     if target_record:
@@ -1137,7 +1080,7 @@ def updatesinglerecordbyid(_core_id,id, field, value):
 @orm.db_session
 def getsleep(isid,id):
     try:
-        targets  = Target.select(lambda i : i._isid == isid and int(i._id) == int(id)).first()
+        targets  = Utility.Target.select(lambda i : i._isid == isid and int(i._id) == int(id)).first()
         with orm.db_session:
                 sleep = getattr(targets,attribute.INTERVAL.value)
                 #set the state back to listen
@@ -1188,7 +1131,7 @@ def updatemanyrecordsbyfield(_core_id,field,value,new_value):
     try:
         with orm.db_session:
             # Retrieve records based on the specified field and its current value
-            records_to_update = Target.select(lambda t: getattr(t, field) == value)[:]
+            records_to_update = Utility.Target.select(lambda t: getattr(t, field) == value)[:]
             # Check if any records match the criteria
             if records_to_update:
                 # Update the specified field with the new value for all matching records
@@ -1276,12 +1219,48 @@ def checksessions(session_token):
 @orm.db_session
 def create_core():
     data = request.get_json()
-    print('#*'*100)
-    print(data)
-    return "200", 200
-    
-    
-
+    try:
+        if data :
+                # Ensure that data is a dictionary
+            print(data)
+            if not isinstance(data, dict):
+                return jsonify({'error': 'Invalid JSON data'}), 400
+            # Now you can safely access dictionary keys
+            usr = data.get("_username", None)
+            usr = data["_username"]
+            password = data["_password"]
+            randstring = Utility.generate_random_string(18)
+            coreid = Utility.Guid()
+            Utility.Core.insert_core(coreid)            
+            Utility.Configuration.insert_Configuration(30,0,data["_hostname"],data["_hostname"],data["_address"],data["_port"],"3453453453",coreid)            
+            #creates entry into hashtable
+            if not Utility.create_user(usr,password,coreid):
+                Utility.Log.insert_log(f"{coreid}",
+                    'create_user():',
+                    action.GET.value,
+                    str(datetime.now()),
+                    action.FAILED.value,
+                    "{\"msg\":\"create_user(): 401 'error': 'Already Exists'} "+"\"}")
+                return 401, "400"            
+            #creates abstract user
+            Utility.User.insert_user(randstring,usr,coreid)            
+            orm.commit()     
+            Utility.Log.insert_log("",
+                        f'created: {coreid}',
+                        action.GET.value,
+                        str(datetime.now()),
+                        action.SUCCESS.value,
+                        "{\"msg\":\"create_core(): 200 "+"\"}")
+        #{"_title":"Title","_hostname":"com.mother.Ship.com","_address":"10.0.0.10","_port":":5675","_username":"username","_password":"password","_confirm":"password"}
+        return "200", 200
+    except Exception as e:
+        Utility.Log.insert_log("",
+                        f'Creation Failed',
+                        action.GET.value,
+                        str(datetime.now()),
+                        action.FAILED.value,
+                        "{\"msg\":\"create_core(): 500 "+"\"}")
+        return  jsonify({'error': f' error :{e}'}), 500
 
 @app.route('/<_core_id>/c/u', methods=['POST'])
 @orm.db_session
@@ -1733,7 +1712,7 @@ def getfilecontent(_core_id,filename):
 # success = update_field_by_id(record_id, field_to_update, new_value)
 if '__main__' == __name__:
 # Call the create_target_table function to create the Target table if it does not exist
-    print(f'{Utility.YELLOW}* CONFIGURING SERVER')
+    print(f'{Utility.YELLOW}* CONFIGURING SERVER{Utility.RESET}')
     if len(sys.argv) > 1 :
         connob = host, port = Utility.gethostname(f'{sys.argv[1]}')
         if connob: 
@@ -1752,4 +1731,7 @@ if '__main__' == __name__:
     print(f'{Utility.YELLOW}* START PROC{Utility.RESET}')
 
 
+
+    #FIRE IT UP BABY!!!
+    print(f'{Utility.GREEN}* SPINNING SERVER UP{Utility.RESET}')
     socketio.run(app,host=host, port=port,debug=True)
