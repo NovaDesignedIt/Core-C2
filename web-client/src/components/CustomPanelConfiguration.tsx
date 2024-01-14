@@ -57,17 +57,21 @@ const ConfigPanel: React.FC<ConfigurationProp> = ({ core }) => {
           <p style={{ margin: "auto",cursor:"default"  }}>
             <h6> {core?._config?._host_name} - {core?._config?._ip_address}</h6>
           </p>
-          <p style={{ margin: "auto",cursor:"pointer"  }}>
+          <p style={{ margin: "auto",cursor:"default" }}>
             <h6> Instance ID: {core?._core_id}</h6>
           </p>
           <div style={{ marginLeft: "auto",cursor:"pointer"}}
             onClick={() => { alert('syncing core'); }}
           >
-            <p >
+            <Stack sx={{ "&:hover":{
+              color:"#7ff685"
+            }}}>
+            <p  >
               <h6>  save
                 <CloudSyncIcon />
               </h6>
             </p>
+            </Stack>
           </div>
         </div>
 
