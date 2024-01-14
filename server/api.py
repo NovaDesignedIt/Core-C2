@@ -1231,9 +1231,17 @@ def create_core():
             password = data["_password"]
             randstring = Utility.generate_random_string(18)
             coreid = Utility.Guid()
-            Utility.Core.insert_core(coreid)            
-            Utility.Configuration.insert_Configuration(30,0,data["_hostname"],data["_hostname"],data["_address"],data["_port"],"3453453453",coreid)            
-            #creates entry into hashtable
+            Utility.Core.insert_core(coreid)
+            Utility.Instance.insert_instance(0,Utility.generate_random_string(10),"default",data["_address"],data["_hostname"],0,coreid)
+            Utility.Configuration.insert_Configuration(30,0,data["_hostname"],data["_hostname"],data["_address"],data["_port"],"3453453453",coreid)
+            # instance_id = Utility.generate_random_string(10)
+            # instance_name = data.get('_instance_name')
+            # instance_ip = data.get('_instance_ip')
+            # instance_url = data.get('_instance_url')
+            # instance_count = data.get('_Instance_count')
+            # core_id = data.get('_core_id')
+                #creates entry into hashtable
+            
             if not Utility.create_user(usr,password,coreid):
                 Utility.Log.insert_log(f"{coreid}",
                     'create_user():',
@@ -1241,9 +1249,11 @@ def create_core():
                     str(datetime.now()),
                     action.FAILED.value,
                     "{\"msg\":\"create_user(): 401 'error': 'Already Exists'} "+"\"}")
-                return 401, "400"            
+                return 401, "400"
+            
             #creates abstract user
-            Utility.User.insert_user(randstring,usr,coreid)            
+            Utility.User.insert_user(randstring,usr,coreid)
+            
             orm.commit()     
             Utility.Log.insert_log("",
                         f'created: {coreid}',

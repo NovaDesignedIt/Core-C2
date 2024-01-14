@@ -134,7 +134,7 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core }) => {
                         <label style={{ color: "#fff", marginRight: '5%' }}>&nbsp;&nbsp;-&nbsp;&nbsp;{core?._config?._host_name} </label>
                     </div>
                 </Stack>
-                <div style={{ width: "100%", height: "10%", padding: "1%", paddingBottom: '1%', backgroundColor: "#000", overflow: 'hidden' }}>
+                <div style={{ width: "100%",minHeight:"45px", height: "7%", padding: "1%", paddingBottom: '1%', backgroundColor: "#000", overflow: 'hidden' }}>
 
                     <Button
                         onClick={() => HandleAdd(true)}
@@ -146,7 +146,7 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core }) => {
                         onClick={() => { selectedRowId > 0 ? alert('instance with id ' + selectedRowId + ' was deleted' + ' 😉 *pretend it\'s deleted ok?') : alert('select an Instance to Delete') }}
                         sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}> Delete </Button>
                 </div>
-                <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "100%", borderRadius: 0, backgroundColor: "#000", }} >
+                <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "40%",minHeight:"10px", borderRadius: 0, backgroundColor: "#000", }} >
                     <Table size="small" sx={{
                         borderStyle: 'dotted',
                         borderWidth: '1px',
@@ -205,7 +205,9 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core }) => {
                             ))}
                         </TableBody>
                     </Table>
-                    <div style={{ gap: '10px',display:'flex' , flexDirection: 'row', height: "50%", width: "100%", backgroundColor: "#111", padding: '1%' }}>
+                   
+                </TableContainer>
+                <div style={{ gap: '10px',display:'flex' , flexDirection: 'row', height: "50%", width: "100%", backgroundColor: "#111", padding: '1%' }}>
                         {
                             PanelOpen &&
 
@@ -350,7 +352,6 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core }) => {
 
                         </Stack>
                     </div>
-                </TableContainer>
             </div>
             <div
                 onClick={() => { setSelectedRowId(0); TogglePanel(false) }}

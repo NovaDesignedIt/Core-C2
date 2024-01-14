@@ -95,6 +95,24 @@ class Instance(db.Entity):
     _Instance_count = orm.Optional(int)
     _core_id = orm.Optional(str)
 
+    @orm.db_session
+    def insert_instance(_id,
+                                _instance_id,
+                                _instance_name ,
+                                _instance_ip ,
+                                _instance_url ,
+                                _Instance_count, 
+                                _core_id ):
+        Instance(
+        _id  =  _id ,
+        _instance_id  =     _instance_id ,
+        _instance_name  =     _instance_name ,
+        _instance_ip  =     _instance_ip ,
+        _instance_url  =     _instance_url ,
+        _Instance_count  =     _Instance_count ,
+        _core_id  =     _core_id )
+        orm.commit()
+
 
 #dummy inserts below
 class Configuration(db.Entity):
