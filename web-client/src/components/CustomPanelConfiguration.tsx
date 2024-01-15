@@ -10,9 +10,10 @@ import { Typography } from '@material-ui/core';
 
 interface ConfigurationProp {
   core?: Core;
+  url:string;
 };
 
-const ConfigPanel: React.FC<ConfigurationProp> = ({ core }) => {
+const ConfigPanel: React.FC<ConfigurationProp> = ({ core,url}) => {
   const [tabselected, SetTabSelected] = React.useState(0);
 
 
@@ -76,10 +77,10 @@ const ConfigPanel: React.FC<ConfigurationProp> = ({ core }) => {
         </div>
 
       {tabselected == 0 &&
-        <ConfigGeneralComp core={core} />
+        <ConfigGeneralComp core={core} url={url} />
       }
       {tabselected == 1 &&
-        <InstancesConfiguration core={core} />
+        <InstancesConfiguration core={core} url={url} />
       }
       
     </Stack>

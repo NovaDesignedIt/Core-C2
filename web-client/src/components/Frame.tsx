@@ -122,9 +122,9 @@ const Frame = () => {
             {selectedContent === 4 && <MapPanel
               core={core} />}
             {selectedContent === 5 && <CustomPanelConfiguration
-              core={core} />}
+              core={core} url={url} />}
             {selectedContent === 6 && <CustomPanelConfiguration
-              core={core} />}
+              core={core} url={url} />}
           </Stack>
 
 

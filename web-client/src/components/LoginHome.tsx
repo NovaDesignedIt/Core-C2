@@ -6,8 +6,8 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 export default function LoginHome({ onSetCore = (core: Core, url: string) => { } }) {
-    const [password, setPassword] = useState('user');
-    const [username, setUsername] = useState('super');
+    const [password, setPassword] = useState('password');
+    const [username, setUsername] = useState('username');
     const [address, setAddress] = useState('192.168.2.196:8000');
     const [color, setColor] = useState('#ffffff');
     const [explode, setExplode] = useState(false);
@@ -42,7 +42,7 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
             const instances: Instance[] = corev["_instances"];
             const title = configuration._title !== undefined ? configuration._title : '_'
             const directoryStructure: Root = await getRootDirectory(address, corid, sessiontok, title);
-            console.log("thisis it", directoryStructure)
+            console.log("thisis it", instances)
             const users: User[] = corev["_users"];
             const rdir = directoryStructure !== undefined ? directoryStructure : new Root()
             const current_user = users.find(i => i._username === username);

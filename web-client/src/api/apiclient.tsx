@@ -111,6 +111,7 @@ export class Config {
   _ip_address?: string;
   _hash_id?: string;
   _core_id?: string;
+  _log_ret_days?: number;
 
   constructor(
     _id = 0,
@@ -121,6 +122,7 @@ export class Config {
     _ip_address = '',
     _hash_id = '',
     _core_id = '',
+    _log_ret_days = 0,
   ) {
     this._id = _id || 0;
     this._session_len = _session_len || 0;
@@ -130,6 +132,7 @@ export class Config {
     this._ip_address = _ip_address || 'ipaddr';
     this._hash_id = _hash_id || 'hashid';
     this._core_id = _core_id || 'coreid';
+    this._log_ret_days = _log_ret_days ||  0;
   }
 }
 
@@ -307,7 +310,7 @@ export async function insertinstance(url:string,core:Core,data:Instance): Promis
     });
 
     if (response.ok || response.status == 201) {
-      return `${response.text}`;
+      return '200';
     } else if (response.status === 401) {
       return '401';
     } else if (response.status === 400) {
@@ -366,10 +369,10 @@ export async function getinstancebyid(url:string,core:Core,instance:Instance): P
  * @function
  * @param {string} url - The URL.
  * @param {Core} core - The Core object.
- * @param {Instance} instance - The Instance object.
+
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function getallinstance(url:string,core:Core,instance:Instance): Promise<string> {
+export async function getallinstance(url:string,core:Core): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/all`;
 
@@ -382,7 +385,7 @@ export async function getallinstance(url:string,core:Core,instance:Instance): Pr
     });
 
     if (response.ok || response.status == 200) {
-      return `${response.text}`;
+      return response.json();
     } else if (response.status === 401) {
       return '401';
     } else if (response.status === 404) {
@@ -418,7 +421,7 @@ export async function deleteinstancebyid(url:string,core:Core,instance:Instance)
     });
 
     if (response.ok || response.status == 200) {
-      return `${response.text}`;
+      return '200';
     } else if (response.status === 401) {
       return '401';
     } else if (response.status === 404) {

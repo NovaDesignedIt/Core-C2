@@ -6,8 +6,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Button } from '@mui/material';
-import { Core, Instance } from '../api/apiclient';
+import { Button, TextField } from '@mui/material';
+import { Core, Instance, Target, getallinstance, insertinstance } from '../api/apiclient';
+import { AnyLayer } from 'react-map-gl';
 
 
 const themeText = {
@@ -47,19 +48,25 @@ function createData(
 
 interface InstanceUsersProps {
     core?: Core;
-
+    url :string;
 }
 
-const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core }) => {
-
+const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core,url }) => {
+     
+    const [Instances,setInstances] =React.useState<Instance[]>(core?._instances !== undefined ? core._instances : []) 
     const [selectedRowId, setSelectedRowId] = React.useState(0);
-    const [PanelOpen, TogglePanel] = React.useState(true);
+    const [insertRow, TogglePanel] = React.useState(false);
     const [Exists, setExists] = React.useState(false);
-
+    const [InstanceName,SetInstanceName]  = React.useState('')
     //Instance Variables
     const [IpValue, SetIpValue] = React.useState('');
     const [HostNameValue, SetHostNameValue] = React.useState('');
     const [NameValue, SetNameValue] = React.useState('');
+
+    const handleInstanceNameChange = (event:any) => {        
+        SetInstanceName(event.target.value)
+        console.log(InstanceName)
+    }
 
     function wipevalues(isNew: boolean, targ?: Instance) {
         if (!isNew && targ !== undefined) {
@@ -75,59 +82,59 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core }) => {
 
     }
 
-    const HandleHostName = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-        SetHostNameValue(event.target.value);
-    }
-
-    const HandleIpChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-        SetIpValue(event.target.value);
-    }
-
-
-    const HandleNameChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-        SetNameValue(event.target.value);
-    }
-
-
     const handleRowClick = (rowId: number) => {
         setSelectedRowId(rowId);
+        console.log(rowId);
     };
 
-    const HandleEdit = (open: boolean) => {
-        if (selectedRowId > 0) {
-            TogglePanel(true);
-            setExists(true);
-            const instance: Instance | undefined = core?._instances?.find((instance) => instance._id === selectedRowId);
-            wipevalues(false, instance);
+const HandleDelete = (rowid:number) => {
+
+
+}
+
+    const HandleAdd = async  (open: boolean) => {
+        if (insertRow){
+            const data = new Instance(0,''
+            ,InstanceName
+            ,core?._config?._ip_address,
+            core?._config?._host_name,
+            0,core?._core_id,[new Target()]
+            );
+            console.log(data)
+            var t: string = ''
+            if (core !== undefined && InstanceName !== '') {
+                t = await insertinstance(url, core, data);
+                if (t === "200") {
+                    const t = await getallinstance(url,core);
+                    console.log(t)
+                    const allinstances:Instance[] = t as unknown as Instance[]
+                    setInstances(allinstances);
+                }
+            }
+            TogglePanel(false);
+            return
         }
-
-    }
-
-    const HandleAdd = (open: boolean) => {
         TogglePanel(true);
         setExists(false);
         wipevalues(true, undefined);
     }
-
     const BorderBottomStyle = {
-
     }
 
+    
     return (
         <>
-            <div style={{ width: "100%", height: "35%", backgroundColor: "#000" }}>
+            <div style={{ width: "100%", height: "35%",minHeight:"250px" , backgroundColor: "#000" }}>
                 <div style={{ width: "100%",minHeight:"40px", height: "10px", padding: "1%", paddingBottom: '1%', backgroundColor: "#000", overflow: 'hidden' }}>
 
                     <Button
-                        onClick={() => HandleAdd(true)}
-                        sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}> Insert </Button>
+                        onClick={() => {  HandleAdd(true)}}
+                        sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}>{ insertRow ?  "Save" :"Insert"}  </Button>
                     <Button
-                        onClick={() => { selectedRowId > 0 ? HandleEdit(true) : alert('select an Instance to Edit') }}
-                        sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}> Edit </Button>
-                    <Button
-                        onClick={() => { selectedRowId > 0 ? alert('instance with id ' + selectedRowId + ' was deleted' + ' 😉 *pretend it\'s deleted ok?') : alert('select an Instance to Delete') }}
+                        onClick={() => {()=>{HandleDelete(selectedRowId)} }}
                         sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}> Delete </Button>
                 </div>
+
                 <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "100%",minHeight:"10px", borderRadius: 0, backgroundColor: "#000", }} >
                     <Table size="small" sx={{
                         borderStyle: 'dotted',
@@ -161,9 +168,35 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core }) => {
                                 <TableCell align="left">instance name</TableCell>
                                 <TableCell align="left">instance id</TableCell>
                             </TableRow>
+
+
+                            {insertRow &&
+                                <TableRow sx={{ ':Hover': { backgroundColor: "#000" }, cursor: "default" }}>
+                                    {/* icci */}
+                                    <TableCell align="left">
+
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <TextField
+                                            fullWidth={true}
+                                            InputLabelProps={{ sx: { color: "#fff" } }}
+                                            inputProps={{ sx: { color: "#fff" } }}
+                                            size='small'
+                                            onChange={(e)=>{handleInstanceNameChange(e)}}
+                                            value={InstanceName}
+                                            sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                    </TableCell>
+                                </TableRow>
+                            }
+
+
+
+
                         </TableHead>
                         <TableBody>
-                            {(core?._instances !== undefined ? core._instances : []).map((row) => (
+                            {(Instances).map((row) => (
                                 <TableRow
                                     key={row._id}
                                     selected={row._id === selectedRowId}
@@ -178,6 +211,7 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core }) => {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                
             </div>
         </>
     );

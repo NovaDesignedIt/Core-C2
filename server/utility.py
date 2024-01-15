@@ -125,6 +125,8 @@ class Configuration(db.Entity):
     _port = orm.Required(int)
     _hash_id = orm.Required(str)
     _core_id = orm.Required(str)
+    _log_ret_days = orm.Optional(int)
+    
     
     @orm.db_session
     def insert_Configuration(
@@ -135,7 +137,8 @@ class Configuration(db.Entity):
                             ip_address,
                             port,
                             hash_id,
-                            core_id):
+                            core_id,
+                            _log_ret_days):
         Configuration( 
                         _session_len  = session_len,
                         _theme  = theme,
@@ -144,7 +147,8 @@ class Configuration(db.Entity):
                         _ip_address  = ip_address,
                         _port  = port,
                         _hash_id  = hash_id,
-                        _core_id  = core_id)
+                        _core_id  = core_id,
+                        _log_ret_days =_log_ret_days)
         orm.commit()
 
 class User(db.Entity):
@@ -683,6 +687,7 @@ def return_core(core_id,sessiontoken):
                         "_port": config_object._port,
                         "_hash_id": config_object._hash_id,
                         "_core_id": config_object._core_id,
+                        "_log_ret_days": config_object._log_ret_days
                     }
                     configJson = config_dict
                     InstanceObjects = orm.select(c for c in Instance if c._core_id == core_id)

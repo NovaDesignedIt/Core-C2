@@ -99,7 +99,7 @@ def insertinstance(_core_id):
         return '401', 401
     try:
         data = request.get_json()  # Get JSON data from the request body
-
+        
         # Extract data from JSON
         instance_id = Utility.generate_random_string(10)
         instance_name = data.get('_instance_name')
@@ -108,7 +108,7 @@ def insertinstance(_core_id):
         instance_count = data.get('_Instance_count')
         core_id = data.get('_core_id')
         # Create a new Instance object and insert it into the database
-        Utility.Instance(_instance_id=instance_id,
+        instance = Utility.Instance(_instance_id=instance_id,
                                 _instance_name=instance_name,
                                 _instance_ip=instance_ip,
                                 _instance_url=instance_url,
@@ -122,7 +122,7 @@ def insertinstance(_core_id):
                                str(datetime.now()),
                                action.SUCCESS.value,
                                "{\"msg\":\"insertinstance(_core_id): 201"+"\"}")
-        return 'Record inserted successfully', 201  # Return success message and status code 201 (Created)
+        return f'{jsonify(instance.__dict__)}', 200  # Return success message and status code 201 (Created)
     except Exception as e:
         
         Utility.Log.insert_log(f"{_core_id}",
@@ -214,6 +214,7 @@ def getallinstance(_core_id):
             records = Utility.Instance.select(lambda s: s._core_id == _core_id)
             # Convert the records to a list of dictionaries and return it as JSON response
             record_data = [{
+            "_id": record._id,
             "_instance_id": record._instance_id,
             "_instance_name": record._instance_name,
             "_instance_ip": record._instance_ip,
@@ -816,7 +817,7 @@ def getrecordbyid(_core_id,record_id):
                                 action.SUCCESS.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}")
+                                "{\"msg\":\"def getrecordbyid(_core_id,record_id): 401"+"\"}")
         return '401', 401
     try:
         with orm.db_session:
@@ -842,7 +843,7 @@ def getrecordbyid(_core_id,record_id):
                     action.GET.value,
                     str(datetime.now()),
                     action.SUCCESS.value,
-                    "{\"msg\":\"getrecordbyid(record_id): 200"+"\"}")
+                    "{\"msg\":\"def getrecordbyid(_core_id,record_id): 200"+"\"}")
                 return jsonify(record_data)  # Return the record as JSON response
             else:
                 
@@ -851,7 +852,7 @@ def getrecordbyid(_core_id,record_id):
                     action.GET.value,
                     str(datetime.now()),
                     action.FAILED.value,
-                    "{\"msg\":\"getrecordbyid(record_id): 404"+"\"}")
+                    "{\"msg\":\"def getrecordbyid(_core_id,record_id): 404"+"\"}")
                 return '404', 404  # Return '404' if the record with the specified ID does not exist
 
     except Exception as e:
@@ -861,7 +862,7 @@ def getrecordbyid(_core_id,record_id):
                     action.GET.value,
                     str(datetime.now()),
                     action.ERROR.value,
-                    "{\"msg\":\"getrecordbyid(record_id): 500" +f"Error: {e}"+"\"}")
+                    "{\"msg\":\"def getrecordbyid(_core_id,record_id): 500" +f"Error: {e}"+"\"}")
         return '500', 500  # Return '500' in case of any error during retrieval
 
 @app.route('/<_core_id>/<_isid>/t/all', methods=['GET'])
@@ -1233,14 +1234,7 @@ def create_core():
             coreid = Utility.Guid()
             Utility.Core.insert_core(coreid)
             Utility.Instance.insert_instance(0,Utility.generate_random_string(10),"default",data["_address"],data["_hostname"],0,coreid)
-            Utility.Configuration.insert_Configuration(30,0,data["_hostname"],data["_hostname"],data["_address"],data["_port"],"3453453453",coreid)
-            # instance_id = Utility.generate_random_string(10)
-            # instance_name = data.get('_instance_name')
-            # instance_ip = data.get('_instance_ip')
-            # instance_url = data.get('_instance_url')
-            # instance_count = data.get('_Instance_count')
-            # core_id = data.get('_core_id')
-                #creates entry into hashtable
+            Utility.Configuration.insert_Configuration(30,0,data["_hostname"],data["_hostname"],data["_address"],data["_port"],"3453453453",coreid,30)
             
             if not Utility.create_user(usr,password,coreid):
                 Utility.Log.insert_log(f"{coreid}",
