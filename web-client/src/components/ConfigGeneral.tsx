@@ -253,8 +253,8 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
 
 
       </Stack>
-      <Stack sx={{ flexDirection: "column", width: "70%", height: "100%", padding: "15px", overflow: 'scroll' }}>
-        <div>
+      <Stack spacing={"2%"} sx={{ flexDirection: "column", width: "70%", height: "100%", padding: "15px", overflow: 'scroll' }}>
+        <div style={{maxHeight:"400px"}} >
           <h5 style={{ color: "#fff", cursor: "default" }}>Instances</h5>
           <InstanceContainer core={core} url={url} />
         </div>

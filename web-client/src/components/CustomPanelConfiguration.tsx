@@ -79,9 +79,7 @@ const ConfigPanel: React.FC<ConfigurationProp> = ({ core,url}) => {
       {tabselected == 0 &&
         <ConfigGeneralComp core={core} url={url} />
       }
-      {tabselected == 1 &&
-        <InstancesConfiguration core={core} url={url} />
-      }
+      
       
     </Stack>
     </Typography>

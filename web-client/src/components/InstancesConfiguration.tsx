@@ -56,30 +56,11 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core,url }) => {
     const [Instances,setInstances] =React.useState<Instance[]>(core?._instances !== undefined ? core._instances : []) 
     const [selectedRowId, setSelectedRowId] = React.useState(0);
     const [insertRow, TogglePanel] = React.useState(false);
-    const [Exists, setExists] = React.useState(false);
     const [InstanceName,SetInstanceName]  = React.useState('')
-    //Instance Variables
-    const [IpValue, SetIpValue] = React.useState('');
-    const [HostNameValue, SetHostNameValue] = React.useState('');
-    const [NameValue, SetNameValue] = React.useState('');
-
+ 
     const handleInstanceNameChange = (event:any) => {        
         SetInstanceName(event.target.value)
         console.log(InstanceName)
-    }
-
-    function wipevalues(isNew: boolean, targ?: Instance) {
-        if (!isNew && targ !== undefined) {
-            SetIpValue(targ?._instance_ip)
-            SetHostNameValue(targ?._instance_url)
-            SetNameValue(targ?._instance_name)
-        }
-        else {
-            SetIpValue('')
-            SetHostNameValue('')
-            SetNameValue('')
-        }
-
     }
 
     const handleRowClick = (rowId: number) => {
@@ -118,14 +99,14 @@ const HandleDelete = (rowid:number) => {
         setExists(false);
         wipevalues(true, undefined);
     }
-    const BorderBottomStyle = {
-    }
+  
 
     
     return (
         <>
-            <div style={{ width: "100%", height: "35%",minHeight:"250px" , backgroundColor: "#000" }}>
-                <div style={{ width: "100%",minHeight:"40px", height: "10px", padding: "1%", paddingBottom: '1%', backgroundColor: "#000", overflow: 'hidden' }}>
+            <div style={{ width: "100%", height: "35%",minHeight:"250px" , backgroundColor: "#000",overflow:"scroll" }}>
+                <div style={{border:"1px solid #222",borderRadius:"5px"}}>
+                <div style={{ width: "100%",minHeight:"40px", height: "10px", padding: "1%", paddingBottom: '1%', backgroundColor: "#000" }}>
 
                     <Button
                         onClick={() => {  HandleAdd(true)}}
@@ -135,7 +116,7 @@ const HandleDelete = (rowid:number) => {
                         sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}> Delete </Button>
                 </div>
 
-                <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "100%",minHeight:"10px", borderRadius: 0, backgroundColor: "#000", }} >
+                <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "100%",minHeight:"10px", borderRadius: 0, backgroundColor: "#000" }} >
                     <Table size="small" sx={{
                         borderStyle: 'dotted',
                         borderWidth: '1px',
@@ -211,7 +192,7 @@ const HandleDelete = (rowid:number) => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                
+                </div>
             </div>
         </>
     );
