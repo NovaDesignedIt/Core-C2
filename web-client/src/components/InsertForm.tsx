@@ -114,9 +114,7 @@ const insertForm: React.FC<DataGridComponents> = ({ url, core, instance,closePan
       alert('you need atleast a name.')
     }
   }
-
-
-
+  
   const themeTextBlack = {
     height: "100%",
     color: "#fff",

@@ -7,13 +7,13 @@ import Box from '@mui/material/Box';
 import MapPanel from './MapPanel';
 import react from 'react';
 import LoginHome from './LoginHome';
-import Store from './Store';
+import FileStorage from './FileStorage';
 import CustomPanelConfiguration from './CustomPanelConfiguration';
-import { Core, Instance } from '../api/apiclient';
+import { Config, Core, CoreC, File as Files, Instance } from '../api/apiclient';
 import { useAppDispatch } from '../store/store';
 
 
-import {SetCore} from  '../store/features/CoreSlice';
+import {BuildStateManagement} from  '../store/features/CoreSlice';
 
 
 
@@ -39,7 +39,7 @@ const Frame = () => {
   const [sizes, setSizes] = react.useState([15, 85]);
 
   const dispatch:any = useAppDispatch();
-  
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -60,11 +60,7 @@ const Frame = () => {
      }else {
       index = core === undefined && (index === 6 || index === 5) ? -1 : index
       setSelectedContent(index);
-     }
-
-
-    
-
+     }    
   };
 
   const handleSelectedTargets = (selectedtargs: number[]) => {
@@ -81,7 +77,6 @@ const Frame = () => {
     //console.log(filteredObjects.length);
     return true;
   }
-
   const onSelectInstance = (instance: Instance) => {
     setSelectedContent(3);
     setSelectedtarget([]);
@@ -89,14 +84,13 @@ const Frame = () => {
   };
 
   const HandleLogin = (CORE: Core) => {
-    
-    
-    dispatch(SetCore({ coreObject:CORE  }))
-
-
+    //This is where the magic happens\
+    const co: CoreC = CORE?._core_c ?? new CoreC();
+    const con: Config = CORE?._config ?? new Config();
+    const ins: Instance[] = CORE?._instances ?? [];
+    const fst: Files[] = CORE?._rootdir?._files ?? [];
     if (CORE !== undefined) {
-      //This is where the magic happens
-
+      dispatch(BuildStateManagement({core:co,config:con,instances:ins,fstore:fst}));
       setSelectedCore(CORE);
     }
   };
@@ -106,9 +100,9 @@ const Frame = () => {
     console.log('allSizes in %', allSizes);
     setSizes(allSizes);
   }
+
   return (
     <Box flexDirection="column" width="100%" height="100vh" sx={{ sm: "70vh", }}>
-      
       <Stack direction="row" height="100%" padding={0}
         style={{ backgroundColor: "#000",}}>
         <Splitter direction={SplitDirection.Horizontal}
@@ -120,7 +114,7 @@ const Frame = () => {
           <Stack direction="column" height="100%" width="100%" maxWidth={"100"} overflow="hidden" >
             {selectedContent === -1 && <LoginHome
               onSetCore={HandleLogin}/>}
-            {selectedContent === 2 && <Store
+            {selectedContent === 2 && <FileStorage
               core={core}
               url={core !== undefined ? core?._url : ''} />}
             {selectedContent === 3 && 

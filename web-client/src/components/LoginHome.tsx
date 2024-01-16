@@ -1,6 +1,6 @@
 import { Alert, Button, Snackbar, TextField, Typography } from '@mui/material';
 import { SetStateAction, useState } from 'react';
-import { Core, Config, Instance, Root, getRootDirectory, User, CreateCore } from '../api/apiclient';
+import { Core, Config, Instance, Root, getRootDirectory, User, CreateCore, CoreC } from '../api/apiclient';
 import CloseIcon from '@mui/icons-material/Close';
 
 
@@ -46,7 +46,9 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
             const rdir = directoryStructure !== undefined ? directoryStructure : new Root()
             const current_user = users.find(i => i._username === username);
             const user: string = current_user !== undefined ? current_user._username : "";
-            const c = new Core(sessiontok, corid, configuration, instances, rdir, users, user,url);
+            const corec = new CoreC(sessiontok,corid,user,address);
+            const c = new Core(corec,sessiontok, corid, configuration, instances, rdir, users, user,address);
+
             onSetCore(c);
         };
 

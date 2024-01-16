@@ -77,7 +77,6 @@ export class Instance {
   _instance_url: string;
   _Instance_count: number;
   _core_id: string;
-  _targets: Target[];
 
   constructor(
     _id = 0,
@@ -86,8 +85,7 @@ export class Instance {
     _instance_ip = '',
     _instance_url = '',
     _Instance_count = 0,
-    _core_id = '',
-    _targets = [new Target()]) 
+    _core_id = '',)
   {
     this._id = _id
     this._instance_id = _instance_id
@@ -96,12 +94,10 @@ export class Instance {
     this._instance_url = _instance_url
     this._Instance_count = _Instance_count
     this._core_id = _core_id;
-    this._targets = _targets;
+
   }
 
-  getTargetById(id:number): Target | undefined {
-    return this._targets.find(i => i._id = id);
-  }
+
 
 
 }
@@ -175,7 +171,28 @@ export class Logger{
   }
 }
 
+export class CoreC {
+  _sessiontoken: string;
+  _core_id: string;
+  _user: string;
+  _url: string;
+
+  constructor(
+    _sessiontoken = '',
+    _core_id = '',
+    user = '',
+    url = ''
+  ) {
+    this._sessiontoken = _sessiontoken;
+    this._core_id = _core_id;
+    this._user = user;
+    this._url = url;
+  }
+
+}
+
 export class Core {
+  _core_c?: CoreC;
   _sessiontoken: string;
   _core_id: string;
   _config?: Config;
@@ -186,6 +203,7 @@ export class Core {
   _url: string;
 
   constructor(
+    _core_c?:CoreC,
     _sessiontoken = '',
     _core_id = '',
     _config?: Config,
@@ -195,6 +213,7 @@ export class Core {
     user = '',
     url = ''
   ) {
+    this._core_c = _core_c;
     this._sessiontoken = _sessiontoken;
     this._core_id = _core_id;
     this._config = _config;

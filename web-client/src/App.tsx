@@ -3,6 +3,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Frame from './components/Frame';
 import SocketsExample from './components/SocketsExample';
+import { createStore } from '@reduxjs/toolkit';
 // ::-webkit-scrollbar
 // ::-webkit-scrollbar-button
 // ::-webkit-scrollbar-track
@@ -35,9 +36,10 @@ const styles = () => ({
   },
 });
 
-
 function App() {
+
   return (
+
     <Frame></Frame>
   );
 }

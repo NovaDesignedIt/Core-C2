@@ -9,7 +9,11 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 export const store = configureStore({
     reducer: {
         core: CoreSlice.reducer
-    }
+    },
+    middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false
+    })
 });
 
 
