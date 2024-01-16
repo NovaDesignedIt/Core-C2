@@ -259,7 +259,7 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
           <InstanceContainer core={core} url={url} />
         </div>
         <Stack direction={'row'} spacing={5} >
-          <Stack spacing={3} width={'100%'}>
+          <Stack spacing={3} width={'50%'}>
 
             <h5 style={{ color: "#fff", cursor: "default" }}>Session</h5>
 
@@ -268,6 +268,7 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
               borderRadius: "4px",
               display: 'flex-end',
               width: "100%",
+          
               padding: "15px",
               flexDirection: 'column',
               backgroundColor: "#111",
@@ -290,7 +291,7 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
                 size='small'
                 value={sessionlen}
                 onChange={(e) => { HandleSessionLength(e) }}
-                sx={{ ...themeText, width: "100%", borderRadius: "5px" }} ></TextField>
+                sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
             </div>
           </Stack>
           <Stack spacing={2} width={'100%'}  >

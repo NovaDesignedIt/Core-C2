@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button, TextField } from '@mui/material';
-import { Core, Instance, Target, getallinstance, insertinstance } from '../api/apiclient';
+import { Core, Instance, Target, deleteinstancebyid, getallinstance, insertinstance } from '../api/apiclient';
 import { AnyLayer } from 'react-map-gl';
 
 
@@ -48,17 +48,17 @@ function createData(
 
 interface InstanceUsersProps {
     core?: Core;
-    url :string;
+    url: string;
 }
 
-const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core,url }) => {
-     
-    const [Instances,setInstances] =React.useState<Instance[]>(core?._instances !== undefined ? core._instances : []) 
-    const [selectedRowId, setSelectedRowId] = React.useState(0);
+const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core, url }) => {
+
+    const [Instances, setInstances] = React.useState<Instance[]>(core?._instances !== undefined ? core._instances : [])
+    const [selectedRowId, setSelectedRowId] = React.useState(-1);
     const [insertRow, TogglePanel] = React.useState(false);
-    const [InstanceName,SetInstanceName]  = React.useState('')
- 
-    const handleInstanceNameChange = (event:any) => {        
+    const [InstanceName, SetInstanceName] = React.useState('')
+
+    const handleInstanceNameChange = (event: any) => {
         SetInstanceName(event.target.value)
         console.log(InstanceName)
     }
@@ -68,27 +68,43 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core,url }) => {
         console.log(rowId);
     };
 
-const HandleDelete = (rowid:number) => {
+    const HandleDelete = async (rowid: number) => {
+        console.log(rowid)
+        if (rowid !== undefined) {
+            const instance = Instances?.find((i) => i._id = rowid)
+            if (instance !== undefined && core !== undefined) {
+                const response = await deleteinstancebyid(url, core, instance)
+                if (response === "200") {
+                    const newInstances: any = Instances.filter((item: Instance) => {
 
+                        return item._id !== rowid;
+                    });
+                    //NEED REDUX BEFORE MOVING
+                    if (newInstances !== undefined) {
+                        console.log(newInstances, rowid);
+                        setInstances(newInstances)
+                    }
+                }
+            }
+        }
+    }
 
-}
-
-    const HandleAdd = async  (open: boolean) => {
-        if (insertRow){
-            const data = new Instance(0,''
-            ,InstanceName
-            ,core?._config?._ip_address,
-            core?._config?._host_name,
-            0,core?._core_id,[new Target()]
+    const HandleAdd = async (open: boolean) => {
+        if (insertRow) {
+            const data = new Instance(0, ''
+                , InstanceName
+                , core?._config?._ip_address,
+                core?._config?._host_name,
+                0, core?._core_id, [new Target()]
             );
             console.log(data)
             var t: string = ''
             if (core !== undefined && InstanceName !== '') {
                 t = await insertinstance(url, core, data);
                 if (t === "200") {
-                    const t = await getallinstance(url,core);
+                    const t = await getallinstance(url, core);
                     console.log(t)
-                    const allinstances:Instance[] = t as unknown as Instance[]
+                    const allinstances: Instance[] = t as unknown as Instance[]
                     setInstances(allinstances);
                 }
             }
@@ -96,102 +112,97 @@ const HandleDelete = (rowid:number) => {
             return
         }
         TogglePanel(true);
-        setExists(false);
-        wipevalues(true, undefined);
     }
-  
 
-    
+
+
     return (
         <>
-            <div style={{ width: "100%", height: "35%",minHeight:"250px" , backgroundColor: "#000",overflow:"scroll" }}>
-                <div style={{border:"1px solid #222",borderRadius:"5px"}}>
-                <div style={{ width: "100%",minHeight:"40px", height: "10px", padding: "1%", paddingBottom: '1%', backgroundColor: "#000" }}>
-
+            <div style={{ width: "100%", height: "35%", minHeight: "250px", backgroundColor: "#000",padding:"10px" }}>
+                <div style={{   padding: "1%", backgroundColor: "#000", border: "1px #222 solid" ,borderRadius:"4px" }}>
                     <Button
-                        onClick={() => {  HandleAdd(true)}}
-                        sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}>{ insertRow ?  "Save" :"Insert"}  </Button>
+                        onClick={() => { HandleAdd(true) }}
+                        sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}>{insertRow ? "Save" : "Insert"}  </Button>
                     <Button
-                        onClick={() => {()=>{HandleDelete(selectedRowId)} }}
+                        onClick={() => { HandleDelete(selectedRowId) }}
                         sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}> Delete </Button>
                 </div>
+                <div style={{ border: "1px solid #222", borderRadius: "5px", overflow: "scroll",maxHeight:"100%" }}>
 
-                <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "100%",minHeight:"10px", borderRadius: 0, backgroundColor: "#000" }} >
-                    <Table size="small" sx={{
-                        borderStyle: 'dotted',
-                        borderWidth: '1px',
-                        borderColor: '#111',
-                        height:"50%",
-                        minWidth: 650, 
-                        backgroundColor: "#222",
-                        "& .MuiTableCell-root": {
-                            color: "#fff",
-                        },
-                        "& .MuiTableHead-root": {
-                            backgroundColor: "#111",
-                            ":Hover,focus": {
-                                backgroundColor: "#333",
+
+                    <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "100%", minHeight: "10px", borderRadius: 0, backgroundColor: "#000" }} >
+                        <Table size="small" sx={{
+                    
+                            borderStyle: 'dotted',
+                            borderWidth: '1px',
+                            borderColor: '#111',
+                            height: "50%",
+                            minWidth: 650,
+                            backgroundColor: "#222",
+                            "& .MuiTableCell-root": {
+                                color: "#fff",
                             },
-                        },
-                        "& .MuiTableRow-root": {
-                            ":Hover,focus": {
-                                backgroundColor: "#333",
+                            "& .MuiTableHead-root": {
+                                backgroundColor: "#111",
+                                ":Hover,focus": {
+                                    backgroundColor: "#333",
+                                },
                             },
-                        },
-                        "& .MuiTableRow-root.Mui-selected": {
-                            backgroundColor: "#444",
-                            opacity: '1'
-                        }
-                    }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow sx={{ ':Hover': { backgroundColor: "#000" },cursor:"default" }}>
-                                <TableCell align="left"> id</TableCell>
-                                <TableCell align="left">instance name</TableCell>
-                                <TableCell align="left">instance id</TableCell>
-                            </TableRow>
-
-
-                            {insertRow &&
-                                <TableRow sx={{ ':Hover': { backgroundColor: "#000" }, cursor: "default" }}>
-                                    {/* icci */}
-                                    <TableCell align="left">
-
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        <TextField
-                                            fullWidth={true}
-                                            InputLabelProps={{ sx: { color: "#fff" } }}
-                                            inputProps={{ sx: { color: "#fff" } }}
-                                            size='small'
-                                            onChange={(e)=>{handleInstanceNameChange(e)}}
-                                            value={InstanceName}
-                                            sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
-                                    </TableCell>
-                                    <TableCell align="left">
-                                    </TableCell>
-                                </TableRow>
+                            "& .MuiTableRow-root": {
+                                ":Hover,focus": {
+                                    backgroundColor: "#333",
+                                },
+                            },
+                            "& .MuiTableRow-root.Mui-selected": {
+                                backgroundColor: "#444",
+                                opacity: '1'
                             }
-
-
-
-
-                        </TableHead>
-                        <TableBody>
-                            {(Instances).map((row) => (
-                                <TableRow
-                                    key={row._id}
-                                    selected={row._id === selectedRowId}
-                                    onClick={() => { handleRowClick(row._id); }}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 },cursor:"pointer" }}
-                                >
-                                    <TableCell align="left">{row._id}</TableCell>
-                                    <TableCell align="left">{row._instance_name}</TableCell>
-                                    <TableCell align="left">{row._instance_id}</TableCell>
+                        }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow onClick={()=>{setSelectedRowId(-1)}}  sx={{ ':Hover': { backgroundColor: "#000" }, cursor: "default" }}>
+                                    <TableCell align="left"> id</TableCell>
+                                    <TableCell align="left">instance name</TableCell>
+                                    <TableCell align="left">instance id</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+
+
+                                {insertRow &&
+                                    <TableRow sx={{ ':Hover': { backgroundColor: "#000" }, cursor: "default" }}>
+                                        {/* icci */}
+                                        <TableCell align="left">
+
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <TextField
+                                                fullWidth={true}
+                                                InputLabelProps={{ sx: { color: "#fff" } }}
+                                                inputProps={{ sx: { color: "#fff" } }}
+                                                size='small'
+                                                onChange={(e) => { handleInstanceNameChange(e) }}
+                                                value={InstanceName}
+                                                sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
+                                        </TableCell>
+                                        <TableCell align="left">
+                                        </TableCell>
+                                    </TableRow>
+                                }
+                            </TableHead>
+                            <TableBody>
+                                {(Instances)?.map((row) => (
+                                    <TableRow
+                                        key={row._id}
+                                        selected={row._id === selectedRowId}
+                                        onClick={() => { handleRowClick(row._id); TogglePanel(false) }}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: "pointer", border: row._id === selectedRowId ? "2px solid #fff" : undefined}}
+                                    >
+                                        <TableCell align="left">{row._id}</TableCell>
+                                        <TableCell align="left">{row._instance_name}</TableCell>
+                                        <TableCell align="left">{row._instance_id}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </div>
             </div>
         </>
@@ -201,4 +212,3 @@ export default instanceConfiguration;
 
 
 
-    
