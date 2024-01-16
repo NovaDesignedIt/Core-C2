@@ -189,7 +189,7 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
 
       if (isMounted) {
         const data = await getallrecords(url, inst, core)
-        if (data === '401') {
+        if (data === '401' || typeof data  === "string") {
           setOpen2(true);
           return;
         } 

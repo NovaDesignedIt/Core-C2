@@ -23,6 +23,7 @@ import { GiPlanetCore } from "react-icons/gi";
 import { Instance, Core } from '../api/apiclient';
 import { FaDatabase } from "react-icons/fa6";
 import WebStoriesIcon from '@mui/icons-material/WebStories';
+import { useAppSelector } from '../store/store';
 {/*sx={{color:"#21fd0a"}}*/ }
 const data = [
   // { icon: <People />, index: 1, text: "User" },
@@ -56,6 +57,12 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
   const [open, setOpen] = react.useState(false);
   const [sublistOpen, setSublistOpen] = react.useState(false);
   const [selectedInstance, SetSelectedInstance] = react.useState<Instance>();
+  
+  
+  const inst = useAppSelector(state => state.core.instanceObjects)
+  const instances  = inst ?? []
+
+  
   const handleSublistToggle = () => {
     setSublistOpen(!sublistOpen);
   };
@@ -244,8 +251,8 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
                                 <List component="div" disablePadding key={0}>
                                   {/* Add your sublist items here */}
                                   {
-                                    open && sublistOpen && core?._instances !== undefined ?
-                                      core._instances.map((item_instance: Instance) => (
+                                    open && sublistOpen && instances ?
+                                      instances.map((item_instance: Instance) => (
                                       <ListItemButton
                                           key={item_instance._id}
                                           selected={selectedInstance?._instance_id === item_instance?._instance_id}

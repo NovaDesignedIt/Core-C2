@@ -23,6 +23,8 @@ const ConfigPanel: React.FC<ConfigurationProp> = ({ core,url}) => {
 
   return (
     <Typography
+    component={'span'}
+    variant={'body1'}
     style={{
       fontFamily: '"Ubuntu Mono", monospace',
       justifyContent: 'center',

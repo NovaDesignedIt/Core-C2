@@ -9,6 +9,8 @@ import Paper from '@mui/material/Paper';
 import { Button, TextField } from '@mui/material';
 import { Core, Instance, Target, deleteinstancebyid, getallinstance, insertinstance } from '../api/apiclient';
 import { AnyLayer } from 'react-map-gl';
+import { useAppDispatch, useAppSelector } from '../store/store';
+import { SetInstance } from '../store/features/CoreSlice';
 
 
 const themeText = {
@@ -34,8 +36,6 @@ const themeText = {
     boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)',
 }
 
-
-
 function createData(
     name: string,
     calories: number,
@@ -51,12 +51,20 @@ interface InstanceUsersProps {
     url: string;
 }
 
-const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core, url }) => {
+const instanceConfiguration: React.FC<InstanceUsersProps> = () => {
+    const dispatch:any = useAppDispatch();
 
-    const [Instances, setInstances] = React.useState<Instance[]>(core?._instances !== undefined ? core._instances : [])
+    const CoreC = useAppSelector(state => state.core.coreObject) 
+    const config = useAppSelector(state => state.core.configObject) 
+    const inst = useAppSelector(state => state.core.instanceObjects)
+    const instances  = inst ?? []
+  
+    const [Instances, setInstances] = React.useState<Instance[]>(instances)
     const [selectedRowId, setSelectedRowId] = React.useState(-1);
     const [insertRow, TogglePanel] = React.useState(false);
     const [InstanceName, SetInstanceName] = React.useState('')
+
+   
 
     const handleInstanceNameChange = (event: any) => {
         SetInstanceName(event.target.value)
@@ -71,19 +79,15 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core, url }) => {
     const HandleDelete = async (rowid: number) => {
         console.log(rowid)
         if (rowid !== undefined) {
-            const instance = Instances?.find((i) => i._id = rowid)
-            if (instance !== undefined && core !== undefined) {
-                const response = await deleteinstancebyid(url, core, instance)
+            const instance = Instances.find(i => i._id === rowid)
+            if (instance !== undefined && CoreC !== undefined) {
+                const response = await deleteinstancebyid(CoreC._url, CoreC, instance)
                 if (response === "200") {
-                    const newInstances: any = Instances.filter((item: Instance) => {
-
-                        return item._id !== rowid;
-                    });
-                    //NEED REDUX BEFORE MOVING
-                    if (newInstances !== undefined) {
-                        console.log(newInstances, rowid);
-                        setInstances(newInstances)
-                    }
+                    const t = await getallinstance(CoreC._url, CoreC);
+                    console.log(t)
+                    const allinstances: Instance[] = t as unknown as Instance[]
+                    dispatch(SetInstance({ instance : allinstances}))
+                    setInstances(allinstances);
                 }
             }
         }
@@ -91,20 +95,24 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core, url }) => {
 
     const HandleAdd = async (open: boolean) => {
         if (insertRow) {
-            const data = new Instance(0, ''
-                , InstanceName
-                , core?._config?._ip_address,
-                core?._config?._host_name,
-                0, core?._core_id, [new Target()]
+            const data = new Instance(
+                0, 
+                '', 
+                InstanceName,
+                CoreC?._url,
+                config?._ip_address,
+                0, 
+                CoreC?._core_id,
             );
             console.log(data)
             var t: string = ''
-            if (core !== undefined && InstanceName !== '') {
-                t = await insertinstance(url, core, data);
+            if (CoreC !== undefined && InstanceName !== '') {
+                t = await insertinstance(CoreC._url, CoreC, data);
                 if (t === "200") {
-                    const t = await getallinstance(url, core);
+                    const t = await getallinstance(CoreC._url, CoreC);
                     console.log(t)
                     const allinstances: Instance[] = t as unknown as Instance[]
+                    dispatch(SetInstance({ instance : allinstances}))
                     setInstances(allinstances);
                 }
             }
@@ -119,7 +127,7 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core, url }) => {
     return (
         <>
             <div style={{ width: "100%", height: "35%", minHeight: "250px", backgroundColor: "#000",padding:"10px" }}>
-                <div style={{   padding: "1%", backgroundColor: "#000", border: "1px #222 solid" ,borderRadius:"4px" }}>
+                <div onClick={()=>{setSelectedRowId(-1)}} style={{   padding: "1%", backgroundColor: "#000", border: "1px #222 solid" ,borderRadius:"4px" }}>
                     <Button
                         onClick={() => { HandleAdd(true) }}
                         sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}>{insertRow ? "Save" : "Insert"}  </Button>
@@ -164,8 +172,6 @@ const instanceConfiguration: React.FC<InstanceUsersProps> = ({ core, url }) => {
                                     <TableCell align="left">instance name</TableCell>
                                     <TableCell align="left">instance id</TableCell>
                                 </TableRow>
-
-
                                 {insertRow &&
                                     <TableRow sx={{ ':Hover': { backgroundColor: "#000" }, cursor: "default" }}>
                                         {/* icci */}

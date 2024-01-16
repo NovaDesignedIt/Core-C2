@@ -41,6 +41,9 @@ const InstanceContainer: React.FC<InstanceContainerProps> = ({ url, objs, instan
     const [sizes2, setSizes2] = React.useState([80, 20]);
     const [action,setSelectedAction] = React.useState(0);
 
+
+
+
     function handleResize(gutterIdx: number, allSizes: number[]) {
         //console.log('gutterIdx', gutterIdx);
         //console.log('allSizes in %', allSizes);

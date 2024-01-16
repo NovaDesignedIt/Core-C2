@@ -1,7 +1,7 @@
 import { Alert, Box, Button, Checkbox, FormControlLabel, List, ListItem, ListItemIcon, ListItemText, Stack, Switch, TextField, Typography, styled } from '@mui/material';
 import React, { SetStateAction } from 'react'
 import { Core } from '../api/apiclient';
-import InstanceContainer from "./InstancesConfiguration";
+import InstanceConfiguration from "./InstancesConfiguration";
 import ListenerComponent from "./Listeners";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -15,8 +15,19 @@ interface ConfigGeneralProp {
 
 const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
 
-  const [daysretLog, setDaysretLog] = React.useState<number>(core?._config?._session_len !== undefined ? core?._config?._session_len : 30);
-  const [sessionlen, setsessionlen] = React.useState<number>(core?._config?._log_ret_days !== undefined ? core?._config?._log_ret_days : 30);
+
+
+  const configurationObject = useAppSelector(state => state.core.configObject)
+  const corid = useAppSelector(state => state.core.configObject._core_id) 
+
+
+  const sessionLength:number = configurationObject._session_len !== undefined ?   configurationObject._session_len : 0
+  const DaysRetLog:number =  configurationObject?._log_ret_days !== undefined ?   configurationObject?._log_ret_days : 0
+
+
+
+  const [daysretLog, setDaysretLog] = React.useState<number>(sessionLength);
+  const [sessionlen, setsessionlen] = React.useState<number>(DaysRetLog);
   const [chckdmp, setChkdmp] = React.useState(false);
   const [chkping, setChkping] = React.useState(false);
   const [chkhttp, setChkhttp] = React.useState(false);
@@ -26,7 +37,6 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
   const [chklp, setChklp] = React.useState(false);
   const [chktimeout, setchktimeout] = React.useState(false);
 
-  const corid = useAppSelector(state => state.core.configObject._core_id) 
 
 
   const HandleClearLogs = () => {
@@ -264,7 +274,7 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
       <Stack spacing={"2%"} sx={{ flexDirection: "column", width: "70%", height: "100%", padding: "15px", overflow: 'scroll' }}>
         <div style={{maxHeight:"400px"}} >
           <h5 style={{ color: "#fff", cursor: "default" }}>Instances</h5>
-          <InstanceContainer core={core} url={url} />
+          <InstanceConfiguration core={core} url={url} />
         </div>
         <Stack direction={'row'} spacing={5} >
           <Stack spacing={3} width={'50%'}>

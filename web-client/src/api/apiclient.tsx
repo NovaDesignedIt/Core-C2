@@ -353,7 +353,7 @@ export async function getinstancebyfield(url:string,core:Core, recordId: string,
  * @param {Instance} data - The Instance data.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function insertinstance(url:string,core:Core,data:Instance): Promise<string> {
+export async function insertinstance(url:string,core:CoreC,data:Instance): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i`;
 
@@ -429,7 +429,7 @@ export async function getinstancebyid(url:string,core:Core,instance:Instance): P
 
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function getallinstance(url:string,core:Core): Promise<string> {
+export async function getallinstance(url:string,core:CoreC): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/all`;
 
@@ -465,7 +465,7 @@ export async function getallinstance(url:string,core:Core): Promise<string> {
  * @param {Instance} instance - The Instance object.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function deleteinstancebyid(url:string,core:Core,instance:Instance): Promise<string> {
+export async function deleteinstancebyid(url:string,core:CoreC,instance:Instance): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/${instance._id}`;
 
