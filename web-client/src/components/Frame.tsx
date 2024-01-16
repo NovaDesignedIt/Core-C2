@@ -1,4 +1,5 @@
-import { AppBar, styled, Stack, Toolbar, Typography, Alert, Snackbar } from '@mui/material';
+
+import { Stack, Alert, Snackbar } from '@mui/material';
 import Sidebar from './Sidebar';
 import Splitter, { SplitDirection } from '@devbookhq/splitter'
 import InstanceContainer from './InstanceContainer';
@@ -9,14 +10,21 @@ import LoginHome from './LoginHome';
 import Store from './Store';
 import CustomPanelConfiguration from './CustomPanelConfiguration';
 import { Core, Instance } from '../api/apiclient';
+import { useAppDispatch } from '../store/store';
 
-      
+
+import {SetCore} from  '../store/features/CoreSlice';
 
 
-const StyledToolbar = styled(Toolbar)({
-  display: "flex",
-  justifyContent: "space-between"
-})
+
+
+
+
+
+
+
+
+
 
 
 
@@ -29,15 +37,16 @@ const Frame = () => {
   const [open, setOpen] = react.useState(false);
   const [objs, setObjs] = react.useState<Instance[]>();
   const [sizes, setSizes] = react.useState([15, 85]);
-  const [url, setUrl] = react.useState('');
 
+  const dispatch:any = useAppDispatch();
+  
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleContentSelection = async (index: react.SetStateAction<number>) => {
     //is logged in?
-    const result = await fetch(`http://${url}/ss/${core !== undefined ? core?._core_id : ''}`, {
+    const result = await fetch(`http://${core !== undefined ? core?._url : ''}/ss/${core !== undefined ? core?._core_id : ''}`, {
       method: 'GET',
       headers: {
         'authtok': core !== undefined ?  core?._sessiontoken : ''
@@ -79,12 +88,15 @@ const Frame = () => {
     SetInstance(instance);
   };
 
-  const HandleLogin = (CORE: Core, url: string) => {
-
+  const HandleLogin = (CORE: Core) => {
+    
+    
+    dispatch(SetCore({ coreObject:CORE  }))
 
 
     if (CORE !== undefined) {
-      setUrl(url);
+      //This is where the magic happens
+
       setSelectedCore(CORE);
     }
   };
@@ -107,14 +119,13 @@ const Frame = () => {
           </Stack>
           <Stack direction="column" height="100%" width="100%" maxWidth={"100"} overflow="hidden" >
             {selectedContent === -1 && <LoginHome
-              onSetCore={HandleLogin}
-            />}
+              onSetCore={HandleLogin}/>}
             {selectedContent === 2 && <Store
               core={core}
-              url={url} />}
+              url={core !== undefined ? core?._url : ''} />}
             {selectedContent === 3 && 
             <InstanceContainer
-              url={url}
+              url={core !== undefined ? core?._url : ''}
               objs={objs}
               instance={Instance}
               handleSelectedTargets={handleSelectedTargets}
@@ -122,12 +133,10 @@ const Frame = () => {
             {selectedContent === 4 && <MapPanel
               core={core} />}
             {selectedContent === 5 && <CustomPanelConfiguration
-              core={core} url={url} />}
+              core={core} url={core !== undefined ? core?._url : ''} />}
             {selectedContent === 6 && <CustomPanelConfiguration
-              core={core} url={url} />}
+              core={core} url={core !== undefined ? core?._url : ''} />}
           </Stack>
-
-
         </Splitter>
       </Stack>
       <Snackbar open={open} autoHideDuration={2500} onClose={handleClose}>

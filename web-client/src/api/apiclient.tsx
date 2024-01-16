@@ -2,6 +2,10 @@
                    MAIN WEBCLIENT API CLASS TO MANAGE THE CALLS.
 ///////////////////////////////////////////////////////////////////////////////////*/
 
+export interface CoreInterface {
+ core:Core;
+}
+
 
 
 export class Target {
@@ -172,22 +176,56 @@ export class Logger{
 }
 
 export class Core {
-  _sessiontoken : string;
+  _sessiontoken: string;
   _core_id: string;
   _config?: Config;
   _instances?: Instance[];
   _rootdir?: Root;
-  _users?:User[];
-  _user:string;
-  
-  constructor(_sessiontoken ='', _core_id ='' ,_config = new Config(), _instances:Instance[],_root:Root,_users:User[],user:string){
+  _users?: User[];
+  _user: string;
+  _url: string;
+
+  constructor(
+    _sessiontoken = '',
+    _core_id = '',
+    _config?: Config,
+    _instances?: Instance[],
+    _rootdir?: Root,
+    _users?: User[],
+    user = '',
+    url = ''
+  ) {
     this._sessiontoken = _sessiontoken;
     this._core_id = _core_id;
-    this._config = _config || undefined;
-    this._instances = _instances || [];
-    this._rootdir = _root;
+    this._config = _config;
+    this._instances = _instances;
+    this._rootdir = _rootdir;
     this._users = _users;
     this._user = user;
+    this._url = url;
+  }
+
+
+  addInstance(instance: Instance): void {
+    // Check if the instance doesn't already exist
+    if (this._instances !== undefined) {
+      if (!this._instances.some((existingInstance) => existingInstance._id === instance._id)) {
+        // Add the new instance to the array
+        this._instances.push(instance);
+      }
+    }
+  }
+
+  deleteInstance(instanceId: number): void {
+    // Find the index of the instance with the given ID
+    if (this._instances !== undefined) {
+      const index = this._instances.findIndex((instance) => instance._id === instanceId);
+
+      // If the instance exists, remove it from the array
+      if (index !== -1) {
+        this._instances.splice(index, 1);
+      }
+    }
   }
 
   config(){

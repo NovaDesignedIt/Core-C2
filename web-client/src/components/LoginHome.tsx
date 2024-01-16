@@ -1,11 +1,10 @@
-
 import { Alert, Button, Snackbar, TextField, Typography } from '@mui/material';
 import { SetStateAction, useState } from 'react';
 import { Core, Config, Instance, Root, getRootDirectory, User, CreateCore } from '../api/apiclient';
 import CloseIcon from '@mui/icons-material/Close';
 
 
-export default function LoginHome({ onSetCore = (core: Core, url: string) => { } }) {
+export default function LoginHome({ onSetCore = (core: Core) => { } }) {
     const [password, setPassword] = useState('password');
     const [username, setUsername] = useState('username');
     const [address, setAddress] = useState('192.168.2.196:8000');
@@ -47,8 +46,8 @@ export default function LoginHome({ onSetCore = (core: Core, url: string) => { }
             const rdir = directoryStructure !== undefined ? directoryStructure : new Root()
             const current_user = users.find(i => i._username === username);
             const user: string = current_user !== undefined ? current_user._username : "";
-            const c = new Core(sessiontok, corid, configuration, instances, rdir, users, user);
-            onSetCore(c, address);
+            const c = new Core(sessiontok, corid, configuration, instances, rdir, users, user,url);
+            onSetCore(c);
         };
 
         const url = `http://${address}/auth`;
