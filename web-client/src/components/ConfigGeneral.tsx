@@ -6,6 +6,8 @@ import ListenerComponent from "./Listeners";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import { useAppSelector  } from '../store/store';
+
 interface ConfigGeneralProp {
   core?: Core
   url: string;
@@ -24,11 +26,17 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
   const [chklp, setChklp] = React.useState(false);
   const [chktimeout, setchktimeout] = React.useState(false);
 
+  const corid = useAppSelector(state => state.core.configObject._core_id) 
+
+
+  const HandleClearLogs = () => {
+    alert(corid);
+  }
+
   const HandleSessionLength = (event: { target: { value: SetStateAction<string>; }; }) => {
     const t: number = parseInt(event.target.value.toString());
     setsessionlen(t);
   }
-
   const HandleDaysretChanged = (event: { target: { value: SetStateAction<string>; }; }) => {
     const t: number = parseInt(event.target.value.toString());
     setDaysretLog(t);
@@ -236,7 +244,7 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
             </p>
           </div>
           <Button
-            onClick={() => alert('Logs cleared')}
+            onClick={() => {HandleClearLogs()}}
             sx={{
 
               border: "1px solid #FF3635",
