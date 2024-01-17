@@ -15,6 +15,8 @@ import UpdateForm from './UpdateForm';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import { Core, deleterecordbyid, Instance, getallrecords } from '../api/apiclient';
 import { Typography } from '@material-ui/core';
+import { useAppDispatch, useAppSelector } from '../store/store';
+import { SetSelectedTargets } from '../store/features/CoreSlice';
 
 
 
@@ -34,17 +36,29 @@ const columns = [
 ];
 
 
-
-
-interface DataGridComponents {
-  url: string;
-  core?: Core; // Include the 'core' prop with the optional (?) modifier
-  instance?: Instance;
-  getselectedtargs: (param: number[]) => {};
-  getAction: (param: number) => void;
+interface gridViewProp {
+  GetAction: (index:number)=>void;
 }
 
-const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getselectedtargs = (r: number[]) => { }, getAction }) => {
+const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
+  const dispatch:any = useAppDispatch();
+
+    // url={core !== undefined ? core?._url : ''}
+    // objs={objs}
+    // instance={Instance}
+    // handleSelectedTargets={handleSelectedTargets}
+    // core={core} selectedTargets={selectedTargets}
+    const config = useAppSelector(state => state.core.configObject);
+    const core = useAppSelector(state => state.core.coreObject); 
+    const Targets = useAppSelector(state => state.core.targetObjects); 
+    const SelectedTargets = useAppSelector(state => state.core.selectedTargets); 
+    const SelectedContent = useAppSelector(state => state.core.SelectedContent); 
+    const SelectedInstance = useAppSelector(state => state.core.SelectedInstances); 
+    
+
+
+
+
   const [promptopen, setPrompt] = React.useState(false);
   const [rows, setRows] = useState<any>([]);
   const [open2, setOpen2] = useState(false);
@@ -68,7 +82,7 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
   });
 
   const handleSelectedAction = (index: number) => {
-    getAction(index)
+    GetAction(index)
   }
 
   //deleterecordbyid
@@ -79,7 +93,7 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
     setOpen(true)
     var ol = rowSelected !== undefined ? rowSelected : [].toString().split(',').map((id: string) => id.trim())
     for (const id of ol) {
-      await deleterecordbyid(url, id.toString(), core);
+      await deleterecordbyid(core._url, id.toString(), core);
     }
     //  fetchData();
     setSelectedRows([]);
@@ -129,7 +143,7 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
         <button style={buttonstyle} onClick={(e) => {
           e.preventDefault();
           setPrompt(true);
-          handleSelectedAction(0);
+          
         }}>
           <span style={{ marginRight: '5px' }}>
             <RemoveIcon fontSize='small' /> {/* Add the AddIcon */}
@@ -151,17 +165,17 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
 
 
 
-        <GridToolbarColumnsButton onClick={() => { handleSelectedAction(0); }} />
+        <GridToolbarColumnsButton onClick={() => {  }} />
 
-        <GridToolbarFilterButton enterDelay={0} onClick={() => { handleSelectedAction(0); }} />
+        <GridToolbarFilterButton enterDelay={0} onClick={() => {  }} />
         
         <GridToolbarDensitySelector 
           onMouseEnter={() => { setRefresh(false); }}
-          onClick={() => { handleSelectedAction(0); }}
+          onClick={() => {  }}
         />
         <GridToolbarExport
           onMouseEnter={() => { setRefresh(false); }}
-          onClick={() => { handleSelectedAction(0); }}
+          onClick={() => {  }}
         />
 
 
@@ -172,7 +186,7 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
           alert('kidding. this is a demo Instance and should probably not unleash these things in the wild.')
         }}>
           <span style={{ marginRight: '5px' }}>
-          <SatelliteAltIcon fontSize='small' /> 
+          <SatelliteAltIcon style={{fontSize:"15px"}} /> 
           </span>
           DOWNLOAD AGENT
         </button>
@@ -188,7 +202,7 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
       // Replace the URL with your actual API endpoint 
 
       if (isMounted) {
-        const data = await getallrecords(url, inst, core)
+        const data = await getallrecords(core._url, inst, core)
         if (data === '401' || typeof data  === "string") {
           setOpen2(true);
           return;
@@ -249,28 +263,21 @@ const MuiDataGrid: React.FC<DataGridComponents> = ({ url, core, instance, getsel
   };
   useEffect(() => {
     const intervalId = setInterval(() => {
-
-      Refresh === true ? fetchData(instance !== undefined ? instance : new Instance()) : () => { }
-
-
+      Refresh === true ? fetchData(SelectedInstance) : () => { }
     }, 500); // Adjust the interval (in milliseconds) based on your preferred delay
-
     // Cleanup function to clear the interval when the component unmounts or when needed
     return () => clearInterval(intervalId);
-  }, [instance, Refresh]);
+  }, [SelectedInstance, Refresh]);
 
 
   //console.log(rowsWithIds);
   const selectedRows = (r: string) => {
-
     //parse string.
     const indexArray = r.toString().split(',').map(Number);
     // Step 2: Iterate through the array and get corresponding _id values
-    const selectedIds = indexArray.map(index => rows[`${index - 1}`]?._id);
+    const selectedIds:number[] = indexArray.map(index => rows[`${index - 1}`]?._id);
     setSelectedRows(selectedIds);
-    // Now, selectedIds contains an array of _id values corresponding to the given indices
-    getselectedtargs(selectedIds);
-
+    dispatch(SetSelectedTargets({target_ids:selectedIds}))
   }
 
   const handleOpen = () => {

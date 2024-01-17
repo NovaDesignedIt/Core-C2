@@ -20,10 +20,12 @@ import FolderIcon from '@mui/icons-material/Folder';
 import ViewInArIcon from '@mui/icons-material/ViewInAr';
 import Collapse from '@mui/material/Collapse';
 import { GiPlanetCore } from "react-icons/gi";
-import { Instance, Core } from '../api/apiclient';
+import { Instance, Core,getallrecords } from '../api/apiclient';
 import { FaDatabase } from "react-icons/fa6";
 import WebStoriesIcon from '@mui/icons-material/WebStories';
-import { useAppSelector } from '../store/store';
+import { useAppSelector,useAppDispatch } from '../store/store';
+import { SetInstanceTargets, SetSelectedContent,SetSelectedInstance } from '../store/features/CoreSlice';
+
 {/*sx={{color:"#21fd0a"}}*/ }
 const data = [
   // { icon: <People />, index: 1, text: "User" },
@@ -46,38 +48,43 @@ const FireNav = styled(List)<{ component?: React.ElementType }>({
   },
 });
 
-interface SideBarProps{
 
-  onSelectInstance :(instance:Instance) => void;
-  onSelectContent : (index: react.SetStateAction<number>) => void;
-  core?:Core;
-}
-
-const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: Instance) => { }, onSelectContent = (index: react.SetStateAction<number>) => { },  core } ) => {
+const CustomizedList =  ( ) => {
+  
+  const dispatch:any = useAppDispatch();
+  
   const [open, setOpen] = react.useState(false);
   const [sublistOpen, setSublistOpen] = react.useState(false);
-  const [selectedInstance, SetSelectedInstance] = react.useState<Instance>();
+  const [selectedInstance, setinstance] = react.useState<Instance>();
   
-  
+
+  const core = useAppSelector(state => state.core.coreObject)
   const inst = useAppSelector(state => state.core.instanceObjects)
   const instances  = inst ?? []
 
-  
+  console.log(core._core_id)
   const handleSublistToggle = () => {
     setSublistOpen(!sublistOpen);
   };
 
-  const HandleInstanceSelection = (instance:Instance) => {
-    onSelectInstance(instance);
-    SetSelectedInstance(instance);
+  const HandleInstanceSelection = async (instance: Instance) => {
+    const data = await getallrecords(core._url, instance, core)
+    if (data === '401' || typeof data === "string") {
+      return;
+    }
+    const filteredRows = data !== undefined ? data : [{}].filter((row: any) => row._isid === instance._instance_id ? instance?._instance_id : new Instance()._instance_id);
+    dispatch(SetInstanceTargets({ instance:filteredRows}))
+    dispatch(SetSelectedInstance({ instance: instance }))
+    dispatch(SetSelectedContent({ content: 3 }))
+    setinstance(instance);
   }
 
   const handleDropDownMenu = () =>{
-     core !== undefined ? setOpen(!open) : setOpen(false);
+     core._core_id !== "" ? setOpen(!open) : setOpen(false);
   }
 
-  const handleItemClick = (index: react.SetStateAction<number>) => {
-    onSelectContent(index);
+  const handleItemClick = (index: number) => {
+    dispatch(SetSelectedContent({content:index}))
   };
 
   return (
@@ -102,11 +109,11 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
           {/* {👽} */}
           <Paper elevation={0} sx={{ minWidth:"10%", borderRadius: 0,width:"100%" }}>
             <FireNav component="nav" disablePadding sx={{width:"100%"}}>
-              <ListItemButton key={1} component="a" href="#customized-list" >
+              <ListItemButton key={1} >
                 <ListItemIcon sx={{ fontSize: 15 }}>🛰️</ListItemIcon>
 
                 <ListItemText
-                  sx={{ my: 0, color: core === undefined ? "#fff" : "#7ff685" }}
+                  sx={{ my: 0, color:  core._core_id === '' ? "#fff" : "#7ff685" }}
                   primary="CoreC2"
               
                   onClick={() => handleItemClick(-1)}
@@ -130,7 +137,7 @@ const CustomizedList:React.FC<SideBarProps>  = ({ onSelectInstance = (instance: 
                   <ListItemText
 
                     primary="core Overview"
-                    secondary={ core === undefined  ? "login to fetch core." : ""}
+                    secondary={  core._core_id !== '' ? "login to fetch core." : ""}
                     secondaryTypographyProps={{
                       color: 'gray',
                       fontSize:10,

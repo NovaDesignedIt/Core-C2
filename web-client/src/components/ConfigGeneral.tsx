@@ -8,12 +8,9 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useAppSelector  } from '../store/store';
 
-interface ConfigGeneralProp {
-  core?: Core
-  url: string;
-}
 
-const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
+
+const ConfigGeneralComp =  () => {
 
 
 
@@ -51,6 +48,14 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
     const t: number = parseInt(event.target.value.toString());
     setDaysretLog(t);
   }
+
+  const HandleDaysretChanged_KeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      // Handle Enter key
+      event.preventDefault();
+    }
+  }
+  
 
   const HandleTimeOut = (event: React.ChangeEvent<HTMLInputElement>) => {
     setchktimeout(event.target.checked)
@@ -238,7 +243,9 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
             inputProps={{ sx: { color: "#fff" } }}
             label={'days'}
             size='small'
+            type={'number'}
             value={daysretLog}
+            onKeyDown={(e:any)=>{ HandleDaysretChanged_KeyDown(e)}}
             onChange={(e) => { HandleDaysretChanged(e) }}
             sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
 
@@ -274,7 +281,7 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
       <Stack spacing={"2%"} sx={{ flexDirection: "column", width: "70%", height: "100%", padding: "15px", overflow: 'scroll' }}>
         <div style={{maxHeight:"400px"}} >
           <h5 style={{ color: "#fff", cursor: "default" }}>Instances</h5>
-          <InstanceConfiguration core={core} url={url} />
+          <InstanceConfiguration/>
         </div>
         <Stack direction={'row'} spacing={5} >
           <Stack spacing={3} width={'50%'}>
@@ -303,6 +310,7 @@ const ConfigGeneralComp: React.FC<ConfigGeneralProp> = ({ core, url }) => {
               </p>
               <TextField
                 fullWidth={true}
+                type={'number'}
                 InputLabelProps={{ sx: { color: "#fff" } }}
                 inputProps={{ sx: { color: "#fff" } }}
                 label={'minutes'}

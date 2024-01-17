@@ -152,11 +152,7 @@ const exampleMapStyles = [
 ];
 
 
-interface mapcomponentprop {
-    core?:Core
-}
-
-const map_basic: React.FC<mapcomponentprop> = ({core}) => {
+const map_basic = () => {
     const position = {lat: 53, lng: 13};
     return (
         <ThemeProvider   theme={{styles: exampleMapStyles}}>

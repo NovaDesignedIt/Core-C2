@@ -64,6 +64,7 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
             body: JSON.stringify(payload), // Convert the data to JSON format
         })
             .then(response => {
+                
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }

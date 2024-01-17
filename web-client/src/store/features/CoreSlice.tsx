@@ -1,25 +1,35 @@
 
-import { Core, Instance, CoreInterface, Config, Target, File, CoreC, getallinstance } from '../../api/apiclient';
+import { Core, Instance, Config, Target, File, CoreC } from '../../api/apiclient';
 import { createSlice, configureStore, PayloadAction } from '@reduxjs/toolkit'
 
-const emptyCoreInstance = new CoreC();
+const emptyCoreInstance = new Core();
 const emptyConfigInstance = new Config();
-const emptytargetObject: Target[] = []
-const emptyFilestore: File[] = []
-const emptyinstanceobject: Instance[] = []
+const emptytargetObject: Target[] = [];
+const emptyFilestore: File[] = [];
+const emptyinstanceobject: Instance[] = [];
+const emptyselectedtargets: number[] = [];
+const emptySelectedInstances = new Instance();
 
 interface CoreState {
   coreObject: CoreC
   instanceObjects: Instance[]
   configObject: Config
   fstoreObject: File[]
+  SelectedInstances:Instance
+  selectedTargets: number[]
+  targetObjects: Target[]
+  SelectedContent:number
 }
 
 const initialState: CoreState = {
   coreObject: emptyCoreInstance,
   configObject: emptyConfigInstance,
   fstoreObject: emptyFilestore,
-  instanceObjects: emptyinstanceobject
+  instanceObjects: emptyinstanceobject,
+  SelectedInstances:emptySelectedInstances,
+  selectedTargets: emptyselectedtargets,
+  targetObjects: emptytargetObject,
+  SelectedContent: -1,  
 }
 
 export const CoreSlice = createSlice({
@@ -32,6 +42,18 @@ export const CoreSlice = createSlice({
         state.configObject = action.payload.config
         state.fstoreObject = action.payload.fstore
         state.instanceObjects = action.payload.instances
+      },
+      SetSelectedContent:
+      (state, action: PayloadAction<{ content: number }>) => {
+        state.SelectedContent = action.payload.content;
+      },
+    SetSelectedInstance:
+      (state, action: PayloadAction<{ instance: Instance }>) => {
+        state.SelectedInstances = action.payload.instance;
+      },
+    SetSelectedTargets:
+      (state, action: PayloadAction<{ target_ids: number[] }>) => {
+        state.selectedTargets = action.payload.target_ids;
       },
     InsertInstance:
       (state, action: PayloadAction<{ instance: Instance }>) => {
@@ -53,9 +75,14 @@ export const CoreSlice = createSlice({
       (state, action: PayloadAction<{ configuration: Config }>) => {
         state.configObject = action.payload.configuration;
       },
+    SetInstanceTargets:
+    (state,action:PayloadAction<{instance:any[]}>) =>{
+      state.targetObjects = action.payload.instance as unknown as Target[]
+    },
+
   }
 
 });
 
 export default CoreSlice.reducer;
-export const { SetCore, InsertInstance, DeleteInstance, BuildStateManagement, SetConfiguration, SetInstance } = CoreSlice.actions;
+export const { SetCore, SetInstanceTargets, InsertInstance, DeleteInstance, BuildStateManagement, SetConfiguration, SetInstance,SetSelectedTargets,SetSelectedInstance,SetSelectedContent } = CoreSlice.actions;

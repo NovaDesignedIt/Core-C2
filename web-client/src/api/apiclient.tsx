@@ -317,7 +317,7 @@ export interface CoreObjects {
  * @param {string} value - The value to match.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function getinstancebyfield(url:string,core:Core, recordId: string, value:string ): Promise<string> {
+export async function getinstancebyfield(url:string,core:CoreC, recordId: string, value:string ): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/${recordId}/${value}`;
 
@@ -392,7 +392,7 @@ export async function insertinstance(url:string,core:CoreC,data:Instance): Promi
  * @param {Instance} instance - The Instance object.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function getinstancebyid(url:string,core:Core,instance:Instance): Promise<string> {
+export async function getinstancebyid(url:string,core:CoreC,instance:Instance): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/${instance._id}`;
 
@@ -506,7 +506,7 @@ export async function deleteinstancebyid(url:string,core:CoreC,instance:Instance
  * @param {string} value - The new value.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function updatesingleInstancebyid(url:string,core:Core,instance:Instance,field:string,value:string): Promise<string> {
+export async function updatesingleInstancebyid(url:string,core:CoreC,instance:Instance,field:string,value:string): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/${instance._id}/${field}/${value}`;
 
@@ -546,7 +546,7 @@ export async function updatesingleInstancebyid(url:string,core:Core,instance:Ins
  * @param {string} new_value - The new value.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function updatemanyinstancebyfield(url:string,core:Core,field:string,value:string,new_value:string): Promise<string> {
+export async function updatemanyinstancebyfield(url:string,core:CoreC,field:string,value:string,new_value:string): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/${field}/${value}/${new_value}`;
 
@@ -585,7 +585,7 @@ export async function updatemanyinstancebyfield(url:string,core:Core,field:strin
  * @param {Target} data - The Target data.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function insertrecord(url:string,core:Core,data:Target): Promise<string> {
+export async function insertrecord(url:string,core:CoreC,data:Target): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/t`;
 
@@ -624,7 +624,7 @@ export async function insertrecord(url:string,core:Core,data:Target): Promise<st
  * @param {string} value - The value to match.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function getrecordsbyfield(url:string,core:Core,field:string,value:string): Promise<string> {
+export async function getrecordsbyfield(url:string,core:CoreC,field:string,value:string): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/t/${field}/${value}`;
 
@@ -661,7 +661,7 @@ export async function getrecordsbyfield(url:string,core:Core,field:string,value:
  * @param {string} record_id - The ID of the record to retrieve.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function getrecordbyid(url:string,core:Core,record_id:string): Promise<Target | string> {
+export async function getrecordbyid(url:string,core:CoreC,record_id:string): Promise<Target | string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/t/${record_id}`;
 
@@ -699,7 +699,7 @@ export async function getrecordbyid(url:string,core:Core,record_id:string): Prom
  * @param {Core} [core] - The Core object (optional).
  * @returns {Promise<Target[] | string>} A Promise with the result.
  */
-export async function getallrecords(url:string,instance?:Instance,core?:Core): Promise<Target[] | string> {
+export async function getallrecords(url:string,instance?:Instance,core?:CoreC): Promise<Target[] | string> {
   try {
     const apiUrl = `http://${url}/${core?._core_id}/${instance?._instance_id}/t/all`;
     const authoken = core?._sessiontoken ? core?._sessiontoken : ''
@@ -736,7 +736,7 @@ export async function getallrecords(url:string,instance?:Instance,core?:Core): P
  * @param {Core} [core] - The Core object (optional).
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function deleterecordbyid(url:string,record_id:string,core?:Core,): Promise<string> {
+export async function deleterecordbyid(url:string,record_id:string,core?:CoreC,): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core?._core_id}/t/${record_id}`;
     const authoken = core?._sessiontoken ? core?._sessiontoken : ''
@@ -777,7 +777,7 @@ export async function deleterecordbyid(url:string,record_id:string,core?:Core,):
  * @param {string} value - The new value.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function updatesinglerecordbyid(url:string,core:Core,record_id:string,field:string,value:string): Promise<string> {
+export async function updatesinglerecordbyid(url:string,core:CoreC,record_id:string,field:string,value:string): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/t/${record_id}/${field}/${value}`;
 
@@ -817,7 +817,7 @@ export async function updatesinglerecordbyid(url:string,core:Core,record_id:stri
  * @param {string} value - The new value.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function updatemanyrecordsbyfield(url:string,core:Core,record_id:string,field:string,value:string): Promise<string> {
+export async function updatemanyrecordsbyfield(url:string,core:CoreC,record_id:string,field:string,value:string): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/t/${record_id}/${field}/${value}`;
 
@@ -856,7 +856,7 @@ export async function updatemanyrecordsbyfield(url:string,core:Core,record_id:st
  * @param {string} record_id - The ID of the record to retrieve.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function SetCommand(url:string,core:Core,instance:Instance,target:Target,command:string): Promise<string > {
+export async function SetCommand(url:string,core:CoreC,instance:Instance,target:Target,command:string): Promise<string > {
   try {
  
     if (instance === undefined && core === undefined) {
@@ -932,7 +932,7 @@ export async function fetchOut(url:string,instance:Instance, id: number): Promis
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the download is complete.
  */
-export async function downloadFiles(url:string,files:string[],core?:Core){
+export async function downloadFiles(url:string,files:string[],core?:CoreC){
 
   try {
     console.log(JSON.stringify(files));
@@ -976,7 +976,7 @@ export async function downloadFiles(url:string,files:string[],core?:Core){
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the deletion is complete.
  */
-export  async function deleteFiles(url:string,files:string[],core?:Core){
+export  async function deleteFiles(url:string,files:string[],core?:CoreC){
 
   try {
     console.log(JSON.stringify(files));

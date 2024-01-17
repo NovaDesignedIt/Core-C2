@@ -7,6 +7,7 @@ import InsertForm from './InsertForm'
 import { Box, Modal, Stack, fabClasses } from '@mui/material';
 import { Core, Instance } from '../api/apiclient';
 import { Visibility } from '@mui/icons-material';
+import { useAppSelector } from '../store/store';
 
 
 const style = {
@@ -26,23 +27,14 @@ const style = {
 
 
 
-interface InstanceContainerProps {
-    url: string;
-    objs: any;
-    instance?: Instance;
-    handleSelectedTargets: (param: number[]) => boolean;
-    selectedTargets: any;
-    core?: Core; // Include the 'core' prop with the optional (?) modifier
-}
+//{ url, objs, instance, handleSelectedTargets, core, selectedTargets }
 
-
-const InstanceContainer: React.FC<InstanceContainerProps> = ({ url, objs, instance, handleSelectedTargets, core, selectedTargets }) => {
+const InstanceContainer = () => {
     const [sizes, setSizes] = React.useState([85, 15]);
     const [sizes2, setSizes2] = React.useState([80, 20]);
     const [action,setSelectedAction] = React.useState(0);
 
-
-
+  
 
     function handleResize(gutterIdx: number, allSizes: number[]) {
         //console.log('gutterIdx', gutterIdx);
@@ -94,11 +86,11 @@ const InstanceContainer: React.FC<InstanceContainerProps> = ({ url, objs, instan
 
                           
                             {action !== 1 &&
-                             <Gridview url={url} core={core} instance={instance} getselectedtargs={handleSelectedTargets} getAction={GetSelectedAction}></Gridview>
+                             <Gridview GetAction={GetSelectedAction}></Gridview>
                             }
 
                             {action === 1 &&
-                               <InsertForm url={url} core={core} instance={instance} closePanel={CloseInsertPanel}></InsertForm>
+                                <InsertForm closePanel={CloseInsertPanel}></InsertForm>
                             }
                         </Stack>
 
@@ -117,7 +109,7 @@ const InstanceContainer: React.FC<InstanceContainerProps> = ({ url, objs, instan
                         overflow="scroll"
                         autoComplete="off"
                     >
-                        <Shell core={core} instance={instance} url={url} selectedTargets={selectedTargets} />
+                        <Shell />
                     </Stack>
                       
                     </Splitter>
@@ -133,7 +125,7 @@ const InstanceContainer: React.FC<InstanceContainerProps> = ({ url, objs, instan
                             overflow="scroll"
                             autoComplete="off"
                         >
-                            <BoxMenu url={url} objs={objs} instance={instance} selectedTargets={selectedTargets} core={core} ></BoxMenu>
+                            <BoxMenu  ></BoxMenu>
                         </Stack>
 
                    

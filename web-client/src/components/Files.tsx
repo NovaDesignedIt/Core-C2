@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Button, Stack, TextField } from '@mui/material';
 import { Core, File, Root, CoreObjects } from '../api/apiclient';
+import { useAppSelector } from '../store/store';
 
 
 export interface FileViewerProp {
-  core?: Core
   file?: File
-  url: string
 }
 const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.tif', '.webp', '.svg', '.ico'];
 
@@ -36,28 +35,31 @@ const themeTextBlack = {
 
 
 
-const Files: React.FC<FileViewerProp> = ({ core, file, url }) => {
+const Files: React.FC<FileViewerProp> = ({  file }) => {
   const [selectFile, SetSelectedFile] = React.useState('');
   const [fileContent, setFileContent] = React.useState('');
   const [ImageUrl, setImageURL] = React.useState('');
 
+
+  const CoreC = useAppSelector(state => state.core.coreObject) 
+
+
+
+
   const fetchFileContent = async () => {
     try {
       if (file?._extension !== undefined && !imageExtensions.includes(file._extension)) {
-        const response = await fetch(`http://${url}/upl/${core?._core_id}_files/${file !== undefined ? file._name : ''}`,{
+        const response = await fetch(`http://${CoreC._url}/upl/${CoreC?._core_id}_files/${file !== undefined ? file._name : ''}`,{
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'authtok': core?._sessiontoken !== undefined ? core?._sessiontoken : '',
+            'authtok': CoreC?._sessiontoken !== undefined ? CoreC?._sessiontoken : '',
       }});
-
         if (!response.ok) {
           throw new Error(`Failed to fetch file: ${response.status} ${response.statusText}`);
         }
-
         const content = await response.text();
         setFileContent(content);
-       
       }else{  
               /*
               python back-end-point 
@@ -65,12 +67,11 @@ const Files: React.FC<FileViewerProp> = ({ core, file, url }) => {
               def get_image(filename):      
                   Utility.Log.insert_log("",
                   ..... */
-             
-            await fetch(`http://${url}/${core?._core_id}/upl/ph/${file !== undefined ? file._name : ''}`,{
+            await fetch(`http://${CoreC._url}/${CoreC?._core_id}/upl/ph/${file !== undefined ? file._name : ''}`,{
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
-                  'authtok': core?._sessiontoken !== undefined ? core?._sessiontoken : '',
+                  'authtok': CoreC?._sessiontoken !== undefined ? CoreC?._sessiontoken : '',
             }}).then(response => setImageURL(response.url) )
             .catch(error => console.error('Error fetching image URL:', error));
       }

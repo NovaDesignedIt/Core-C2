@@ -1,6 +1,7 @@
 import { Core, Instance, Target } from "../api/apiclient";
 import { List,Typography,Box  ,ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import CircleIcon from '@mui/icons-material/Circle';
+import { useAppSelector } from "../store/store";
 
 interface ObjectViewProps {
     core?:Core;
@@ -8,9 +9,14 @@ interface ObjectViewProps {
     SelectedTargets: number[];
 }
 
-const ObjectView:React.FC<ObjectViewProps> = ({core,instance,SelectedTargets}) => {
+const ObjectView = () => {
 
-
+    const core = useAppSelector(state=> state.core.coreObject);
+    const url = core._url
+    const instance  = useAppSelector(state=>state.core.SelectedInstances)
+    const selectedTargets = useAppSelector(state=>state.core.selectedTargets)
+    const targets = useAppSelector(state=>state.core.targetObjects)
+    console.log(targets)
     return (
       <Box sx={{ color: '#fff' }}> 
       <Box sx={{
@@ -29,10 +35,10 @@ const ObjectView:React.FC<ObjectViewProps> = ({core,instance,SelectedTargets}) =
       <List sx={{ gap: '10px' }} >
                 {
                     
-                    (instance !== undefined ? instance._targets : []).map((item: any) =>
+                    (targets).map((item: any) =>
                     (
                         <>
-                        { SelectedTargets.includes(item._id) ? (
+                        { selectedTargets.includes(item._id) ? (
                             <ListItem 
                             key={item._id}
                             sx={{

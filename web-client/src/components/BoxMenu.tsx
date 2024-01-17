@@ -13,6 +13,7 @@ import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ObjectView from './ObjectView'
 import LiveView from './LiveView'
+import { useAppSelector } from '../store/store';
 
 
 export function liveView(value:number) {
@@ -125,7 +126,18 @@ interface InstanceContainerProps {
   core?: Core; // Include the 'core' prop with the optional (?) modifier
 }
 
-const BoxMenu: React.FC<InstanceContainerProps> = ({ url,objs, instance, selectedTargets, core }) => {
+const BoxMenu = () => {
+  //{ url,objs, instance, selectedTargets, core }
+  //url={url} objs={objs} instance={instance} selectedTargets={selectedTargets} core={core}
+  const core = useAppSelector(state=> state.core.coreObject);
+  const url = core._url
+  const instance  = useAppSelector(state=>state.core.SelectedInstances)
+  const selectedTargets = useAppSelector(state=>state.core.selectedTargets)
+  
+
+
+
+
   const [value, setValue] = React.useState(1);
   const [running, setRunning] = React.useState(false);
 
@@ -149,41 +161,37 @@ const BoxMenu: React.FC<InstanceContainerProps> = ({ url,objs, instance, selecte
     <>
 
       <BottomNavigation
-        style={{ justifyContent: 'center', backgroundColor: '#202c22', marginTop: '-10px', height: '4%', verticalAlign: 'start', overflow: 'hidden' }}
+        style={{ justifyContent: 'center', backgroundColor: '#222', marginTop: '-10px',height: '5%', verticalAlign: 'center', overflow: 'hidden' }}
       >
+      
         <BottomNavigationAction
           selected={value === 1}
           style={{ height: '100%',
-          backgroundColor: value === 1  ? '#111' : "Transparent"  }}
+          backgroundColor:"#222",
+          }}
           onClick={() => setValue(1)}      
-          icon={<AutoModeIcon fontSize='small' sx={{ color: "#7ff685", height: '15px' }} />} />
+          icon={<AutoModeIcon fontSize='small' sx={{ color: "#7ff685",opacity: value !== 1 ? "0.5" : "", height: '15px' }} />} />
         <BottomNavigationAction
           style={{ height: '100%', 
-          backgroundColor: value === 2  ? '#111' : "Transparent"  }}
+          backgroundColor:"#222"
+        }}
           onClick={() => setValue(2)}
           selected={value === 2}
-          icon={<DataObjectIcon fontSize='small' sx={{ color: "#7ff685", height: '15px' }} />} />
+          icon={<DataObjectIcon fontSize='small' sx={{ color: "#7ff685", opacity: value !== 2 ? "0.5" : "", height: '15px' }} />} />
         <BottomNavigationAction
-          style={{ height: '100%', 
-          backgroundColor: value === 3  ? '#111' : "Transparent"  }}
+          style={{ height: '100%',
+          backgroundColor:"#222"
+        }}
           onClick={() => setValue(3)}
           selected={value === 3}
-          icon={<CodeIcon fontSize='small' sx={{ color: "#7ff685", height: '15px' }} />} />
+          icon={<CodeIcon fontSize='small' sx={{ color: "#7ff685",opacity: value !== 3 ? "0.5" : "", height: '15px' }} />} />
       </BottomNavigation>
-      {/*                  
-       // .MAP THIS STUFF HERE BUCKO
-        //put this in live viewer
-          // target?:        [j34h5k3jh5k3j89r8gjrggg]
-          // action:         [GET]
-          // time:           [2023-12-28 21:56:41.600323]
-          // result:         [SUCCESS]
-          // msg:            [{"msg":"getallrecords(): 200"}]
-
-       */}
+     
+     
       {
           value === 1 && 
           (
-            <LiveView url={url} core={core} instance={instance} SelectedTargets={selectedTargets}/>
+            <LiveView />
           )   
         ||
         value === 2 && 
@@ -244,7 +252,7 @@ const BoxMenu: React.FC<InstanceContainerProps> = ({ url,objs, instance, selecte
         </Box>
         ) ||
         value === 3 && 
-        <ObjectView  core={core} instance={instance} SelectedTargets={selectedTargets} />
+        <ObjectView/>
       }
 
     </>

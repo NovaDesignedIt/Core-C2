@@ -4,19 +4,18 @@ import React from 'react'
 import DirStruct from './DirectoryStructure';
 import Files from './Files';
 import Splitter, { SplitDirection } from '@devbookhq/splitter'
+import { useAppSelector } from '../store/store';
 
 
-interface ConfigurationProp {
-    core?: Core;
-    url: string;
-};
-
-const StoreComponent: React.FC<ConfigurationProp> = ({ core, url }) => {
+const StoreComponent = () => {
     const [file, setFile] = React.useState(new File());
     const [sizes, setSizes] = React.useState([50, 50]);
     const onFileSelected = (file: File) => {
         setFile(file)
     }
+
+    
+    const CoreC = useAppSelector(state => state.core.coreObject) 
 
 
     function handleResize(gutterIdx: number, allSizes: number[]) {
@@ -43,11 +42,11 @@ const StoreComponent: React.FC<ConfigurationProp> = ({ core, url }) => {
                 initialSizes={sizes}
             >
                 <div style={{ height: "100%" }}>
-                    <Files core={core} file={file} url={url} />
+                    <Files  file={file}/>
                 </div>
 
                 <div style={{ height: "100%" }}>
-                    <DirStruct core={core} onFileSelected={onFileSelected} url={url} />
+                    <DirStruct onFileSelected={onFileSelected} />
                 </div>
             </Splitter>
         </Stack>

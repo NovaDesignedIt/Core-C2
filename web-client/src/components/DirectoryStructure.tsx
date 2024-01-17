@@ -12,14 +12,14 @@ import ArticleIcon from '@mui/icons-material/Article';
 import { ListItem, ListItemText } from '@material-ui/core';
 import DownloadIcon from '@mui/icons-material/Download';
 import { Download } from '@mui/icons-material';
+import { useAppSelector } from '../store/store';
 interface DirectoryStructureProp {
-  core?: Core;
   onFileSelected: (file: File) => void;
-  url: string;
 }
 
 
-const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core, onFileSelected, url }) => {
+const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFileSelected }) => {
+
   const [file, setFile] = React.useState(null);
   const [root, SetRoot] = React.useState<File[]>();
   const [selectedFile, setSelectedFile] = React.useState(-1);
@@ -28,6 +28,10 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core, o
   const [SelectedFiles, SetSelectedFiles] = React.useState<File[]>([]);
 
   //console.log(core?._rootdir?._files)
+
+  const CoreC = useAppSelector(state => state.core.coreObject) 
+  const config = useAppSelector(state => state.core.configObject) 
+
 
   const OnSetFile = (file: File) => {
     onFileSelected(file)
@@ -49,10 +53,10 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core, o
     formData.append('file', file);
 
     try {
-      const response = await fetch(`http://${url}/${core?._core_id}/upload`, {
+      const response = await fetch(`http://${CoreC._url}/${CoreC?._core_id}/upload`, {
         method: 'POST',
         headers: {
-          'authtok': core !== undefined ? core._sessiontoken : "",
+          'authtok': CoreC !== undefined ? CoreC._sessiontoken : "",
         },
         body: formData,
       });
@@ -70,10 +74,10 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core, o
 
   async function refreshDirectory() {
     const r: Root = await getRootDirectory(
-      url,
-      core?._core_id !== undefined ? core?._core_id : '',
-      core?._sessiontoken !== undefined ? core?._sessiontoken : '',
-      core?._config?._title !== undefined ? core?._config?._title : '',
+      CoreC._url,
+      CoreC?._core_id !== undefined ? CoreC?._core_id : '',
+      CoreC?._sessiontoken !== undefined ? CoreC?._sessiontoken : '',
+      config?._title !== undefined ? config?._title : '',
     )
     SetRoot(r._files);
   }
@@ -85,9 +89,6 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core, o
 
 
   const handleCheckboxChange = (event: any, f: File) => {
-
-
-
     SelectedFiles.length === 0
       ? SetSelectedFiles([f])
       : SetSelectedFiles((prevSelectedFiles) => {
@@ -106,7 +107,7 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core, o
   async function HandleDelete(files: File[]) {
     if (files.length > 0) {
       const list: string[] = files.map((item: File) => item._name);
-      deleteFiles(url, list, core);
+      deleteFiles(CoreC._url, list, CoreC);
       const newFileList: File[] = SelectedFiles.filter((item: File) => !list.includes(item._name))
       SetSelectedFiles(newFileList);      
 
@@ -118,13 +119,13 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({ core, o
     
     if (files.length > 0) {
       const list: string[] = files.map((item: File) => item._name);
-      const response = await downloadFiles(url, list, core);
+      const response = await downloadFiles(CoreC._url, list, CoreC);
       const blob = response instanceof Response ? await response.blob() : undefined;
       if (blob !== undefined) {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${core?._core_id}_store.zip`;
+        link.download = `${CoreC?._core_id}_store.zip`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

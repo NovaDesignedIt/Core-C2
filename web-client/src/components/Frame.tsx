@@ -10,7 +10,7 @@ import LoginHome from './LoginHome';
 import FileStorage from './FileStorage';
 import CustomPanelConfiguration from './CustomPanelConfiguration';
 import { Config, Core, CoreC, File as Files, Instance } from '../api/apiclient';
-import { useAppDispatch } from '../store/store';
+import { useAppDispatch,useAppSelector } from '../store/store';
 
 
 import {BuildStateManagement} from  '../store/features/CoreSlice';
@@ -32,13 +32,18 @@ const Frame = () => {
 
   const [selectedContent, setSelectedContent] = react.useState(-1);
   const [core, setSelectedCore] = react.useState<Core>();
-  const [Instance, SetInstance] = react.useState<Instance | undefined>();
   const [selectedTargets, setSelectedtarget] = react.useState<number[]>([0,]);
   const [open, setOpen] = react.useState(false);
-  const [objs, setObjs] = react.useState<Instance[]>();
   const [sizes, setSizes] = react.useState([15, 85]);
 
   const dispatch:any = useAppDispatch();
+
+
+
+  const inst = useAppSelector(state => state.core.instanceObjects)
+
+  const content = useAppSelector(state => state.core.SelectedContent)
+
 
   const handleClose = () => {
     setOpen(false);
@@ -63,25 +68,7 @@ const Frame = () => {
      }    
   };
 
-  const handleSelectedTargets = (selectedtargs: number[]) => {
-    setSelectedtarget(selectedtargs);
 
-    // Perform any update logic in the child component
-    const objects = core?._instances;
-    const filteredObjects = objects ? objects.filter(g => selectedtargs.includes(g._id)) : []
-    //const stri = filteredObjects.length > 0 ? JSON.stringify(filteredObjects, null, 2) : ''
-    //console.log(filteredObjects.length);
-    setObjs(filteredObjects);
-
-    //console.log(filteredObjects);
-    //console.log(filteredObjects.length);
-    return true;
-  }
-  const onSelectInstance = (instance: Instance) => {
-    setSelectedContent(3);
-    setSelectedtarget([]);
-    SetInstance(instance);
-  };
 
   const HandleLogin = (CORE: Core) => {
     //This is where the magic happens\
@@ -109,27 +96,14 @@ const Frame = () => {
           onResizeFinished={handleResize}
           initialSizes={sizes}>
           <Stack sx={{ height: "100%", bgcolor: "#172219" }} overflow={"hidden"}>
-            <Sidebar onSelectInstance={onSelectInstance} onSelectContent={handleContentSelection} core={core} />
+            <Sidebar/>
           </Stack>
           <Stack direction="column" height="100%" width="100%" maxWidth={"100"} overflow="hidden" >
-            {selectedContent === -1 && <LoginHome
-              onSetCore={HandleLogin}/>}
-            {selectedContent === 2 && <FileStorage
-              core={core}
-              url={core !== undefined ? core?._url : ''} />}
-            {selectedContent === 3 && 
-            <InstanceContainer
-              url={core !== undefined ? core?._url : ''}
-              objs={objs}
-              instance={Instance}
-              handleSelectedTargets={handleSelectedTargets}
-              core={core} selectedTargets={selectedTargets} />}
-            {selectedContent === 4 && <MapPanel
-              core={core} />}
-            {selectedContent === 5 && <CustomPanelConfiguration
-              core={core} url={core !== undefined ? core?._url : ''} />}
-            {selectedContent === 6 && <CustomPanelConfiguration
-              core={core} url={core !== undefined ? core?._url : ''} />}
+            {content === -1 && <LoginHome onSetCore={HandleLogin}/>}
+            {content === 2 && <FileStorage core={core} url={core !== undefined ? core?._url : ''} />}
+            {content === 3 && <InstanceContainer/>}
+            {content === 4 && <MapPanel/>}
+            {content === 5 && <CustomPanelConfiguration />}
           </Stack>
         </Splitter>
       </Stack>

@@ -3,6 +3,7 @@ import { List,Typography,Box  ,ListItem, ListItemIcon, ListItemText } from '@mui
 import CircleIcon from '@mui/icons-material/Circle';
 import { io, Socket } from 'socket.io-client';
 import * as React from 'react';
+import { useAppSelector } from "../store/store";
 
 interface LiveViewProps {
     url:string
@@ -28,10 +29,16 @@ const generateRandomColor = () => {
   return color;
 };
 
-const LiveView: React.FC<LiveViewProps> = ({ url, core, instance, SelectedTargets }) => {
+const LiveView  = () => {
     const [LogEvent, SetLogEvents] = React.useState<LiveViewObject[]>()
     const [stateIndex, setindex] = React.useState<number>(0)
     const [eventFocused, setEventFocused] = React.useState(false);
+
+    const core = useAppSelector(state=> state.core.coreObject);
+    const url = core._url
+    const instance  = useAppSelector(state=>state.core.SelectedInstances)
+    const selectedTargets = useAppSelector(state=>state.core.selectedTargets)
+    
 
     React.useEffect(() => {
         const socks: Socket = io(`http://${url}/`);
@@ -168,38 +175,3 @@ export default LiveView;
  //Conditional Rendering 
 
 
-//  { SelectedTargets.includes(item._id) ? 
-                        
-//     (
-//         <ListItem 
-//         key={item._id}
-//         sx={{
-//             ":Hover": { opacity: '0.8' },
-//             borderRadius: '4px', marginBottom: '1%', backgroundColor: '#222', gap: '1px'
-//         }}>
-//             <ListItemIcon >
-//                 <CircleIcon sx={{ fontSize: '10px', color:     
-//                                   item._st === -1 ? "#999" :
-//                                   item._st === 0 ? "Tasking" :
-//                                   item._st === 1 ? "yellow" :
-//                                   item._st === 2 ? "dead" :
-//                                   item._st === 3 ? '#21fd0a' : 
-//                                   item._st === 4 ? "Scripting" :
-//                                   "Unknowned"
-//                , width: '10px' }} />
-//             </ListItemIcon>
-//             <div style={{ flexDirection: 'column', display: 'flex', }}>
-//                 <ListItemText style={{ color: '#fff' }}>
-//                     <Typography
-//                         style={{
-//                             color: '#fff',
-//                             fontSize: '9px',
-//                         }}>
-//                         {item._n}
-//                     </Typography>
-//                 </ListItemText>
-//             </div>
-//         </ListItem>
-//     ) 
-    
-//     : (<></>)}

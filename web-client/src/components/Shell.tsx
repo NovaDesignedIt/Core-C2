@@ -20,6 +20,7 @@ import {
   updatemanyrecordsbyfield,
   SetCommand }
 from '../api/apiclient';
+import { useAppSelector } from '../store/store';
 
 
 
@@ -61,12 +62,6 @@ function executeJS(str: string) {
   }
 }
 
-interface ShellProps {
-  core?:Core;
-  instance?: Instance;
-  url:string;
-  selectedTargets:any;
-}
 
 interface commands {
   input:string;
@@ -82,31 +77,40 @@ async function Evaluate(inputValue:string){
   }
 }
 
-const Shell: React.FC<ShellProps> = ({ core, instance,url,selectedTargets })  => {
+const Shell = ()  => {
   const [inputValue, setInputValue] = React.useState<string | any[] | React.ReactElement>();
   const [val, setVal] = React.useState('');
   const textareaRef = React.useRef(null);
   const [commands, setCommands] = React.useState<commands[]>([{input:'',output:''}]);
   const [CmdIndex, setIndex] = React.useState(0);
   
+  // core={core} instance={instance} url={url} selectedTargets={selectedTargets}
+
+  const core = useAppSelector(state => state.core.coreObject);
+  const instance = useAppSelector(state => state.core.SelectedInstances);
+  const selectedTargets = useAppSelector(state => state.core.selectedTargets);
+  const AllTargets = useAppSelector(state => state.core.targetObjects);
+  const url = core._url  
   
-  
+
+
+
+
   const Command = async (arg: string) => {
     //need to be Posting to this
     //@app.route('/<_core_id>/<_isid>/c',methods=['POST'])
     if (core !== undefined && instance !== undefined) {
       selectedTargets.forEach((id: number, index: number) => {
-        const target: Target = ((instance !== undefined ? instance : new Instance())._targets.find(t => t._id === id)) ?? new Target();
+        const target: Target = (AllTargets.find(t => t._id === id)) ?? new Target();
         const out = SetCommand(url, core, instance, target, arg);
-
       })
     }
   }
-  
-  const CommandById = async (arg: string, id:number) => {
+
+  const CommandById = async (arg: string, id: number) => {
     if (core !== undefined && instance !== undefined) {
-        const target: Target = ((instance !== undefined ? instance : new Instance())._targets.find(t => t._id === id)) ?? new Target();
-       SetCommand(url, core, instance, target, arg);
+      const target: Target = (AllTargets.find(t => t._id === id)) ?? new Target();
+      SetCommand(url, core, instance, target, arg);
     }
   }
 

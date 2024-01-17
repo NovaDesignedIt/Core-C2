@@ -46,12 +46,7 @@ function createData(
     return { name, calories, fat, carbs, protein };
 }
 
-interface InstanceUsersProps {
-    core?: Core;
-    url: string;
-}
-
-const instanceConfiguration: React.FC<InstanceUsersProps> = () => {
+const instanceConfiguration = () => {
     const dispatch:any = useAppDispatch();
 
     const CoreC = useAppSelector(state => state.core.coreObject) 
