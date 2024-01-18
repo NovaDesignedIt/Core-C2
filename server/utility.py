@@ -42,6 +42,48 @@ color_codes = [RED ,GREEN ,YELLOW ,BLUE ,MAGENTA ,CYAN ,LIGHT_RED ,LIGHT_GREEN ,
 db = orm.Database("sqlite", "server.db")
 # Define the Targ entity using Pony ORM
 
+""" 
+ATTRIBUTE CLASS.
+"""
+class Attribute(Enum):
+    STATE = "_st" 
+    IN = "_in"
+    OUT = "_out"
+    LASTPING = "_lp"
+    DUMP = "_dump"
+    IPADDRESS = "_ip"
+    INSTANCEID = "_isid"
+    TARGETID = "_id"
+    NAME = "_n"
+    INTERVAL = "_zzz"
+
+""" 
+INPUT CLASS.
+"""
+class _state(Enum):
+    COMMAND = 0 
+    SLEEP = 1
+    KILL = 2
+    LISTEN = 3
+    INTERVAL = 4
+    ERROR = -1
+
+
+""" 
+ACTION CLASS.
+"""
+class ActionType(Enum):
+    GET = 0 
+    INSERT = 1
+    UPDATE = 2
+    DELETE = 3
+    PING = 4
+    EXEC = 5
+    DOWNLOAD = 6
+    SUCCESS = 7
+    FAILED = 8
+    ERROR = 9
+    AUTHENTICATED = 10
 
 
 class Core:
@@ -126,8 +168,19 @@ class Configuration(db.Entity):
     _hash_id = orm.Required(str)
     _core_id = orm.Required(str)
     _log_ret_days = orm.Optional(int)
-    
-    
+
+    _inactivitytimeout  = orm.Optional(int)
+
+    _redirect_to_dump  = orm.Optional(int)
+    _create_on_ping  = orm.Optional(int)
+    _use_http  = orm.Optional(int)
+    _log_create  = orm.Optional(int)
+    _log_delete  = orm.Optional(int)
+    _log_commands  = orm.Optional(int)
+    _log_pings  = orm.Optional(int)
+
+
+
     @orm.db_session
     def insert_Configuration(
                             session_len,
@@ -138,7 +191,15 @@ class Configuration(db.Entity):
                             port,
                             hash_id,
                             core_id,
-                            _log_ret_days):
+                            _log_ret_days,
+                            _redirect_to_dump,
+                            _create_on_ping,
+                            _use_http,
+                            _log_create,
+                            _log_delete,
+                            _log_commands,
+                            _log_pings,
+                            _inactivitytimeout,):
         Configuration( 
                         _session_len  = session_len,
                         _theme  = theme,
@@ -148,7 +209,15 @@ class Configuration(db.Entity):
                         _port  = port,
                         _hash_id  = hash_id,
                         _core_id  = core_id,
-                        _log_ret_days =_log_ret_days)
+                        _log_ret_days =_log_ret_days,
+                        _redirect_to_dump = _redirect_to_dump ,
+                        _create_on_ping = _create_on_ping ,
+                        _use_http = _use_http ,
+                        _log_create = _log_create ,
+                        _log_delete = _log_delete ,
+                        _log_commands = _log_commands ,
+                        _log_pings = _log_pings ,
+                        _inactivitytimeout = _inactivitytimeout)
         orm.commit()
 
 class User(db.Entity):
@@ -169,48 +238,21 @@ class Files(db.Entity):
     _core_id = Required(str)
     _id = PrimaryKey(int, auto=True)
 
-""" 
-ATTRIBUTE CLASS.
-"""
-class Attribute(Enum):
-    STATE = "_st" 
-    IN = "_in"
-    OUT = "_out"
-    LASTPING = "_lp"
-    DUMP = "_dump"
-    IPADDRESS = "_ip"
-    INSTANCEID = "_isid"
-    TARGETID = "_id"
-    NAME = "_n"
-    INTERVAL = "_zzz"
 
-""" 
-INPUT CLASS.
-"""
-class _state(Enum):
-    COMMAND = 0 
-    SLEEP = 1
-    KILL = 2
-    LISTEN = 3
-    INTERVAL = 4
-    ERROR = -1
+class Listeners(db.Entity):
+    _core_id = orm.Required(str)
+    _listener_name = orm.Optional(str)
+    _ipaddress = orm.Optional(str)
+    _last_ping  = orm.Optional(str)
+    _id = orm.PrimaryKey(int,auto=True)
+    
+    @orm.db_session
+    def insert_Listener(_core_id,_listener_name,_listener_IpAddress,_last_ping):
+        Listeners(_core_id=_core_id,
+                  _listener_name=_listener_name,
+                  _ipaddress=_listener_IpAddress,
+                  _last_ping=_last_ping)
 
-
-""" 
-ACTION CLASS.
-"""
-class ActionType(Enum):
-    GET = 0 
-    INSERT = 1
-    UPDATE = 2
-    DELETE = 3
-    PING = 4
-    EXEC = 5
-    DOWNLOAD = 6
-    SUCCESS = 7
-    FAILED = 8
-    ERROR = 9
-    AUTHENTICATED = 10
 
 """ 
 LOGGING CLASS.
@@ -666,6 +708,7 @@ def return_core(core_id,sessiontoken):
                 configJson = {}
                 InstanceJson = []
                 usersJson = []
+                listen = []
                 config_object = orm.select(c for c in Configuration if c._core_id == core_id).first()
                 users = orm.select(c for c in User if c._core_id == core_id)
                 if users : 
@@ -687,9 +730,29 @@ def return_core(core_id,sessiontoken):
                         "_port": config_object._port,
                         "_hash_id": config_object._hash_id,
                         "_core_id": config_object._core_id,
-                        "_log_ret_days": config_object._log_ret_days
+                        "_log_ret_days": config_object._log_ret_days,
+                        "_redirect_to_dump" : config_object._redirect_to_dump,
+                        "_create_on_ping" : config_object._create_on_ping,
+                        "_use_http" : config_object._use_http,
+                        "_log_create" : config_object._log_create,
+                        "_log_delete" : config_object._log_delete,
+                        "_log_commands" : config_object._log_commands,
+                        "_log_pings" : config_object._log_pings,
+                        "_inactivitytimeout" : config_object._inactivitytimeout
                     }
                     configJson = config_dict
+
+                    listeners = orm.select(l for l in Listeners if l._core_id == core_id)
+                    if len(listeners) > 0 :
+                        for i in listeners:
+                            listen.append({
+                            "_core_id" : i._core_id,
+                            "_listener_name" : i._listener_name,
+                            "_ipaddress" : i._ipaddress,
+                            "_last_ping" : i._last_ping,
+                            "_id" : i._id,
+                            })
+
                     InstanceObjects = orm.select(c for c in Instance if c._core_id == core_id)
                     if len(InstanceObjects) > 0 :
                         for i in InstanceObjects :
@@ -719,8 +782,8 @@ def return_core(core_id,sessiontoken):
                                 "_targets": targetlist           
                                 }
                                 )
-                
-                coreJson = {"_core_id" :core._core_id,"_sessiontoken":sessiontoken ,"_config" :configJson, "_users":usersJson, "_instances":InstanceJson}
+                print(listeners)
+                coreJson = {"_core_id" :core._core_id,"_sessiontoken":sessiontoken ,"_config" :configJson, "_users":usersJson, "_listeners":listen, "_instances":InstanceJson}
                 return json.dumps(coreJson)
     except Exception as e:
         print(f"Error: {e}")

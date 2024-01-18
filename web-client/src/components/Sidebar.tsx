@@ -56,7 +56,7 @@ const CustomizedList =  ( ) => {
   const [open, setOpen] = react.useState(false);
   const [sublistOpen, setSublistOpen] = react.useState(false);
   const [selectedInstance, setinstance] = react.useState<Instance>();
-  
+
 
   const core = useAppSelector(state => state.core.coreObject)
   const inst = useAppSelector(state => state.core.instanceObjects)
@@ -106,7 +106,7 @@ const CustomizedList =  ( ) => {
             },
           })}
         >
-          {/* {👽} */}
+
           <Paper elevation={0} sx={{ minWidth:"10%", borderRadius: 0,width:"100%" }}>
             <FireNav component="nav" disablePadding sx={{width:"100%"}}>
               <ListItemButton key={1} >
@@ -135,9 +135,8 @@ const CustomizedList =  ( ) => {
 
                        </ListItemIcon>
                   <ListItemText
-
                     primary="core Overview"
-                    secondary={  core._core_id !== '' ? "login to fetch core." : ""}
+                    secondary={  core._core_id == '' ? "login to fetch core." : ""}
                     secondaryTypographyProps={{
                       color: 'gray',
                       fontSize:10,

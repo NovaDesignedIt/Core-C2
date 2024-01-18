@@ -13,10 +13,10 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import ClearIcon from '@mui/icons-material/Clear';
 import UpdateForm from './UpdateForm';
 import ArchiveIcon from '@mui/icons-material/Archive';
-import { Core, deleterecordbyid, Instance, getallrecords } from '../api/apiclient';
+import { Core, deleterecordbyid, Instance, getallrecords, CoreC, Config } from '../api/apiclient';
 import { Typography } from '@material-ui/core';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { SetSelectedTargets } from '../store/features/CoreSlice';
+import { BuildStateManagement, SetSelectedTargets } from '../store/features/CoreSlice';
 
 
 
@@ -196,11 +196,12 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
     );
   }
 
+
+
+
   const fetchData = async (inst: Instance) => {
     try {
-      let isMounted = true; // This variable is used as a cancellation token
-      // Replace the URL with your actual API endpoint 
-
+      let isMounted = true;
       if (isMounted) {
         const data = await getallrecords(core._url, inst, core)
         if (data === '401' || typeof data  === "string") {
@@ -427,10 +428,7 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
 
         sx={{
           color: "#fff", padding: 0, width: "100%", height: "100%",
-          "& .MuiPaper-root": { bgcolor: "#111613", color: "fff", borderWidth: 1, borderStyle: "solid", borderColor: "#fff" }
-
-        }
-
+          "& .MuiPaper-root": { bgcolor: "#111613", color: "fff", borderWidth: 1, borderStyle: "solid", borderColor: "#fff" }}
         } open={promptopen}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"

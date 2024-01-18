@@ -519,7 +519,7 @@ def SyncCore(_core_id):
 
 
 
-#NEW-CLI
+
 @app.route('/<_core_id>/<_isid>/c',methods=['POST'])
 @orm.db_session
 def command(_core_id,_isid):
@@ -1108,14 +1108,6 @@ def getsleep(isid,id):
 
 
 
-#icci
-
-# @app.route('/<_core_id>/i/<field>/<value>/<new_value>', methods=['PUT'])
-# @orm.db_session
-# def update_instance_by_field(field,value,new_value):
-#     try:
-#         with orm.db_session:
-
 @app.route('/<_core_id>/t/<field>/<value>/<new_value>', methods=['PUT'])
 @orm.db_session
 def updatemanyrecordsbyfield(_core_id,field,value,new_value):
@@ -1166,9 +1158,11 @@ def updatemanyrecordsbyfield(_core_id,field,value,new_value):
                         "{\"msg\":\"updatemanyrecordsbyfield(field,value,new_value): 500"+f"Error: {e}"+"\"}")
 
         return '500'  
-    # Return '500' in case of any error during the update
-""" SESSION MANAGEMENT """
+    
+# Return '500' in case of any error during the update
 
+
+""" SESSION MANAGEMENT """
 @app.route('/ss/<_core_id>', methods=['GET'])
 @orm.db_session
 def CheckingSession(_core_id):
@@ -1209,8 +1203,174 @@ def checksessions(session_token):
                         "{\"msg\":\"checksessions(session_token): 400 "+"\"}")
         return '400'
     
-""" USER MANAGER OPERATIONS """
+""" LISTENER """
+@app.route('/<_core_id>/al', methods=['POST'])
+@orm.db_session
+def pinglistener(_core_id):
+    try:
 
+        if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+            
+            Utility.Log.insert_log(f"{_core_id}",
+                                    'invalid session',
+                                    action.INSERT.value,
+                                    str(datetime.now()),
+                                    action.FAILED.value,
+                                    "{\"msg\":\"def pinglistener(_core_id): 401"+"\"}")
+            return '401', 401
+        
+        print('pinging listener')
+        #ping the Listener here.
+
+        data =  request.get_json()
+        #data =  request.json()
+        if data :
+            _core_id =  data["_core_id"]
+            _listener_name =  data["_listener_name"]
+            _listener_IpAddress =  data["_ipaddress"]
+            _last_ping =  data["_last_ping"]
+            # ping the listner
+            Utility.Listeners.insert_Listener(_core_id,_listener_name,_listener_IpAddress,_last_ping)
+            orm.commit()   
+            
+        Utility.Log.insert_log(f"{_core_id}",
+                                'invalid session',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.SUCCESS.value,
+                                "{\"msg\":\"def pinglistener(_core_id): 401"+"\"}")
+        return data , 200
+    except Exception as e:
+        
+        Utility.Log.insert_log(f"{_core_id}",
+                        'count:0',
+                        action.GET.value,
+                        str(datetime.now()),
+                        action.ERROR.value,
+                        "{\"msg\":\"def pinglistener(_core_id): 500"+f"Error: {e}"+"\"}")
+
+        return '500'  , 500
+
+
+@app.route('/<_core_id>/dl/<id>', methods=['DELETE'])
+@orm.db_session
+def deleteListener(_core_id,id):
+    try:
+
+        if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+            
+            Utility.Log.insert_log(f"{_core_id}",
+                                    'invalid session',
+                                    action.INSERT.value,
+                                    str(datetime.now()),
+                                    action.FAILED.value,
+                                    "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}")
+            return '401', 401
+        
+        with orm.db_session:
+            listener = Utility.Listeners.get(_id=id)
+            # Check if the record exists
+            if listener:
+                # Delete the record from the database
+                listener.delete()
+                orm.commit()
+                
+        Utility.Log.insert_log(f"{_core_id}",
+                                'invalid session',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.SUCCESS.value,
+                                "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}")
+        return '200', 200
+        
+    except Exception as e:
+        
+        Utility.Log.insert_log(f"{_core_id}",
+                        'count:0',
+                        action.GET.value,
+                        str(datetime.now()),
+                        action.ERROR.value,
+                        "{\"msg\":\"def deleteListener(_core_id,id): 500"+f"Error: {e}"+"\"}")
+
+        return '500'  
+
+
+@app.route('/<_core_id>/gl', methods=['GET'])
+@orm.db_session
+def getListeners(_core_id):
+    try:
+
+        if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+            
+            Utility.Log.insert_log(f"{_core_id}",
+                                    'invalid session',
+                                    action.INSERT.value,
+                                    str(datetime.now()),
+                                    action.FAILED.value,
+                                    "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}")
+            return '401', 401
+        listeners = orm.select(i for i in Utility.Listeners if i._core_id == _core_id )  
+        Utility.Log.insert_log(f"{_core_id}",
+                                'invalid session',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.SUCCESS.value,
+                                "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}")
+        return jsonify(listeners), 200
+        
+    except Exception as e:
+        
+        Utility.Log.insert_log(f"{_core_id}",
+                        'count:0',
+                        action.GET.value,
+                        str(datetime.now()),
+                        action.ERROR.value,
+                        "{\"msg\":\"def deleteListener(_core_id,id): 500"+f"Error: {e}"+"\"}")
+
+        return '500'  
+
+
+
+""" SAVE CONFIGURATION """
+@app.route('/<_core_id>/sconf', methods=['POST'])
+@orm.db_session
+def setconfigurations(_core_id):
+    try:
+        if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+            Utility.Log.insert_log(f"{_core_id}",
+                                    'invalid session',
+                                    action.INSERT.value,
+                                    str(datetime.now()),
+                                    action.FAILED.value,
+                                    "{\"msg\":\"insertinstance(): 401"+"\"}")
+            return '401', 401
+        with orm.db_session:
+            data = request.json()
+            if data :
+                configuration = orm.select(c for c in Utility.Configuration if c._core_id == _core_id).first()
+                # Check if the configuration with the specified core_id exists
+                if configuration:
+                    # Update the attributes of the configuration entity with new_data
+                    for key, value in data.get('_config').items():
+                        setattr(configuration, key, value)
+                    # Commit the changes to the database
+            Utility.Log.insert_log(f"{_core_id}",
+                                    'invalid session',
+                                    action.INSERT.value,
+                                    str(datetime.now()),
+                                    action.SUCCESS.value,
+                                    "{\"msg\":\"def setconfigurations(_core_id): 401"+"\"}")
+            return '200', 200    
+    except Exception as e:
+        
+        Utility.Log.insert_log(f"{_core_id}",
+                        'count:0',
+                        action.GET.value,
+                        str(datetime.now()),
+                        action.ERROR.value,
+                        "{\"msg\":\"def setconfigurations(_core_id): 500"+f"Error: {e}"+"\"}")
+
+        return '500'  ,500
 
 
 
@@ -1234,7 +1394,7 @@ def create_core():
             coreid = Utility.Guid()
             Utility.Core.insert_core(coreid)
             Utility.Instance.insert_instance(0,Utility.generate_random_string(10),"default",data["_address"],data["_hostname"],0,coreid)
-            Utility.Configuration.insert_Configuration(30,0,data["_hostname"],data["_hostname"],data["_address"],data["_port"],"3453453453",coreid,30)
+            Utility.Configuration.insert_Configuration(30,0,data["_hostname"],data["_hostname"],data["_address"],data["_port"],"3453453453",coreid,30,0,0,0,0,0,0,0)
             
             if not Utility.create_user(usr,password,coreid):
                 Utility.Log.insert_log(f"{coreid}",

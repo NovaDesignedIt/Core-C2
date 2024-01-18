@@ -3,7 +3,7 @@
 ///////////////////////////////////////////////////////////////////////////////////*/
 
 export interface CoreInterface {
- core:Core;
+  core: Core;
 }
 
 
@@ -32,9 +32,7 @@ export class Target {
     _isid = '',
     _zzz = 0,
     _n = '',
-  )
-
-  {
+  ) {
     this._ip = _ip
     this._st = _st
     this._dmp = _dmp
@@ -50,24 +48,49 @@ export class Target {
 }
 
 export class User {
-  _hash_id  :string;
-  _username  :string;
-  _AuthToken:  string;
-  _core_id : string;
+  _hash_id: string;
+  _username: string;
+  _AuthToken: string;
+  _core_id: string;
 
-  constructor(   
-  _hash_id = "",
-  _username = "",
-  _AuthToken = "",
-  _core_id= "" 
-  )
-{
-   this._core_id =_core_id 
-   this._hash_id =_hash_id 
-   this._username =_username 
-   this._AuthToken =_AuthToken 
+  constructor(
+    _hash_id = "",
+    _username = "",
+    _AuthToken = "",
+    _core_id = ""
+  ) {
+    this._core_id = _core_id
+    this._hash_id = _hash_id
+    this._username = _username
+    this._AuthToken = _AuthToken
+  }
 }
+
+export class Listeners {
+    _core_id :string
+    _listener_name :string
+    _ipaddress :string
+    _last_ping  :string
+    _id :number
+
+  constructor(
+    _core_id ="",
+    _listener_name ="",
+    _ipaddress ="",
+    _last_ping  ="",
+    _id = 0,
+    
+  ) {
+    this._core_id = _core_id
+    this._listener_name = _listener_name
+    this._ipaddress = _ipaddress
+    this._last_ping  = _last_ping
+    this._id = _id
+    
+  }
 }
+
+
 
 export class Instance {
   _id: number;
@@ -85,8 +108,7 @@ export class Instance {
     _instance_ip = '',
     _instance_url = '',
     _Instance_count = 0,
-    _core_id = '',)
-  {
+    _core_id = '',) {
     this._id = _id
     this._instance_id = _instance_id
     this._instance_name = _instance_name
@@ -112,6 +134,14 @@ export class Config {
   _hash_id?: string;
   _core_id?: string;
   _log_ret_days?: number;
+  _redirect_to_dump?: number;
+  _create_on_ping?: number;
+  _use_http?: number;
+  _log_create?: number;
+  _log_delete?: number;
+  _log_commands?: number;
+  _log_pings?: number;
+  _inactivitytimeout?: number;
 
   constructor(
     _id = 0,
@@ -123,6 +153,14 @@ export class Config {
     _hash_id = '',
     _core_id = '',
     _log_ret_days = 0,
+    _redirect_to_dump = 0,
+    _create_on_ping = 0,
+    _use_http = 0,
+    _log_create = 0,
+    _log_delete = 0,
+    _log_commands = 0,
+    _log_pings = 0,
+    _inactivitytimeout = 0
   ) {
     this._id = _id || 0;
     this._session_len = _session_len || 0;
@@ -132,11 +170,19 @@ export class Config {
     this._ip_address = _ip_address || 'ipaddr';
     this._hash_id = _hash_id || 'hashid';
     this._core_id = _core_id || 'coreid';
-    this._log_ret_days = _log_ret_days ||  0;
+    this._log_ret_days = _log_ret_days || 0;
+    this._redirect_to_dump = _redirect_to_dump;
+    this._create_on_ping = _create_on_ping;
+    this._use_http = _use_http;
+    this._log_create = _log_create;
+    this._log_delete = _log_delete;
+    this._log_commands = _log_commands;
+    this._log_pings = _log_pings;
+    this._inactivitytimeout = _inactivitytimeout;
   }
 }
 
-export class Logger{ 
+export class Logger {
   _id: string;
   _instance_id: string;
   _target_name: string;
@@ -145,29 +191,29 @@ export class Logger{
   _result: number;
   _core_id: string;
   _target_id: number;
-  _msg: string;                  
-  
+  _msg: string;
+
   constructor(
     _id = '',
-  _instance_id = '',
-  _target_name = '',
-  _action = 0,
-  _time = '',
-  _result = 0,
-  _core_id = '',
-  _target_id = 0,
-  _msg = ''
+    _instance_id = '',
+    _target_name = '',
+    _action = 0,
+    _time = '',
+    _result = 0,
+    _core_id = '',
+    _target_id = 0,
+    _msg = ''
   ) {
-     
-  this._id = _id || '';
-  this._instance_id = _instance_id || '';
-  this._target_name = _target_name || '';
-  this._action = _action || 0;
-  this._time = _time || '';
-  this._result = _result || 0;
-  this._core_id = _core_id || '';
-  this._target_id = _target_id || 0;
-  this._msg = _msg || '';
+
+    this._id = _id || '';
+    this._instance_id = _instance_id || '';
+    this._target_name = _target_name || '';
+    this._action = _action || 0;
+    this._time = _time || '';
+    this._result = _result || 0;
+    this._core_id = _core_id || '';
+    this._target_id = _target_id || 0;
+    this._msg = _msg || '';
   }
 }
 
@@ -197,17 +243,19 @@ export class Core {
   _core_id: string;
   _config?: Config;
   _instances?: Instance[];
+  _listeners?: Listeners[];
   _rootdir?: Root;
   _users?: User[];
   _user: string;
   _url: string;
 
   constructor(
-    _core_c?:CoreC,
+    _core_c?: CoreC,
     _sessiontoken = '',
     _core_id = '',
     _config?: Config,
     _instances?: Instance[],
+    _listeners?: Listeners[],
     _rootdir?: Root,
     _users?: User[],
     user = '',
@@ -218,6 +266,7 @@ export class Core {
     this._core_id = _core_id;
     this._config = _config;
     this._instances = _instances;
+    this._listeners = _listeners
     this._rootdir = _rootdir;
     this._users = _users;
     this._user = user;
@@ -247,15 +296,15 @@ export class Core {
     }
   }
 
-  config(){
+  config() {
     return this._config;
   }
 
-  id(){
+  id() {
     return this._core_id;
-   }
+  }
 
-  token(){
+  token() {
     return this._sessiontoken;
   }
 
@@ -263,21 +312,21 @@ export class Core {
 
 
 export class Root {
-  _path : string;
+  _path: string;
   _core_id: string;
   _filecount: number;
   _files: File[];
 
   constructor(
-      _path = '',
-      _core_id = '',
-      _filecount = 0,
-      _files = [new File(),],
+    _path = '',
+    _core_id = '',
+    _filecount = 0,
+    _files = [new File(),],
   ) {
-      this._core_id = _core_id;
-      this._filecount = 0;
-      this._files = _files;
-      this._path = '/' + _core_id + '/';
+    this._core_id = _core_id;
+    this._filecount = 0;
+    this._files = _files;
+    this._path = '/' + _core_id + '/';
   }
 
 
@@ -289,21 +338,21 @@ export class File {
   _extension: string;
 
   constructor(
-      _size = 0,
-      _name = '',
-      _extension =  '',
+    _size = 0,
+    _name = '',
+    _extension = '',
 
   ) {
-      this._size = _size;
-      this._name = _name;
-      this._extension = _extension;
+    this._size = _size;
+    this._name = _name;
+    this._extension = _extension;
   }
 
 }
 
 
 export interface CoreObjects {
-  core?:Core
+  core?: Core
 }
 
 /**
@@ -317,7 +366,7 @@ export interface CoreObjects {
  * @param {string} value - The value to match.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function getinstancebyfield(url:string,core:CoreC, recordId: string, value:string ): Promise<string> {
+export async function getinstancebyfield(url: string, core: CoreC, recordId: string, value: string): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/${recordId}/${value}`;
 
@@ -353,7 +402,7 @@ export async function getinstancebyfield(url:string,core:CoreC, recordId: string
  * @param {Instance} data - The Instance data.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function insertinstance(url:string,core:CoreC,data:Instance): Promise<string> {
+export async function insertinstance(url: string, core: CoreC, data: Instance): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i`;
 
@@ -363,7 +412,7 @@ export async function insertinstance(url:string,core:CoreC,data:Instance): Promi
         'Content-Type': 'application/json',
         'authtok': core._sessiontoken,
       },
-      body: JSON.stringify(data), 
+      body: JSON.stringify(data),
     });
 
     if (response.ok || response.status == 201) {
@@ -392,7 +441,7 @@ export async function insertinstance(url:string,core:CoreC,data:Instance): Promi
  * @param {Instance} instance - The Instance object.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function getinstancebyid(url:string,core:CoreC,instance:Instance): Promise<string> {
+export async function getinstancebyid(url: string, core: CoreC, instance: Instance): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/${instance._id}`;
 
@@ -429,7 +478,7 @@ export async function getinstancebyid(url:string,core:CoreC,instance:Instance): 
 
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function getallinstance(url:string,core:CoreC): Promise<string> {
+export async function getallinstance(url: string, core: CoreC): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/all`;
 
@@ -465,7 +514,7 @@ export async function getallinstance(url:string,core:CoreC): Promise<string> {
  * @param {Instance} instance - The Instance object.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function deleteinstancebyid(url:string,core:CoreC,instance:Instance): Promise<string> {
+export async function deleteinstancebyid(url: string, core: CoreC, instance: Instance): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/${instance._id}`;
 
@@ -489,7 +538,7 @@ export async function deleteinstancebyid(url:string,core:CoreC,instance:Instance
   } catch (error) {
     console.error('Error:', error);
     return '500';
-  }instance
+  } instance
 }
 
 
@@ -506,7 +555,7 @@ export async function deleteinstancebyid(url:string,core:CoreC,instance:Instance
  * @param {string} value - The new value.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function updatesingleInstancebyid(url:string,core:CoreC,instance:Instance,field:string,value:string): Promise<string> {
+export async function updatesingleInstancebyid(url: string, core: CoreC, instance: Instance, field: string, value: string): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/${instance._id}/${field}/${value}`;
 
@@ -546,7 +595,7 @@ export async function updatesingleInstancebyid(url:string,core:CoreC,instance:In
  * @param {string} new_value - The new value.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function updatemanyinstancebyfield(url:string,core:CoreC,field:string,value:string,new_value:string): Promise<string> {
+export async function updatemanyinstancebyfield(url: string, core: CoreC, field: string, value: string, new_value: string): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/${field}/${value}/${new_value}`;
 
@@ -585,7 +634,7 @@ export async function updatemanyinstancebyfield(url:string,core:CoreC,field:stri
  * @param {Target} data - The Target data.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function insertrecord(url:string,core:CoreC,data:Target): Promise<string> {
+export async function insertrecord(url: string, core: CoreC, data: Target): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/t`;
 
@@ -595,7 +644,7 @@ export async function insertrecord(url:string,core:CoreC,data:Target): Promise<s
         'Content-Type': 'application/json',
         'authtok': core._sessiontoken,
       },
-      body: JSON.stringify(data), 
+      body: JSON.stringify(data),
     });
 
     if (response.ok || response.status == 200) {
@@ -624,7 +673,7 @@ export async function insertrecord(url:string,core:CoreC,data:Target): Promise<s
  * @param {string} value - The value to match.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function getrecordsbyfield(url:string,core:CoreC,field:string,value:string): Promise<string> {
+export async function getrecordsbyfield(url: string, core: CoreC, field: string, value: string): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/t/${field}/${value}`;
 
@@ -661,7 +710,7 @@ export async function getrecordsbyfield(url:string,core:CoreC,field:string,value
  * @param {string} record_id - The ID of the record to retrieve.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function getrecordbyid(url:string,core:CoreC,record_id:string): Promise<Target | string> {
+export async function getrecordbyid(url: string, core: CoreC, record_id: string): Promise<Target | string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/t/${record_id}`;
 
@@ -699,7 +748,7 @@ export async function getrecordbyid(url:string,core:CoreC,record_id:string): Pro
  * @param {Core} [core] - The Core object (optional).
  * @returns {Promise<Target[] | string>} A Promise with the result.
  */
-export async function getallrecords(url:string,instance?:Instance,core?:CoreC): Promise<Target[] | string> {
+export async function getallrecords(url: string, instance?: Instance, core?: CoreC): Promise<Target[] | string> {
   try {
     const apiUrl = `http://${url}/${core?._core_id}/${instance?._instance_id}/t/all`;
     const authoken = core?._sessiontoken ? core?._sessiontoken : ''
@@ -707,7 +756,7 @@ export async function getallrecords(url:string,instance?:Instance,core?:CoreC): 
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'authtok':authoken
+        'authtok': authoken
       },
     });
 
@@ -736,7 +785,7 @@ export async function getallrecords(url:string,instance?:Instance,core?:CoreC): 
  * @param {Core} [core] - The Core object (optional).
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function deleterecordbyid(url:string,record_id:string,core?:CoreC,): Promise<string> {
+export async function deleterecordbyid(url: string, record_id: string, core?: CoreC,): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core?._core_id}/t/${record_id}`;
     const authoken = core?._sessiontoken ? core?._sessiontoken : ''
@@ -744,7 +793,7 @@ export async function deleterecordbyid(url:string,record_id:string,core?:CoreC,)
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'authtok': authoken ,
+        'authtok': authoken,
       },
     });
 
@@ -777,7 +826,7 @@ export async function deleterecordbyid(url:string,record_id:string,core?:CoreC,)
  * @param {string} value - The new value.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function updatesinglerecordbyid(url:string,core:CoreC,record_id:string,field:string,value:string): Promise<string> {
+export async function updatesinglerecordbyid(url: string, core: CoreC, record_id: string, field: string, value: string): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/t/${record_id}/${field}/${value}`;
 
@@ -817,7 +866,7 @@ export async function updatesinglerecordbyid(url:string,core:CoreC,record_id:str
  * @param {string} value - The new value.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function updatemanyrecordsbyfield(url:string,core:CoreC,record_id:string,field:string,value:string): Promise<string> {
+export async function updatemanyrecordsbyfield(url: string, core: CoreC, record_id: string, field: string, value: string): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core._core_id}/t/${record_id}/${field}/${value}`;
 
@@ -856,20 +905,20 @@ export async function updatemanyrecordsbyfield(url:string,core:CoreC,record_id:s
  * @param {string} record_id - The ID of the record to retrieve.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function SetCommand(url:string,core:CoreC,instance:Instance,target:Target,command:string): Promise<string > {
+export async function SetCommand(url: string, core: CoreC, instance: Instance, target: Target, command: string): Promise<string> {
   try {
- 
+
     if (instance === undefined && core === undefined) {
       return `no target with ${target._id}`;
     }
 
     //alert(typeof instance)
     const apiUrl = `http://${url}/${core._core_id}/${instance._instance_id}/c`;
- 
+
     target._st = 0;
     target._in = command;
     //@app.route('/<_core_id>/<_isid>/c',methods=['POST'])
-   
+
 
 
     const response = await fetch(apiUrl, {
@@ -880,7 +929,7 @@ export async function SetCommand(url:string,core:CoreC,instance:Instance,target:
       },
       body: JSON.stringify(target),
     });
-    
+
     //console.log(JSON.stringify(target))
 
     if (response.ok || response.status == 200) {
@@ -905,11 +954,11 @@ export async function SetCommand(url:string,core:CoreC,instance:Instance,target:
  * @param {number} id - The numeric id parameter.
  * @returns {Promise<string>} A Promise that resolves to the fetched data or an error message.
  */
-export async function fetchOut(url:string,instance:Instance, id: number): Promise<string> {
-   
+export async function fetchOut(url: string, instance: Instance, id: number): Promise<string> {
+
   try {
     const response = await fetch(`http://${url}/${instance._instance_id}/${id}/go`);
-    
+
     if (response.ok) {
       const data = await response.text();
       return data;
@@ -932,14 +981,14 @@ export async function fetchOut(url:string,instance:Instance, id: number): Promis
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the download is complete.
  */
-export async function downloadFiles(url:string,files:string[],core?:CoreC){
+export async function downloadFiles(url: string, files: string[], core?: CoreC) {
 
   try {
     console.log(JSON.stringify(files));
 
     //alert(typeof instance)
     const apiUrl = `http://${url}/${core?._core_id}/upload/gf`;
- 
+
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -948,7 +997,7 @@ export async function downloadFiles(url:string,files:string[],core?:CoreC){
       },
       body: JSON.stringify(files),
     });
-    
+
 
 
     if (response.ok || response.status == 200) {
@@ -976,14 +1025,14 @@ export async function downloadFiles(url:string,files:string[],core?:CoreC){
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the deletion is complete.
  */
-export  async function deleteFiles(url:string,files:string[],core?:CoreC){
+export async function deleteFiles(url: string, files: string[], core?: CoreC) {
 
   try {
     console.log(JSON.stringify(files));
 
     //alert(typeof instance)
     const apiUrl = `http://${url}/${core?._core_id}/uploads/del`;
- 
+
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -992,7 +1041,7 @@ export  async function deleteFiles(url:string,files:string[],core?:CoreC){
       },
       body: JSON.stringify(files),
     });
-    
+
     //console.log(JSON.stringify(target))
 
     if (response.ok || response.status == 200) {
@@ -1020,19 +1069,19 @@ export  async function deleteFiles(url:string,files:string[],core?:CoreC){
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the deletion is complete.
  */
-export async function CreateCore(url:string,coreStructure:any) {
+export async function CreateCore(url: string, coreStructure: any) {
 
-  const response =  await fetch(`http://${url}/cc`, {
+  const response = await fetch(`http://${url}/cc`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json", // Specify the content type as JSON
     },
-    body:coreStructure, // Convert the object to a JSON string
+    body: coreStructure, // Convert the object to a JSON string
   }).then(
-    (data)=> {
+    (data) => {
       return data.status
     }
-  ).catch((error:Error)=> { 
+  ).catch((error: Error) => {
     console.log(error);
   })
 
@@ -1042,12 +1091,90 @@ export async function CreateCore(url:string,coreStructure:any) {
 
 
 /**
+ * addlistener from the specified URL.
+ * @param {url} - The URL for the delete endpoint.
+ * @param {Listeners} - Listener Object
+ * @param {core} - An optional Core object.
+ * @returns A Promise that resolves when the deletion is complete.
+ */
+export async function addlistener(url: string, core:CoreC, Listener: Listeners) {
+  const response = await fetch(`http://${url}/${core._core_id}/al`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json", // Specify the content type as JSON
+      'authtok': core?._sessiontoken !== undefined ? core?._sessiontoken : '',
+    },
+    body: JSON.stringify(Listener), // Convert the object to a JSON string
+  }).then(
+    (data) => {
+      return data.status
+    }
+  ).catch((error: Error) => {
+    console.log(error);
+  })
+  return response;
+
+
+}
+
+
+/**
+ * deleteListener from the specified URL.
+ * @param {url} - The URL for the delete endpoint.
+ * @param {Listeners} - Listener Object
+ * @param {core} - An optional Core object.
+ * @returns A Promise that resolves when the deletion is complete.
+ */
+export async function deleteListener(url: string, core:CoreC, id: number) {
+  const response = await fetch(`http://${url}/${core._core_id}/dl/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json", // Specify the content type as JSON
+      'authtok': core?._sessiontoken !== undefined ? core?._sessiontoken : '',
+    }
+  }).then(
+    (data) => {
+      return data.status
+    }
+  ).catch((error: Error) => {
+    console.log(error);
+  })
+  return response;
+}
+
+
+/**
+ * getalllisteners from the specified URL.
+ * @param {url} - The URL for the delete endpoint.
+ * @param {core} - An optional Core object.
+ * @returns A Promise that resolves when the deletion is complete.
+ */
+export async function getalllisteners(url: string, core:CoreC) {
+  const response = await fetch(`http://${url}/${core._core_id}/gl`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json", // Specify the content type as JSON
+      'authtok': core?._sessiontoken !== undefined ? core?._sessiontoken : '',
+    }
+  }).then(
+    (data) => {
+      return data
+    }
+  ).catch((error: Error) => {
+    console.log(error);
+  })
+  return response;
+}
+
+
+
+/**
  * Makes an AJAX request using XMLHttpRequest.
  * @param {string} url - The URL to send the AJAX request to.
  * @param {Core} [core] - Optional parameter representing the core configuration for the request.
  * @returns {void}
  */
-export function getRootDirectory(url:string,core:string,_sessiontok:string,_title:string):  Promise<Root> {
+export function getRootDirectory(url: string, core: string, _sessiontok: string, _title: string): Promise<Root> {
   return new Promise((resolve, reject) => {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', `http://${url}/${core}/dir`, true);
@@ -1057,7 +1184,7 @@ export function getRootDirectory(url:string,core:string,_sessiontok:string,_titl
         if (xhr.status === 200) {
           var responseData = JSON.parse(xhr.responseText);
           const rootdir: File[] = responseData['_files'] !== undefined && Array.isArray(responseData['_files'])
-            ? responseData['_files'].map((fileData: any) => new File(fileData['_size'],fileData['_name'],  fileData["_extension"]))
+            ? responseData['_files'].map((fileData: any) => new File(fileData['_size'], fileData['_name'], fileData["_extension"]))
             : [];
           const rootdirectory: Root = new Root(
             `/${core}/${_title}/`,
@@ -1065,7 +1192,7 @@ export function getRootDirectory(url:string,core:string,_sessiontok:string,_titl
             responseData['_filecount'],
             rootdir
           );
-          console.log(rootdirectory);
+          //console.log(rootdirectory);
           resolve(rootdirectory); // Resolve the promise with the result
         } else {
           console.error('Request failed with status:', xhr.status);

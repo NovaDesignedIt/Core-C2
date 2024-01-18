@@ -9,7 +9,7 @@ import react from 'react';
 import LoginHome from './LoginHome';
 import FileStorage from './FileStorage';
 import CustomPanelConfiguration from './CustomPanelConfiguration';
-import { Config, Core, CoreC, File as Files, Instance } from '../api/apiclient';
+import { Config, Core, CoreC, File as Files, Instance, Listeners } from '../api/apiclient';
 import { useAppDispatch,useAppSelector } from '../store/store';
 
 
@@ -76,8 +76,9 @@ const Frame = () => {
     const con: Config = CORE?._config ?? new Config();
     const ins: Instance[] = CORE?._instances ?? [];
     const fst: Files[] = CORE?._rootdir?._files ?? [];
+    const listener: Listeners[] = CORE?._listeners ?? [];
     if (CORE !== undefined) {
-      dispatch(BuildStateManagement({core:co,config:con,instances:ins,fstore:fst}));
+      dispatch(BuildStateManagement({core:co,config:con,instances:ins,fstore:fst,listeners:listener}));
       setSelectedCore(CORE);
     }
   };
@@ -100,7 +101,7 @@ const Frame = () => {
           </Stack>
           <Stack direction="column" height="100%" width="100%" maxWidth={"100"} overflow="hidden" >
             {content === -1 && <LoginHome onSetCore={HandleLogin}/>}
-            {content === 2 && <FileStorage core={core} url={core !== undefined ? core?._url : ''} />}
+            {content === 2 && <FileStorage />}
             {content === 3 && <InstanceContainer/>}
             {content === 4 && <MapPanel/>}
             {content === 5 && <CustomPanelConfiguration />}

@@ -1,31 +1,35 @@
-import { Alert, Box, Button, Checkbox, FormControlLabel, List, ListItem, ListItemIcon, ListItemText, Stack, Switch, TextField, Typography, styled } from '@mui/material';
+import { Alert, Box, Button, Checkbox, FormControlLabel, List, ListItem, ListItemIcon, ListItemText, Snackbar, Stack, Switch, TextField, Typography, styled } from '@mui/material';
 import React, { SetStateAction } from 'react'
-import { Core } from '../api/apiclient';
+import { Core, Listeners, addlistener } from '../api/apiclient';
 import InstanceConfiguration from "./InstancesConfiguration";
 import ListenerComponent from "./Listeners";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-import { useAppSelector  } from '../store/store';
+import { useAppDispatch, useAppSelector } from '../store/store';
+import { addlisteners } from '../store/features/CoreSlice';
 
 
 
-const ConfigGeneralComp =  () => {
+const ConfigGeneralComp = () => {
 
-
+  const dispatch: any = useAppDispatch();
 
   const configurationObject = useAppSelector(state => state.core.configObject)
-  const corid = useAppSelector(state => state.core.configObject._core_id) 
+  const corid = useAppSelector(state => state.core.configObject._core_id)
+  const core = useAppSelector(state => state.core.coreObject)
 
 
-  const sessionLength:number = configurationObject._session_len !== undefined ?   configurationObject._session_len : 0
-  const DaysRetLog:number =  configurationObject?._log_ret_days !== undefined ?   configurationObject?._log_ret_days : 0
+  const sessionLength: number = configurationObject._session_len !== undefined ? configurationObject._session_len : 0
+  const DaysRetLog: number = configurationObject?._log_ret_days !== undefined ? configurationObject?._log_ret_days : 0
 
-
+ 
 
   const [daysretLog, setDaysretLog] = React.useState<number>(sessionLength);
   const [sessionlen, setsessionlen] = React.useState<number>(DaysRetLog);
+  const [message, setmessage] = React.useState('');
   const [chckdmp, setChkdmp] = React.useState(false);
+  const [open, SetOpen] = React.useState(false);
   const [chkping, setChkping] = React.useState(false);
   const [chkhttp, setChkhttp] = React.useState(false);
   const [chkcreate, setCheckcreate] = React.useState(false);
@@ -33,11 +37,13 @@ const ConfigGeneralComp =  () => {
   const [chkcmd, setChkcmd] = React.useState(false);
   const [chklp, setChklp] = React.useState(false);
   const [chktimeout, setchktimeout] = React.useState(false);
-
-
+  const [newlistener, SetNewListener] = React.useState(false);
+  const [name, SetName] = React.useState('');
+  const [ipaddress, SetIpAddress] = React.useState('');
+  const [selectedListener, SetSelectedListener] = React.useState(-1);
 
   const HandleClearLogs = () => {
-    alert(corid);
+    //alert(corid);
   }
 
   const HandleSessionLength = (event: { target: { value: SetStateAction<string>; }; }) => {
@@ -55,7 +61,51 @@ const ConfigGeneralComp =  () => {
       event.preventDefault();
     }
   }
-  
+const SelectedListener = (id :number) =>{
+  SetSelectedListener(id)
+}
+
+  const HandleInsertListener = async () => {
+    if (name !== '' && ipaddress !== '') {
+
+      const l: Listeners = new Listeners(corid, name, ipaddress, '', 0)
+
+      const result = await addlistener(core._url, core, l);
+      if(result === 200){
+      dispatch(addlisteners({listener:l}))
+      SetNewListener(false);
+      }else if(result === 401){
+        SetOpen(true);
+        setmessage('Logged out')
+      }else if(result === 500){
+        SetOpen(true);
+        setmessage('Error')
+      }
+    }
+  }
+
+  const HandleDeleteListener = async () => {
+    if (selectedListener  > 0) {
+      alert(selectedListener);
+    }else{
+      alert('Select Listener first')
+    }
+  }
+
+
+
+  const HandleListenerName = (event: { target: { value: SetStateAction<string>; }; }) => {
+    SetName(event.target.value);
+  }
+
+  const HandleListenerIpAddress = (event: { target: { value: SetStateAction<string>; }; }) => {
+    SetIpAddress(event.target.value);
+  }
+
+  const handleClose = () => {
+    SetOpen(false)
+  }
+
 
   const HandleTimeOut = (event: React.ChangeEvent<HTMLInputElement>) => {
     setchktimeout(event.target.checked)
@@ -245,7 +295,7 @@ const ConfigGeneralComp =  () => {
             size='small'
             type={'number'}
             value={daysretLog}
-            onKeyDown={(e:any)=>{ HandleDaysretChanged_KeyDown(e)}}
+            onKeyDown={(e: any) => { HandleDaysretChanged_KeyDown(e) }}
             onChange={(e) => { HandleDaysretChanged(e) }}
             sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
 
@@ -261,7 +311,7 @@ const ConfigGeneralComp =  () => {
             </p>
           </div>
           <Button
-            onClick={() => {HandleClearLogs()}}
+            onClick={() => { HandleClearLogs() }}
             sx={{
 
               border: "1px solid #FF3635",
@@ -279,9 +329,9 @@ const ConfigGeneralComp =  () => {
 
       </Stack>
       <Stack spacing={"2%"} sx={{ flexDirection: "column", width: "70%", height: "100%", padding: "15px", overflow: 'scroll' }}>
-        <div style={{maxHeight:"400px"}} >
+        <div style={{ maxHeight: "400px" }} >
           <h5 style={{ color: "#fff", cursor: "default" }}>Instances</h5>
-          <InstanceConfiguration/>
+          <InstanceConfiguration />
         </div>
         <Stack direction={'row'} spacing={5} >
           <Stack spacing={3} width={'50%'}>
@@ -293,7 +343,7 @@ const ConfigGeneralComp =  () => {
               borderRadius: "4px",
               display: 'flex-end',
               width: "100%",
-          
+
               padding: "15px",
               flexDirection: 'column',
               backgroundColor: "#111",
@@ -306,7 +356,7 @@ const ConfigGeneralComp =  () => {
                 <SwitchTheme defaultChecked checked={chktimeout} onChange={(e) => { HandleTimeOut(e) }} />
               </div>
               <p style={{ opacity: "0.5" }}>
-                set Session length 
+                set Session length
               </p>
               <TextField
                 fullWidth={true}
@@ -326,25 +376,85 @@ const ConfigGeneralComp =  () => {
               border: "1px solid #222",
               borderRadius: "4px",
               display: 'flex',
-              width: "100%",
-              height: "50%",
+              width: "90%",
+              height: "100%",
+              maxHeight:"80%",
               gap: "10px",
               padding: "1%",
               flexDirection: 'column',
               backgroundColor: "#111",
             }}>
-              <div style={{ flexDirection: "row", display: "flex", marginRight: "auto", gap: "20px", cursor: "pointer" }}>
-                <AddIcon />
-                <EditNoteIcon />
-                <RemoveIcon />
+              <div style={{ flexDirection: "row", display: "flex", marginRight: "auto", height: "10%", gap: "20px", cursor: "pointer" }}>
+                <AddIcon
+                  onClick={() => { newlistener ? SetNewListener(false) : SetNewListener(true) }}
+                  sx={{
+                    "&:hover": {
+                      color: "#7ff685"
+                    }
+                  }} />
+                <EditNoteIcon sx={{
+                  "&:hover": {
+                    color: "#7ff685"
+                  }
+                }} />
+                <RemoveIcon 
+                onClick= {() => {HandleDeleteListener()}}
+                sx={{
+                  "&:hover": {
+                    color: "#7ff685"
+                  }
+                }} />
               </div>
-              <div style={{ padding: "1px", overflow: "hidden" }}>
-                <ListenerComponent />
+              <div style={{ padding: "1px", overflow: "hidden", width: "100%", gap: "10px", height: "100%", flexDirection: "column", display: "flex" }}>
+
+                {newlistener &&
+                  //newlist
+                  <div style={{ padding: "1px", overflow: "hidden", gap: "10px", width: "100%", height: "50%" ,maxHeight:"40px", flexDirection: "row", display: "flex" }}>
+                    <TextField
+                      InputLabelProps={{ sx: { color: "#fff" } }}
+                      inputProps={{ sx: { color: "#fff" } }}
+                      size='small'
+                      placeholder={'name'}
+                      onChange={(e) => { HandleListenerName(e) }}
+                      sx={{ ...themeText, width: "20%", borderRadius: "5px" }} ></TextField>
+                    <TextField
+
+                      InputLabelProps={{ sx: { color: "#fff" } }}
+                      inputProps={{ sx: { color: "#fff" } }}
+                      size='small'
+                      placeholder={'ipaddress'}
+                      onChange={(e) => { HandleListenerIpAddress(e) }}
+                      sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
+                    <Button
+                      onClick={() => { HandleInsertListener() }}
+                      sx={{
+
+                        border: "1px solid #333",
+                        color: '#fff',
+                        ":hover": {
+                          bgcolor: "#777",
+                        }
+                      }}
+                      style={{ width: '5%', height: '100%', }} >
+                      +
+                    </Button>
+                  </div>
+
+                }
+                <div style={{ padding: "1px", overflow: "hidden", gap: "10px", width: "100%", height: "100%", flexDirection: "row", display: "flex" }}>
+
+                  <ListenerComponent HandleSelectedInstance={SelectedListener} />
+                </div>
               </div>
             </div>
           </Stack>
         </Stack>
       </Stack>
+      <Snackbar open={open} autoHideDuration={2500} onClose={handleClose}>
+        <Alert onClose={handleClose} variant="filled" severity="error" sx={{ width: '100%' }}>
+          {message}
+        </Alert >
+      </Snackbar>
     </Stack>
   );
 

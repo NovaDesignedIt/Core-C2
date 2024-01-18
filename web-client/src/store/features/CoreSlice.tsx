@@ -1,5 +1,5 @@
 
-import { Core, Instance, Config, Target, File, CoreC } from '../../api/apiclient';
+import { Core, Instance, Config, Target, File, CoreC,Listeners} from '../../api/apiclient';
 import { createSlice, configureStore, PayloadAction } from '@reduxjs/toolkit'
 
 const emptyCoreInstance = new Core();
@@ -8,6 +8,7 @@ const emptytargetObject: Target[] = [];
 const emptyFilestore: File[] = [];
 const emptyinstanceobject: Instance[] = [];
 const emptyselectedtargets: number[] = [];
+const emptyListener: Listeners[] = [];
 const emptySelectedInstances = new Instance();
 
 interface CoreState {
@@ -18,6 +19,7 @@ interface CoreState {
   SelectedInstances:Instance
   selectedTargets: number[]
   targetObjects: Target[]
+  listenerObjects: Listeners[]
   SelectedContent:number
 }
 
@@ -29,6 +31,7 @@ const initialState: CoreState = {
   SelectedInstances:emptySelectedInstances,
   selectedTargets: emptyselectedtargets,
   targetObjects: emptytargetObject,
+  listenerObjects:emptyListener,
   SelectedContent: -1,  
 }
 
@@ -37,11 +40,20 @@ export const CoreSlice = createSlice({
   initialState,
   reducers: {
     BuildStateManagement:
-      (state, action: PayloadAction<{ core: CoreC, config: Config, fstore: File[], instances: Instance[] }>) => {
+      (state, action: PayloadAction<{ core: CoreC, config: Config, fstore: File[], instances: Instance[], listeners:Listeners[] }>) => {
         state.coreObject = action.payload.core
         state.configObject = action.payload.config
         state.fstoreObject = action.payload.fstore
         state.instanceObjects = action.payload.instances
+        state.listenerObjects = action.payload.listeners
+      },
+      DeleteListener:
+      (state, action: PayloadAction<{ listenerid: number }>) => {
+        state.listenerObjects = state.listenerObjects.filter(i => i._id !== action.payload.listenerid);
+      },
+      addlisteners:
+      (state, action: PayloadAction<{ listener: Listeners }>) => {
+        state.listenerObjects.push(action.payload.listener);
       },
       SetSelectedContent:
       (state, action: PayloadAction<{ content: number }>) => {
@@ -85,4 +97,17 @@ export const CoreSlice = createSlice({
 });
 
 export default CoreSlice.reducer;
-export const { SetCore, SetInstanceTargets, InsertInstance, DeleteInstance, BuildStateManagement, SetConfiguration, SetInstance,SetSelectedTargets,SetSelectedInstance,SetSelectedContent } = CoreSlice.actions;
+
+export const { 	SetCore,
+  DeleteListener,
+  addlisteners,
+  SetInstanceTargets,
+  InsertInstance,
+  DeleteInstance,
+  BuildStateManagement,
+  SetConfiguration,
+  SetInstance,
+  SetSelectedTargets,
+  SetSelectedInstance,
+  SetSelectedContent 
+} = CoreSlice.actions;

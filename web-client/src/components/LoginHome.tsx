@@ -1,6 +1,6 @@
 import { Alert, Button, Snackbar, TextField, Typography } from '@mui/material';
 import { SetStateAction, useState } from 'react';
-import { Core, Config, Instance, Root, getRootDirectory, User, CreateCore, CoreC } from '../api/apiclient';
+import { Core, Config, Instance, Root, getRootDirectory, User, CreateCore, CoreC, Listeners } from '../api/apiclient';
 import CloseIcon from '@mui/icons-material/Close';
 
 
@@ -12,7 +12,6 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
     const [explode, setExplode] = useState(false);
     const [open, setOpen] = useState(false);
     const [IsCreating, SetIsCreating] = useState(false);
-
     const [titlecc , settitle ] = useState('title');
     const [hostnamecc , sethostname ] = useState('host.name.com');
     const [addresscc , setaddress ] = useState('10.0.0.52');
@@ -38,17 +37,17 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
             const sessiontok: string = corev["_sessiontoken"].toString();
             const corid: string = corev["_core_id"].toString();
             const configuration: Config = corev["_config"];
+            const listeners:Listeners[] = corev["_listeners"];
             const instances: Instance[] = corev["_instances"];
             const title = configuration._title !== undefined ? configuration._title : '_'
             const directoryStructure: Root = await getRootDirectory(address, corid, sessiontok, title);
-            console.log("thisis it", instances)
             const users: User[] = corev["_users"];
             const rdir = directoryStructure !== undefined ? directoryStructure : new Root()
             const current_user = users.find(i => i._username === username);
             const user: string = current_user !== undefined ? current_user._username : "";
             const corec = new CoreC(sessiontok,corid,user,address);
-            const c = new Core(corec,sessiontok, corid, configuration, instances, rdir, users, user,address);
-
+            const c = new Core(corec,sessiontok, corid, configuration, instances,listeners, rdir, users, user,address);
+            console.log(c)
             onSetCore(c);
         };
 
