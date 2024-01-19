@@ -18,7 +18,7 @@ host=''
 port=0
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="http://localhost:5173")
+socketio = SocketIO(app, cors_allowed_origins="http://localhost:5173") 
 app.secret_key = 'your_secret_key'
 secrets = 'ziggy'
 IMAGE_FOLDER = './upl/ph/'
@@ -33,12 +33,12 @@ def getinstancebyfield(_core_id,field, value):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"getinstancebyfield(_core_id,field, value):: 401"+"\"}")
+                                "{\"msg\":\"getinstancebyfield(_core_id,field, value):: 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
@@ -57,31 +57,31 @@ def getinstancebyfield(_core_id,field, value):
                 } for record in records]
 
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                                f'fetching {len(records)} records field: {field} value: {value}',
                                action.GET.value,
                                str(datetime.now()),
                                action.SUCCESS.value,
-                               "{\"msg\":\"getinstancebyfield(_core_id,field, value):"+"\"}")
+                               "{\"msg\":\"getinstancebyfield(_core_id,field, value):"+"\"}",_core_id) #LOGGER
                 return jsonify(records_data)  # Return the records as JSON response
             else:
 
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                                'None',
                                action.GET.value,
                                str(datetime.now()),
                                action.FAILED.value,
-                               "{\"msg\":\"getinstancebyfield(_core_id,field, value):"+"\"}")
+                               "{\"msg\":\"getinstancebyfield(_core_id,field, value):"+"\"}",_core_id) #LOGGER
                 return '404', 404  # Return '404' if no records match the criteria
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                f'None  {field} value: {value}',
                                action.GET.value,
                                str(datetime.now()),
                                action.ERROR.value,
-                               "{\"msg\":\"getinstancebyfield(_core_id,field, value): "+f"Error: {e}"+"\"}")
+                               "{\"msg\":\"getinstancebyfield(_core_id,field, value): "+f"Error: {e}"+"\"}",_core_id) #LOGGER
         return '500', 500  # Return '500' in case of any error during retrieval
         
 @app.route('/<_core_id>/i', methods=['POST'])
@@ -90,12 +90,12 @@ def insertinstance(_core_id):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"def insertinstance(_core_id): 401"+"\"}")
+                                "{\"msg\":\"def insertinstance(_core_id): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         data = request.get_json()  # Get JSON data from the request body
@@ -116,21 +116,21 @@ def insertinstance(_core_id):
                                 _core_id=core_id)
         Utility.db.commit()  # Commit the transactionType to save the record in the database
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                instance_name,
                                action.INSERT.value,
                                str(datetime.now()),
                                action.SUCCESS.value,
-                               "{\"msg\":\"insertinstance(_core_id): 201"+"\"}")
+                               "{\"msg\":\"insertinstance(_core_id): 201"+"\"}",_core_id) #LOGGER
         return f'{jsonify(instance.__dict__)}', 200  # Return success message and status code 201 (Created)
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                'None',
                                action.INSERT.value,
                                str(datetime.now()),
                                action.FAILED.value,
-                               "{\"msg\":\"insertinstance(_core_id): 400"+"\"}")
+                               "{\"msg\":\"insertinstance(_core_id): 400"+"\"}",_core_id) #LOGGER
         return str(e), 400  # Return error message and status code 400 (Bad Request) in case of errors
 
 @app.route('/<_core_id>/i/<int:record_id>', methods=['GET'])
@@ -139,12 +139,12 @@ def getinstancebyid(_core_id,record_id):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"getinstancebyid(_core_id,record_id): 401"+"\"}")
+                                "{\"msg\":\"getinstancebyid(_core_id,record_id): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
@@ -170,17 +170,17 @@ def getinstancebyid(_core_id,record_id):
                                action.GET.value,
                                str(datetime.now()),
                                action.SUCCESS.value,
-                               "{\"msg\":\"getinstancebyid(_core_id,record_id): 200\"}")
+                               "{\"msg\":\"getinstancebyid(_core_id,record_id): 200\"}",_core_id) #LOGGER
                 return retObj # Return the record as JSON response
             else:
 
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                                'None',
                                action.GET.value,
                                str(datetime.now()),
                                action.FAILED.value,
-                               "{\"msg\":\"getinstancebyid(_core_id,record_id): 404"+"\"}")
+                               "{\"msg\":\"getinstancebyid(_core_id,record_id): 404"+"\"}",_core_id) #LOGGER
                 return '404', 404  # Return '404' if the record with the specified ID does not exist
     except Exception as e:
         #print(coi+'*********************************************')
@@ -198,15 +198,12 @@ def getinstancebyid(_core_id,record_id):
 def getallinstance(_core_id):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-
-
-        
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"getallinstance(_core_id): 401"+"\"}")
+                                "{\"msg\":\"getallinstance(_core_id): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
@@ -223,22 +220,22 @@ def getallinstance(_core_id):
             "_core_id": record._core_id
             } for record in records]
             
-            Utility.Log.insert_log(f"{_core_id}",
+            Utility.Log.insert_log(f"{request}",
                                f'fetching {len(records)} records',
                                action.GET.value,
                                str(datetime.now()),
                                action.SUCCESS.value,
-                               "{\"msg\":\"getallinstance(_core_id): 200"+"\"}")
+                               "{\"msg\":\"getallinstance(_core_id): 200"+"\"}",_core_id) #LOGGER
             return jsonify(record_data)  # Return the records as JSON response
     
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                'None',
                                action.GET.value,
                                str(datetime.now()),
                                action.ERROR.value,
-                               "{\"msg\":\"getallinstance(_core_id): 500 "+f"Error: {e}"+"\"}")
+                               "{\"msg\":\"getallinstance(_core_id): 500 "+f"Error: {e}"+"\"}",_core_id) #LOGGER
         return 500  # Return '500' in case of any error during retrieval
 
 @app.route('/<_core_id>/i/<int:record_id>', methods=['DELETE'])
@@ -247,47 +244,53 @@ def deleteinstancebyid(_core_id,record_id):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"deleteinstancebyid(_core_id,record_id): 401"+"\"}")
+                                "{\"msg\":\"deleteinstancebyid(_core_id,record_id): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
             # Retrieve the record by ID
             instance = Utility.Instance.get(_id=record_id)
             # Check if the record exists
+
+            isid = instance._instance_id
+
             if instance:
                 # Delete the record from the database
                 instance.delete()
-                orm.commit()
-                
-                Utility.Log.insert_log(f"{_core_id}",
+
+                Utility.Log.insert_log(f"{request}",
                                f'Deleted {record_id}',
                                action.DELETE.value,
                                str(datetime.now()),
                                action.SUCCESS.value,
-                               "{\"msg\":\"deleteinstancebyid(_core_id,record_id): 200"+"\"}")
+                               "{\"msg\":\"deleteinstancebyid(_core_id,record_id): 200"+"\"}",_core_id) #LOGGER
+                
+                orm.delete(entry for entry in Utility.Target if entry._isid == isid)
+                orm.commit()
+
                 return '200'  # Return '200' to indicate successful deletion
             else:
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                                'None',
                                action.DELETE.value,
                                str(datetime.now()),
                                action.FAILED.value,
-                               "{\"msg\":\"deleteinstancebyid(_core_id,record_id): 404"+"\"}")
+                               "{\"msg\":\"deleteinstancebyid(_core_id,record_id): 404"+"\"}",_core_id) #LOGGER
                 return '404'  # Return '404' if the record with the specified ID does not exist
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                'None',
                                action.DELETE.value,
                                str(datetime.now()),
                                action.ERROR.value,
-                               "{\"msg\":\"deleteinstancebyid(_core_id,record_id): 500" + f"Error: {e}"+"\"}")
+                               "{\"msg\":\"deleteinstancebyid(_core_id,record_id): 500" + f"Error: {e}"+"\"}",_core_id) #LOGGER
         return '500'  # Return '500' in case of any error during deletion
 
 @app.route('/<_core_id>/i/<id>/<field>/<value>')
@@ -297,48 +300,48 @@ def updatesingleInstancebyid(_core_id,id, field, value):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"updatesingleInstancebyid(_core_id,id, field, value): 401"+"\"}")
+                                "{\"msg\":\"updatesingleInstancebyid(_core_id,id, field, value): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
             # Retrieve the record by ID directly from the Targ entity
             instance = Utility.Instance.get(_id=id)
-            print(f"id: {id} field: {field} value:{value}")
+            print(f"id: {id} field: {field} value:{value}",_core_id) #LOGGER
             # Check if the record exists
             if instance:
                 # Update the specified field with the new value
                 setattr(instance, field, value)
                 orm.commit()
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                                 f'updated single field:{field} value:{value}',
                                 action.UPDATE.value,
                                 str(datetime.now()),
                                 action.SUCCESS.value,
-                                "{\"msg\":\"updatesingleInstancebyid(_core_id,id, field, value): 200"+"\"}")
+                                "{\"msg\":\"updatesingleInstancebyid(_core_id,id, field, value): 200"+"\"}",_core_id) #LOGGER
                 return '200'  # Return True to indicate successful update
             else:
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                                 'None',
                                 action.UPDATE.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"updatesingleInstancebyid(_core_id,id, field, value): 404"+"\"}")
+                                "{\"msg\":\"updatesingleInstancebyid(_core_id,id, field, value): 404"+"\"}",_core_id) #LOGGER
                 return '404'  # Return False if the record with the specified ID does not exist
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'None',
                                 action.UPDATE.value,
                                 str(datetime.now()),
                                 action.ERROR.value,
-                                "{\"msg\":\"updatesingleInstancebyid(_core_id,id, field, value): 500 "+f"Error: {e}"+"\"}")
+                                "{\"msg\":\"updatesingleInstancebyid(_core_id,id, field, value): 500 "+f"Error: {e}"+"\"}",_core_id) #LOGGER
         return '500'  # Return '500' in case of any error during deletion
 
 #@Client updatemanyinstancebyfield():
@@ -348,12 +351,12 @@ def updatemanyinstancebyfield(_core_id,field,value,new_value):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\" updatemanyinstancebyfield(_core_id,field,value,new_value): 401"+"\"}")
+                                "{\"msg\":\" updatemanyinstancebyfield(_core_id,field,value,new_value): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
@@ -367,32 +370,32 @@ def updatemanyinstancebyfield(_core_id,field,value,new_value):
                     setattr(record, field, new_value)
                 orm.commit()
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                                 f' field:{field}, value:{value} ,new value:{new_value}',
                                 action.UPDATE.value,
                                 str(datetime.now()),
                                 action.SUCCESS.value,
-                                "{\"msg\":\" updatemanyinstancebyfield(_core_id,field,value,new_value): 200 "+"\"}")
+                                "{\"msg\":\" updatemanyinstancebyfield(_core_id,field,value,new_value): 200 "+"\"}",_core_id) #LOGGER
                 return '200'  # Return '200' to indicate successful update
             
             else:
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                                     None,
                                     action.UPDATE.value,
                                     str(datetime.now()),
                                     action.FAILED.value,
-                                    "{\"msg\":\" updatemanyinstancebyfield(_core_id,field,value,new_value): 404 "+"\"}")
+                                    "{\"msg\":\" updatemanyinstancebyfield(_core_id,field,value,new_value): 404 "+"\"}",_core_id) #LOGGER
                 return '404'  # Return '404' if no records match the criteria
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                     None,
                     action.UPDATE.value,
                     str(datetime.now()),
                     action.ERROR.value,
-                    "{\"msg\":\" updatemanyinstancebyfield(_core_id,field,value,new_value):"+f"Error: {e}"+"\"}")
-        print(f"Error: {e}")
+                    "{\"msg\":\" updatemanyinstancebyfield(_core_id,field,value,new_value):"+f"Error: {e}"+"\"}",_core_id) #LOGGER
+        print(f"Error: {e}",_core_id) #LOGGER
         return '500'  
     # Return '500' in case of any error during the update
 
@@ -405,12 +408,12 @@ def insertrecord(_core_id):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertrecord(_core_id): 401"+"\"}")
+                                "{\"msg\":\"insertrecord(_core_id): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         data = request.get_json()  # Assuming the client sends JSON data in the request body
@@ -429,21 +432,21 @@ def insertrecord(_core_id):
             # Commit the new record to the database
             orm.commit()
             
-            Utility.Log.insert_log(f"{_core_id}",
-                        f'{data.get("_n")} inserted success',
+        Utility.Log.insert_log(f"{request}",
+                        f'{data.get("_n",_core_id)} inserted success',
                         action.INSERT.value,
                         str(datetime.now()),
                         action.SUCCESS.value,
-                        "{\"msg\":\"insertrecord(_core_id): 200"+"\"}")
+                        "{\"msg\":\"insertrecord(_core_id): 200"+"\"}",_core_id) #LOGGER
         return '200'  # Return '200' to indicate successful insertion
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
-                    f' failed to insert {data.get("_n")} ',
+        Utility.Log.insert_log(f"{request}",
+                    f' failed to insert {data.get("_n",_core_id)}',
                     action.INSERT.value,
                     str(datetime.now()),
                     action.ERROR.value,
-                    "{\"msg\":\"insertrecord(_core_id): 500 "+f"Error: {e}"+"\"}")
+                    "{\"msg\":\"insertrecord(_core_id): 500 "+f"Error: {e}"+"\"}",_core_id) #LOGGER
         return '500'  # Return '500' in case of any error during insertion
 
 @app.route('/<_core_id>/t/<field>/<value>', methods=['GET'])
@@ -452,12 +455,12 @@ def getrecordsbyfield(_core_id,field, value):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"getrecordsbyfield(_core_id,field, value): 401"+"\"}")
+                                "{\"msg\":\"getrecordsbyfield(_core_id,field, value): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
@@ -479,42 +482,42 @@ def getrecordsbyfield(_core_id,field, value):
                     '_isid': record._isid,
                 } for record in records]
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                     f'count: {len(records)}',
                     action.GET.value,
                     str(datetime.now()),
                     action.SUCCESS.value,
-                    "{\"msg\":\"getrecordsbyfield(_core_id,field, value): 200"+"\"}")
+                    "{\"msg\":\"getrecordsbyfield(_core_id,field, value): 200"+"\"}",_core_id) #LOGGER
                 return jsonify(records_data)  # Return the records as JSON response
             else:
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                     f'count: {len(records)}',
                     action.GET.value,
                     str(datetime.now()),
                     action.FAILED.value,
-                    "{\"msg\":\"getrecordsbyfield(_core_id,field, value): 404"+"\"}")
+                    "{\"msg\":\"getrecordsbyfield(_core_id,field, value): 404"+"\"}",_core_id) #LOGGER
                 return '404', 404  # Return '404' if no records match the criteria
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                 f'count: {len(records)}',
                 action.GET.value,
                 str(datetime.now()),             
                 action.ERROR.value,
-                "{\"msg\":\"getrecordsbyfield(_core_id,field, value): 500 "+f"Error: {e}"+"\"}")
+                "{\"msg\":\"getrecordsbyfield(_core_id,field, value): 500 "+f"Error: {e}"+"\"}",_core_id) #LOGGER
         return '500', 500  # Return '500' in case of any error during retrieval
 
 @app.route('/<_core_id>/s',methods=['POST'])
 @orm.db_session
 def SyncCore(_core_id):
     #->
-    Utility.Log.insert_log(f"{_core_id}",
+    Utility.Log.insert_log(f"{request}",
                 f'Syncing Core',
                 action.GET.value,
                 str(datetime.now()),             
                 action.ERROR.value,
-                "{\"msg\":\"SyncCore(_core_id) - Syncing Core \"}")
+                "{\"msg\":\"SyncCore(_core_id) - Syncing Core \"}",_core_id) #LOGGER
     return Utility.sync_core(request.data)
 
 
@@ -526,13 +529,13 @@ def command(_core_id,_isid):
     try:
         print(request.get_json())
         if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-                #print(f'*******************{Utility.Sessions.session_valid(request.headers.get("authtok"))}***************',request.headers.get('authtok'))
-                Utility.Log.insert_log(f"{_core_id}",
+                #print(f'*******************{Utility.Sessions.session_valid(request.headers.get("authtok",_core_id) #LOGGER)}***************',request.headers.get('authtok'))
+                Utility.Log.insert_log(f"{request}",
                                         f'{_isid}',
                                         action.EXEC.value,
                                         str(datetime.now()),
                                         action.FAILED.value,
-                                        "{\"msg\":\"command(): 401"+"\"}")
+                                        "{\"msg\":\"command(): 401"+"\"}",_core_id) #LOGGER
                 return '401', 401
         target = request.get_json()
         if target:
@@ -552,24 +555,24 @@ def command(_core_id,_isid):
                 orm.commit()
 
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                             f'{_isid}',
                             action.EXEC.value,
                             str(datetime.now()),
                             action.SUCCESS.value,
-                            "{\"msg\":\"command(): 200"+"\"}")
+                            "{\"msg\":\"command(): 200"+"\"}",_core_id) #LOGGER
                 socketio.emit(f's/{_isid}',f' { id } running: { command }')
                 return '200', 200
         return '403', 403
     except Exception as e:
             
-            Utility.Log.insert_log(f"{_core_id}",
-                            f'{_isid}',
-                            action.EXEC.value,
-                            str(datetime.now()),
-                            action.FAILED.value,
-                            "{\"msg\":\"command(): 500"+f"{e}"+"\"}")
-            return '500', 500
+        Utility.Log.insert_log(f"{request}",
+                        f'{_isid}',
+                        action.EXEC.value,
+                        str(datetime.now()),
+                        action.FAILED.value,
+                        "{\"msg\":\"command(): 500"+f"{e}"+"\"}",_core_id) #LOGGER
+        return '500', 500
 
 # Function to check for changes in the database
 @orm.db_session
@@ -623,21 +626,21 @@ def getcmd(isid,id):
                 setattr(targets,attribute.IN.value,'')
                 orm.commit()
                 
-                Utility.Log.insert_log(f"{isid}",
+                Utility.Log.insert_log(f"{request}",
                                     f'{id}',
                                     action.GET.value,
                                     str(datetime.now()),
                                     action.SUCCESS.value,
-                                    "{\"msg\":\" getcmd(isid,id) 200 \"}")
+                                    "{\"msg\":\" getcmd(isid,id) 200 \"}") #LOGGER
                 return command
     except Exception as e :
         
-        Utility.Log.insert_log(f"{isid}",
+        Utility.Log.insert_log(f"{request}",
                         f'{id}',
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\" getcmd(isid,id) 401 \"}"+f"\n{e}")
+                        "{\"msg\":\" getcmd(isid,id) 401 \"}"+f"\n{e}") #LOGGER
     return '401'
 
 
@@ -656,22 +659,22 @@ def setout(isid,id):
                     orm.commit()
                     #targets._out = str(data)
                     socketio.emit(f'{isid}',f'{str(data)}' )
-                    Utility.Log.insert_log(f"{isid}",
+                    Utility.Log.insert_log(f"{request}",
                                     f'{id}',
                                     action.GET.value,
                                     str(datetime.now()),
                                     action.SUCCESS.value,
-                                    "{\"msg\":\" setout(isid,id) 200 \"}")
+                                    "{\"msg\":\" setout(isid,id) 200 \"}") #LOGGER
                     #orm.commit()
                     return '200'
     except Exception as e :
         
-        Utility.Log.insert_log(f"{isid}",
+        Utility.Log.insert_log(f"{request}",
                         f'{id}',
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\" setout(isid,id) 400 \"}"+f"\n{e}")
+                        "{\"msg\":\" setout(isid,id) 400 \"}"+f"\n{e}") #LOGGER
     return '404'
 
 
@@ -684,23 +687,23 @@ def getout(isid,id):
         targets  = orm.select(i for i in Utility.Target if  i._isid == isid and int(i._id) == int(id)).first()
         with orm.db_session: 
             if targets is not None:
-                Utility.Log.insert_log(f"{isid}",
+                Utility.Log.insert_log(f"{request}",
                         f'{id}',
                         action.GET.value,
                         str(datetime.now()),
                         action.SUCCESS.value,
-                        "{\"msg\":\" def getout(isid,id): 200 \"}")
+                        "{\"msg\":\" def getout(isid,id): 200 \"}",targets._core_id) #LOGGER
                 out = getattr(targets,attribute.OUT.value)
                 setattr(targets,attribute.OUT.value,'')
                 orm.commit()
                 return out
     except Exception as e :
-        Utility.Log.insert_log(f"{isid}",
+        Utility.Log.insert_log(f"{request}",
                         f'{id}',
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\" def getout(isid,id): 401 \"}"+f"\n{e}")
+                        "{\"msg\":\" def getout(isid,id): 401 \"}"+f"\n{e}",targets._core_id) #LOGGER
     return '401'
 
 @app.route('/<isid>/<id>/gs',methods=["GET"])
@@ -718,12 +721,12 @@ def getstate(isid,id):
                             state.LISTEN.value)
                     orm.commit()
                     return str(targets._st)
-            Utility.Log.insert_log(f"{isid}",
+            Utility.Log.insert_log(f"{request}",
                         f'{id}',
                         action.GET.value,
                         str(datetime.now()),
                         action.SUCCESS.value,
-                        "{\"msg\":\"getstate(): 200 \"}"+f"\n")
+                        "{\"msg\":\"getstate(): 200 \"}"+f"\n",targets._core_id) #LOGGER
             
             LiveViewObj = {"isid": f"{isid}", "status": '200', "time": f"{str(datetime.now())}", "msg": f"def getstate(isid,id):({id})"}
             LiveViewObjString = json.dumps(LiveViewObj)
@@ -732,12 +735,12 @@ def getstate(isid,id):
             return str(targets._st)
     except Exception as e :
         
-        Utility.Log.insert_log(f"{isid}",
+        Utility.Log.insert_log(f"{request}",
                         f'{id}',
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\"getstate(): 500 \"}"+f"\n{e}")
+                        "{\"msg\":\"getstate(): 500 \"}"+f"\n{e}",'500') #LOGGER
     return '500'
 
 #NEW-CLI
@@ -747,26 +750,25 @@ def getTargets(_core_id,isid):
     try:
         with orm.db_session:
             if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-                    #print(f'*******************{Utility.Sessions.session_valid(request.headers.get("authtok"))}***************',request.headers.get('authtok'))
-                    
-                    Utility.Log.insert_log(f"{_core_id}",
-                                            f'{isid}',
-                                            action.GET.value,
-                                            str(datetime.now()),
-                                            action.FAILED.value,
-                                            "{\"msg\":\"idef getTargets(_core_id,isid): 401"+"\"}")
-                    return '401', 401
+                    #print(f'*******************{Utility.Sessions.session_valid(request.headers.get("authtok",_core_id) #LOGGER)}***************',request.headers.get('authtok'))
+                Utility.Log.insert_log(f"{request}",
+                                        f'{isid}',
+                                        action.GET.value,
+                                        str(datetime.now()),
+                                        action.FAILED.value,
+                                        "{\"msg\":\"idef getTargets(_core_id,isid): 401"+"\"}",_core_id) #LOGGER
+                return '401', 401
             #print(isid)
             targets  = Utility.Target.select(lambda i : i._isid == isid)
             #print(len(targets))
             if targets is None :
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                                 f'{isid}',
                                 action.GET.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"getTargets(): 404"+"\"}")
+                                "{\"msg\":\"getTargets(): 404"+"\"}",_core_id) #LOGGER
                 
                 return "404"
             records_data = [{
@@ -782,23 +784,23 @@ def getTargets(_core_id,isid):
                     '_isid': record._isid,
                 } for record in targets]
 
-            Utility.Log.insert_log(f"{_core_id}",
+            Utility.Log.insert_log(f"{request}",
                                 f'{isid}',
                                 action.GET.value,
                                 str(datetime.now()),
                                 action.SUCCESS.value,
-                                "{\"msg\":\"getTargets(): 200"+"\"}")
+                                "{\"msg\":\"getTargets(): 200"+"\"}",_core_id) #LOGGER
                 
             return jsonify(records_data)
     except Exception as e :
         
-        Utility.Log.insert_log(f"{_core_id}",
-                        f'{isid}',
-                        action.GET.value,
-                        str(datetime.now()),
-                        action.ERROR.value,
-                        "{\"msg\":\"getTargets(): 500 \"}"+f"\n{e}")
-    return "500"
+        Utility.Log.insert_log(f"{request}",
+                            f'{isid}',
+                            action.GET.value,
+                            str(datetime.now()),
+                            action.ERROR.value,
+                            "{\"msg\":\"getTargets(): 500 \"}"+f"\n{e}",_core_id) #LOGGER
+        return "500"
     
 
     
@@ -810,14 +812,14 @@ def getrecordbyid(_core_id,record_id):
     #->
 
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-        #print(f'*******************{Utility.Sessions.session_valid(request.headers.get("authtok"))}***************',request.headers.get('authtok'))
+        #print(f'*******************{Utility.Sessions.session_valid(request.headers.get("authtok",_core_id) #LOGGER)}***************',request.headers.get('authtok'))
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.SUCCESS.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"def getrecordbyid(_core_id,record_id): 401"+"\"}")
+                                "{\"msg\":\"def getrecordbyid(_core_id,record_id): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
@@ -838,31 +840,31 @@ def getrecordbyid(_core_id,record_id):
                     '_isid': target_record._isid
                 }
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                     f'{target_record._n}',
                     action.GET.value,
                     str(datetime.now()),
                     action.SUCCESS.value,
-                    "{\"msg\":\"def getrecordbyid(_core_id,record_id): 200"+"\"}")
+                    "{\"msg\":\"def getrecordbyid(_core_id,record_id): 200"+"\"}",_core_id) #LOGGER
                 return jsonify(record_data)  # Return the record as JSON response
             else:
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                     f'{record_id}',
                     action.GET.value,
                     str(datetime.now()),
                     action.FAILED.value,
-                    "{\"msg\":\"def getrecordbyid(_core_id,record_id): 404"+"\"}")
+                    "{\"msg\":\"def getrecordbyid(_core_id,record_id): 404"+"\"}",_core_id) #LOGGER
                 return '404', 404  # Return '404' if the record with the specified ID does not exist
 
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                     f'{record_id}',
                     action.GET.value,
                     str(datetime.now()),
                     action.ERROR.value,
-                    "{\"msg\":\"def getrecordbyid(_core_id,record_id): 500" +f"Error: {e}"+"\"}")
+                    "{\"msg\":\"def getrecordbyid(_core_id,record_id): 500" +f"Error: {e}"+"\"}",_core_id) #LOGGER
         return '500', 500  # Return '500' in case of any error during retrieval
 
 @app.route('/<_core_id>/<_isid>/t/all', methods=['GET'])
@@ -871,12 +873,12 @@ def getallrecords(_core_id,_isid):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"def getallrecords(_core_id,_isid): 401"+"\"}")
+                                "{\"msg\":\"def getallrecords(_core_id,_isid): 401"+"\"}",_core_id) #LOGGER
         
         LiveViewObj = {"isid": f"{_isid}", "status": '401', "time": f"{str(datetime.now())}", "msg": "invalid session"}
         LiveViewObjString = json.dumps(LiveViewObj)
@@ -901,12 +903,12 @@ def getallrecords(_core_id,_isid):
             '_isid': record._isid
         } for record in records]
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                 f'{_isid}',
                 action.GET.value,
                 str(datetime.now()),
                 action.SUCCESS.value,
-                "{\"msg\":\"getallrecords(): 200"+"\"}")
+                "{\"msg\":\"getallrecords(): 200"+"\"}",_core_id) #LOGGER
 
         LiveViewObj = {"isid": f"{_isid}", "status": '200', "time": f"{str(datetime.now())}", "msg": "getalltargets()"}
         LiveViewObjString = json.dumps(LiveViewObj)
@@ -916,14 +918,45 @@ def getallrecords(_core_id,_isid):
 
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                     f'{_isid}',
                     action.GET.value,
                     str(datetime.now()),
                     action.ERROR.value,
-                    "{\"msg\":\"getallrecords(): 500 "+f"Error: {e}"+"\"}")
+                    "{\"msg\":\"getallrecords(): 500 "+f"Error: {e}"+"\"}",_core_id) #LOGGER
         return '500', 500  # Return '500' in case of any error during retrieval
 
+
+@app.route('/<_core_id>/d/t/', methods=['POST'])
+@orm.db_session
+def deletemultirecords(_core_id):
+    try:
+        if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+            Utility.Log.insert_log(f"{request}",
+                                    'invalid session',
+                                    action.DELETE.value,
+                                    str(datetime.now()),
+                                    action.FAILED.value,
+                                    "{\"msg\":\"deletemultirecords(_core_id): 401"+"\"}",_core_id) #LOGGER
+            return '401', 401
+        data =  request.get_json()
+        orm.delete(entry for entry in Utility.Target if entry._id in data)
+        Utility.Log.insert_log(f"{request}",
+                    f'{_core_id}',
+                    action.GET.value,
+                    str(datetime.now()),
+                    action.SUCCESS.value,
+                    "{\"msg\":\"deletemultirecords(_core_id): 200"+"\"}",_core_id) #LOGGER
+        orm.commit()
+        return '200',200
+    except Exception as e:
+        Utility.Log.insert_log(f"{request}",
+                        f'coreid:{data}',
+                        action.DELETE.value,
+                        str(datetime.now()),
+                        action.ERROR.value,
+                        "{\"msg\":\"deletemultirecords(_core_id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
+        return '500'  # Return '500' in case of any error during deletion
 
 
 @app.route('/<_core_id>/t/<int:record_id>', methods=['DELETE'])
@@ -932,12 +965,12 @@ def deleterecordbyid(_core_id,record_id):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.DELETE.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}")
+                                "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
@@ -950,30 +983,30 @@ def deleterecordbyid(_core_id,record_id):
                 orm.commit()
                 
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                         f'recordid:{record_id}',
                         action.DELETE.value,
                         str(datetime.now()),
                         action.SUCCESS.value,
-                        "{\"msg\":\"deleterecordbyid(record_id): 200 "+"\"}")
+                        "{\"msg\":\"deleterecordbyid(record_id): 200 "+"\"}",_core_id) #LOGGER
                 return '200'  # Return '200' to indicate successful deletion
             else:    
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                         f'recordid:{record_id}',
                         action.DELETE.value,
                         str(datetime.now()),
                         action.FAILED.value,
-                        "{\"msg\":\"deleterecordbyid(record_id): 404"+"\"}")
+                        "{\"msg\":\"deleterecordbyid(record_id): 404"+"\"}",_core_id) #LOGGER
                 return '404'  # Return '404' if the record with the specified ID does not exist
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                         f'recordid:{record_id}',
                         action.DELETE.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\"deleterecordbyid(record_id): 500"+f"Error: {e}"+"\"}")
+                        "{\"msg\":\"deleterecordbyid(record_id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
         return '500'  # Return '500' in case of any error during deletion
 
 
@@ -983,55 +1016,57 @@ def deleterecordbyid(_core_id,record_id):
 # Function to update a specific field in a record by ID
 def sleepAgent(_isid, _id, sleep,interval):
     #->
-    print('***'*100)   
-    if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-        
-        Utility.Log.insert_log(f"{_isid}",
-                                'invalid session',
-                                action.INSERT.value,
-                                str(datetime.now()),
-                                action.FAILED.value,
-                                "{\"msg\":\"sleepAgent(): 401"+"\"}")
-        return '401', 401
+    #print('***'*100)   
+    target_record = orm.select(i for i in Utility.Target if i._id ==_id and i._isid==_isid).first()
+    if target_record:
+        if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+            
+            Utility.Log.insert_log(f"{request}",
+                                    'invalid session',
+                                    action.INSERT.value,
+                                    str(datetime.now()),
+                                    action.FAILED.value,
+                                    "{\"msg\":\"sleepAgent(): 401"+"\"}",target_record._core_id) #LOGGER
+            return '401', 401
 
-    try:
-        # Retrieve the record by ID directly from the Targ entity
-        target_record = orm.select(i for i in Utility.Target if i._id ==_id and i._isid==_isid).first()
-        # Check if the record exists
-        if target_record:
-            # Update the specified field with the new value
-            #print(f'**{interval}**'*100) 
-            _i_bool = interval.lower() == 'true'
-            if _i_bool :
-                setattr(target_record,    Utility.Attribute.STATE.value,      Utility._state.SLEEP.value)
-            else :
-                setattr(target_record,    Utility.Attribute.STATE.value,      Utility._state.INTERVAL.value)
-            setattr(target_record,    Utility.Attribute.INTERVAL.value,    sleep)
-            orm.commit()
-            Utility.Log.insert_log(f"{_isid}",
-                        f'count:{target_record._n}',
-                        action.GET.value,
-                        str(datetime.now()),
-                        action.SUCCESS.value,
-                        "{\"msg\":\"sleepAgent(id, field, value): 200 "+"\"}")
-            return '200'  # Return True to indicate successful update
-        else:
-            Utility.Log.insert_log(f"{_isid}",
-                        'count:0',
-                        action.GET.value,
-                        str(datetime.now()),
-                        action.FAILED.value,
-                        "{\"msg\":\"sleepAgent(id, field, value): 404 "+"\"}")
-            return '404'  # Return False if the record with the specified ID does not exist
-    except Exception as e:
-        Utility.Log.insert_log(f"{_isid}",
-                        'count:0',
-                        action.GET.value,
-                        str(datetime.now()),
-                        action.ERROR.value,
-                        "{\"msg\":\"sleepAgent(id, field, value): 500"+f"Error: {e}"+"\"}")
-    return '500'  
+        try:
+            # Retrieve the record by ID directly from the Targ entity
+            
+            # Check if the record exists
 
+                # Update the specified field with the new value
+                #print(f'**{interval}**'*100) 
+                _i_bool = interval.lower() == 'true'
+                if _i_bool :
+                    setattr(target_record,    Utility.Attribute.STATE.value,      Utility._state.SLEEP.value)
+                else :
+                    setattr(target_record,    Utility.Attribute.STATE.value,      Utility._state.INTERVAL.value)
+                setattr(target_record,    Utility.Attribute.INTERVAL.value,    sleep)
+                orm.commit()
+                Utility.Log.insert_log(f"{request}",
+                            f'count:{target_record._n}',
+                            action.GET.value,
+                            str(datetime.now()),
+                            action.SUCCESS.value,
+                            "{\"msg\":\"sleepAgent(id, field, value): 200 "+"\"}",target_record._core_id) #LOGGER
+                return '200'  # Return True to indicate successful update
+            
+        except Exception as e:
+            Utility.Log.insert_log(f"{request}",
+                                    'count:0',
+                                    action.GET.value,
+                                    str(datetime.now()),
+                                    action.ERROR.value,
+                                    "{\"msg\":\"sleepAgent(id, field, value): 500"+f"Error: {e}"+"\"}",target_record._core_id) #LOGGER
+            return '500'  
+    else:
+                Utility.Log.insert_log(f"{request}",
+                            'count:0',
+                            action.GET.value,
+                            str(datetime.now()),
+                            action.FAILED.value,
+                            "{\"msg\":\"sleepAgent(id, field, value): 404 "+"\"}",target_record._core_id) #LOGGER
+                return '404'  # Return False if the record with the specified ID does not exist
 
 
 @app.route('/<_core_id>/t/<id>/<field>/<value>')
@@ -1041,38 +1076,38 @@ def updatesinglerecordbyid(_core_id,id, field, value):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}")
+                                "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     
     # Retrieve the record by ID directly from the Targ entity
     target_record = orm.select(i for i in Utility.Target if i._id == id).first()
-    print(f"id: {id} field: {field} value:{value}")
+    print(f"id: {id} field: {field} value:{value}",_core_id) #LOGGER
     # Check if the record exists
     if target_record:
         # Update the specified field with the new value
         target_record.assign_value(field, value)
         orm.commit()
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                     f'count:{target_record._n}',
                     action.GET.value,
                     str(datetime.now()),
                     action.SUCCESS.value,
-                    "{\"msg\":\"updatesinglerecordbyid(id, field, value): 200 "+"\"}")
+                    "{\"msg\":\"updatesinglerecordbyid(id, field, value): 200 "+"\"}",_core_id) #LOGGER
         return '200'  # Return True to indicate successful update
     
     else:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                     'count:0',
                     action.GET.value,
                     str(datetime.now()),
                     action.FAILED.value,
-                    "{\"msg\":\"updatesinglerecordbyid(id, field, value): 404 "+"\"}")
+                    "{\"msg\":\"updatesinglerecordbyid(id, field, value): 404 "+"\"}",_core_id) #LOGGER
         return '404'  # Return False if the record with the specified ID does not exist
 
 
@@ -1094,17 +1129,17 @@ def getsleep(isid,id):
                                     action.GET.value,
                                     str(datetime.now()),
                                     action.SUCCESS.value,
-                                    "{\"msg\":\" def getsleep(isid,id): 200 \"}")
+                                    "{\"msg\":\" def getsleep(isid,id): 200 \"}",targets._core_id) #LOGGER
                 #print('*8*8'*1000)
                 return f'{sleep}'
     except Exception as e :
-          Utility.Log.insert_log(f"{isid}",
+        Utility.Log.insert_log(f"{isid}",
                         f'{id}',
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\" def getsleep(isid,id): 400 \"}"+f"\n{e}")
-    return '500'
+                        "{\"msg\":\" def getsleep(isid,id): 400 \"}"+f"\n{e}",targets._core_id) #LOGGER
+        return '500'
 
 
 
@@ -1114,12 +1149,12 @@ def updatemanyrecordsbyfield(_core_id,field,value,new_value):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}")
+                                "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
@@ -1132,30 +1167,30 @@ def updatemanyrecordsbyfield(_core_id,field,value,new_value):
                     setattr(record, field, new_value)
                 orm.commit()
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                         f'count:{len(records_to_update)}',
                         action.GET.value,
                         str(datetime.now()),
                         action.SUCCESS.value,
-                        "{\"msg\":\"updatemanyrecordsbyfield(field,value,new_value): 200"+"\"}")
+                        "{\"msg\":\"updatemanyrecordsbyfield(field,value,new_value): 200"+"\"}",_core_id) #LOGGER
                 return '200'  # Return '200' to indicate successful update
             else:
                 
-                Utility.Log.insert_log(f"{_core_id}",
+                Utility.Log.insert_log(f"{request}",
                         'count:0',
                         action.GET.value,
                         str(datetime.now()),
                         action.FAILED.value,
-                        "{\"msg\":\"updatemanyrecordsbyfield(field,value,new_value): 404"+"\"}")
+                        "{\"msg\":\"updatemanyrecordsbyfield(field,value,new_value): 404"+"\"}",_core_id) #LOGGER
                 return '404'  # Return '404' if no records match the criteria
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                         'count:0',
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\"updatemanyrecordsbyfield(field,value,new_value): 500"+f"Error: {e}"+"\"}")
+                        "{\"msg\":\"updatemanyrecordsbyfield(field,value,new_value): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
 
         return '500'  
     
@@ -1167,12 +1202,12 @@ def updatemanyrecordsbyfield(_core_id,field,value,new_value):
 @orm.db_session
 def CheckingSession(_core_id):
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"CheckingSession(_core_id): 401"+"\"}")
+                                "{\"msg\":\"CheckingSession(_core_id): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     return '200', 200
 
@@ -1191,7 +1226,7 @@ def checksessions(session_token):
                         action.GET.value,
                         str(datetime.now()),
                         action.AUTHENTICATED.value,
-                        "{\"msg\":\"checksessions(session_token): 200 "+"\"}")
+                        "{\"msg\":\"checksessions(session_token): 200 "+"\"}","system") #LOGGER
         return '200'
     else:
         
@@ -1200,7 +1235,7 @@ def checksessions(session_token):
                         action.GET.value,
                         str(datetime.now()),
                         action.FAILED.value,
-                        "{\"msg\":\"checksessions(session_token): 400 "+"\"}")
+                        "{\"msg\":\"checksessions(session_token): 400 "+"\"}","system") #LOGGER
         return '400'
     
 """ LISTENER """
@@ -1211,12 +1246,12 @@ def pinglistener(_core_id):
 
         if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
             
-            Utility.Log.insert_log(f"{_core_id}",
+            Utility.Log.insert_log(f"{request}",
                                     'invalid session',
                                     action.INSERT.value,
                                     str(datetime.now()),
                                     action.FAILED.value,
-                                    "{\"msg\":\"def pinglistener(_core_id): 401"+"\"}")
+                                    "{\"msg\":\"def pinglistener(_core_id): 401"+"\"}",_core_id) #LOGGER
             return '401', 401
         
         print('pinging listener')
@@ -1233,38 +1268,62 @@ def pinglistener(_core_id):
             Utility.Listeners.insert_Listener(_core_id,_listener_name,_listener_IpAddress,_last_ping)
             orm.commit()   
             
-        Utility.Log.insert_log(f"{_core_id}",
-                                'invalid session',
-                                action.INSERT.value,
-                                str(datetime.now()),
-                                action.SUCCESS.value,
-                                "{\"msg\":\"def pinglistener(_core_id): 401"+"\"}")
+            Utility.Log.insert_log(f"{request}",
+                            'invalid session',
+                            action.INSERT.value,
+                            str(datetime.now()),
+                            action.SUCCESS.value,
+                            "{\"msg\":\"def pinglistener(_core_id): 401"+"\"}",_core_id) #LOGGER
         return data , 200
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                         'count:0',
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\"def pinglistener(_core_id): 500"+f"Error: {e}"+"\"}")
+                        "{\"msg\":\"def pinglistener(_core_id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
 
         return '500'  , 500
+
+# @app.route('/<_core_id>/gl', methods=['GET'])
+# @orm.db_session
+# def getlisteners(_core_id):
+#     try:
+#         if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+#             Utility.Log.insert_log(f"{request}",
+#                                     'invalid session',
+#                                     action.INSERT.value,
+#                                     str(datetime.now()),
+#                                     action.FAILED.value,
+#                                     "{\"msg\":\"def getlisteners(_core_id): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+#             return '401', 401 
+#         lis =  orm.select(i for i in Utility.Listeners if i._core_id == _core_id)
+#         if lis :
+#             return jsonify(lis), 200
+#         return '404', 404
+#     except Exception as e:
+#         Utility.Log.insert_log(f"{request}",
+#                         'count:0',
+#                         action.GET.value,
+#                         str(datetime.now()),
+#                         action.ERROR.value,
+#                         "{\"msg\":\"def getlisteners(_core_id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+#         return '500'  ,500
 
 
 @app.route('/<_core_id>/dl/<id>', methods=['DELETE'])
 @orm.db_session
 def deleteListener(_core_id,id):
     try:
-
         if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
             
-            Utility.Log.insert_log(f"{_core_id}",
+            Utility.Log.insert_log(f"{request}",
                                     'invalid session',
                                     action.INSERT.value,
                                     str(datetime.now()),
                                     action.FAILED.value,
-                                    "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}")
+                                    "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}",_core_id) #LOGGER
             return '401', 401
         
         with orm.db_session:
@@ -1273,24 +1332,24 @@ def deleteListener(_core_id,id):
             if listener:
                 # Delete the record from the database
                 listener.delete()
-                orm.commit()
+            orm.commit()
                 
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.SUCCESS.value,
-                                "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}")
+                                "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}",_core_id) #LOGGER
         return '200', 200
         
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                         'count:0',
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\"def deleteListener(_core_id,id): 500"+f"Error: {e}"+"\"}")
+                        "{\"msg\":\"def deleteListener(_core_id,id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
 
         return '500'  
 
@@ -1302,30 +1361,33 @@ def getListeners(_core_id):
 
         if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
             
-            Utility.Log.insert_log(f"{_core_id}",
+            Utility.Log.insert_log(f"{request}",
                                     'invalid session',
                                     action.INSERT.value,
                                     str(datetime.now()),
                                     action.FAILED.value,
-                                    "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}")
+                                    "{\"msg\":\"def getListeners(_core_id): 401"+"\"}",_core_id) #LOGGER
             return '401', 401
         listeners = orm.select(i for i in Utility.Listeners if i._core_id == _core_id )  
-        Utility.Log.insert_log(f"{_core_id}",
-                                'invalid session',
+        records_data = [record.to_dict() for record in listeners]
+        Utility.Log.insert_log(f"{request}",
+                                'getallisteners',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.SUCCESS.value,
-                                "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}")
-        return jsonify(listeners), 200
-        
+                                "{\"msg\":\"def getListeners(_core_id): 401"+"\"}",_core_id) #LOGGER
+        if listeners :
+            return  jsonify(records_data), 200
+        else:
+            return '404', 404
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                         'count:0',
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\"def deleteListener(_core_id,id): 500"+f"Error: {e}"+"\"}")
+                        "{\"msg\":\"def getListeners(_core_id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
 
         return '500'  
 
@@ -1337,12 +1399,12 @@ def getListeners(_core_id):
 def setconfigurations(_core_id):
     try:
         if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-            Utility.Log.insert_log(f"{_core_id}",
+            Utility.Log.insert_log(f"{request}",
                                     'invalid session',
                                     action.INSERT.value,
                                     str(datetime.now()),
                                     action.FAILED.value,
-                                    "{\"msg\":\"insertinstance(): 401"+"\"}")
+                                    "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGER
             return '401', 401
         with orm.db_session:
             data = request.json()
@@ -1354,23 +1416,58 @@ def setconfigurations(_core_id):
                     for key, value in data.get('_config').items():
                         setattr(configuration, key, value)
                     # Commit the changes to the database
-            Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                     'invalid session',
                                     action.INSERT.value,
                                     str(datetime.now()),
                                     action.SUCCESS.value,
-                                    "{\"msg\":\"def setconfigurations(_core_id): 401"+"\"}")
-            return '200', 200    
+                                    "{\"msg\":\"def setconfigurations(_core_id): 401"+"\"}",_core_id) #LOGGER
+        return '200', 200    
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                         'count:0',
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\"def setconfigurations(_core_id): 500"+f"Error: {e}"+"\"}")
+                        "{\"msg\":\"def setconfigurations(_core_id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
 
         return '500'  ,500
+
+@app.route('/<_core_id>/cl', methods=['GET'])
+@orm.db_session
+def ClearLogs(_core_id):
+    try:
+        if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+            Utility.Log.insert_log(f"{request}",
+                                    'invalid session',
+                                    action.INSERT.value,
+                                    str(datetime.now()),
+                                    action.FAILED.value,
+                                    "{\"msg\":\"def ClearLogs(_core_id): 401"+"\"}",_core_id) #LOGGER
+            return '401', 401 
+        orm.delete(entry for entry in Utility.Log if entry._core_id == _core_id)
+        Utility.Log.insert_log(f"{request}",
+                            f'{_core_id}',
+                            action.GET.value,
+                            str(datetime.now()),
+                            action.SUCCESS.value,
+                            "{\"msg\":\"ClearLogs(_core_id): 200"+"\"}",_core_id) #LOGGER
+        orm.commit()
+        return '200',200
+    except Exception as e:
+        
+        Utility.Log.insert_log(f"{request}",
+                        'count:0',
+                        action.GET.value,
+                        str(datetime.now()),
+                        action.ERROR.value,
+                        "{\"msg\":\"def ClearLogs(_core_id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
+
+        return '500'  ,500
+
+
+
 
 
 
@@ -1402,7 +1499,7 @@ def create_core():
                     action.GET.value,
                     str(datetime.now()),
                     action.FAILED.value,
-                    "{\"msg\":\"create_user(): 401 'error': 'Already Exists'} "+"\"}")
+                    "{\"msg\":\"create_user(): 401 'error': 'Already Exists'} "+"\"}",coreid) #LOGGER
                 return 401, "400"
             
             #creates abstract user
@@ -1414,7 +1511,7 @@ def create_core():
                         action.GET.value,
                         str(datetime.now()),
                         action.SUCCESS.value,
-                        "{\"msg\":\"create_core(): 200 "+"\"}")
+                        "{\"msg\":\"create_core(): 200 "+"\"}",coreid) #LOGGER
         #{"_title":"Title","_hostname":"com.mother.Ship.com","_address":"10.0.0.10","_port":":5675","_username":"username","_password":"password","_confirm":"password"}
         return "200", 200
     except Exception as e:
@@ -1423,7 +1520,7 @@ def create_core():
                         action.GET.value,
                         str(datetime.now()),
                         action.FAILED.value,
-                        "{\"msg\":\"create_core(): 500 "+"\"}")
+                        "{\"msg\":\"create_core(): 500 "+"\"}",coreid) #LOGGER
         return  jsonify({'error': f' error :{e}'}), 500
 
 @app.route('/<_core_id>/c/u', methods=['POST'])
@@ -1432,12 +1529,12 @@ def create_user(_core_id):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}")
+                                "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     
     data = request.get_json()
@@ -1449,36 +1546,36 @@ def create_user(_core_id):
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\"def create_user(): 400 {'error': 'Missing required fields'}"+"\"}")
+                        "{\"msg\":\"def create_user(): 400 {'error': 'Missing required fields'}"+"\"}",_core_id) #LOGGER
         return  400
     if Utility.Hashtable.Authenticate(data["password"],data["username"])[1]:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                         'create_user',
                         action.GET.value,
                         str(datetime.now()),
                         action.FAILED.value,
-                        "{\"msg\":\"create_user(): 401 {'error': 'Already Exists'}"+"\"}")
+                        "{\"msg\":\"create_user(): 401 {'error': 'Already Exists'}"+"\"}",_core_id) #LOGGER
         return 401
     try:
         Utility.Hashtable.insert(data['password'],data['username'],_core_id)
 
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                 'create_user',
                 action.GET.value,
                 str(datetime.now()),
                 action.SUCCESS.value,
-                "{\"msg\":\"create_user(): 200 {'message': 'user created successfully'}"+"\"}")
+                "{\"msg\":\"create_user(): 200 {'message': 'user created successfully'}"+"\"}",_core_id) #LOGGER
         return  201
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                 'create_user',
                 action.GET.value,
                 str(datetime.now()),
                 action.ERROR.value,
-                "{\"msg\":\"def create_user(): 500 "+f"{'error': str(e)}"+"\"}")
+                "{\"msg\":\"def create_user(): 500 "+f"{'error': str(e)}"+"\"}",_core_id) #LOGGER
         return  500
 
 
@@ -1488,50 +1585,50 @@ def create_user_core(_core_id):
     #->
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}")
+                                "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     data = request.get_json()
     if 'password' not in data or 'username' not in data or 'core_id' not in data:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                 'create_user_core():',
                 action.GET.value,
                 str(datetime.now()),
                 action.FAILED.value,
-                "{\"msg\":\"create_user_core(): 400 {'error': 'Missing required fields'}"+"\"}")
+                "{\"msg\":\"create_user_core(): 400 {'error': 'Missing required fields'}"+"\"}",_core_id) #LOGGER
         return  400
     if Utility.Hashtable.Authenticate(data["password"],data["username"])[1]:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                 'create_user_core():',
                 action.GET.value,
                 str(datetime.now()),
                 action.FAILED.value,
-                "{\"msg\":\"create_user_core(): 401 'error': 'Already Exists'} "+"\"}")
+                "{\"msg\":\"create_user_core(): 401 'error': 'Already Exists'} "+"\"}",_core_id) #LOGGER
         return  401
     try:
         Utility.Hashtable.insert_core_user(data['password'],data['username'],data['core_id'])
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                 'create_user_core():',
                 action.GET.value,
                 str(datetime.now()),
                 action.SUCCESS.value,
-                "{\"msg\":\"create_user_core(): 201 {'message': 'user created successfully'}"+"\"}")
+                "{\"msg\":\"create_user_core(): 201 {'message': 'user created successfully'}"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         return  201
     except Exception as e:
         
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                 'create_user_core():',
                 action.GET.value,
                 str(datetime.now()),
                 action.ERROR.value,
-                "{\"msg\":\"def create_user_core(): 201 "+f"{'error': str(e)}"+"\"}")
+                "{\"msg\":\"def create_user_core(): 201 "+f"{'error': str(e)}"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         return  500
     
 
@@ -1561,15 +1658,15 @@ def login_end_point():
         if b and c and '&' in value:
             # Do something if the condition is true
             s = Utility.Sessions.GenerateSession()
-            core = Utility.return_core(c,s)
+            core, _core_id = Utility.return_core(c,s)
             if core :
                 
                 Utility.Log.insert_log(f"{request}",
-                        'login_end_point():',
-                        action.GET.value,
-                        str(datetime.now()),
-                        action.AUTHENTICATED.value,
-                        "{\"msg\":\"login_end_point(): 200 core: "+core+"\"}")
+                            'login_end_point():',
+                            action.GET.value,
+                            str(datetime.now()),
+                            action.AUTHENTICATED.value,
+                            "{\"msg\":\"login_end_point(): 200 core: "+core+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
                 return core
             
             Utility.Log.insert_log(f"{request}",
@@ -1577,16 +1674,15 @@ def login_end_point():
                         action.GET.value,
                         str(datetime.now()),
                         action.FAILED.value,
-                        "{\"msg\":\"login_end_point() !core? : 500"+"\"}")
+                        "{\"msg\":\"login_end_point() !core? : 500"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
             return "500"
         else:
-            
             Utility.Log.insert_log("",
                         'login_end_point():',
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\"login_end_point(): failed login"+"\"}")
+                        "{\"msg\":\"login_end_point(): failed login"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
             # Do something else if the condition is false
             return '500'
     except Exception as e:
@@ -1596,7 +1692,7 @@ def login_end_point():
             action.GET.value,
             str(datetime.now()),
             action.ERROR.value,
-            "{\"msg\":\"login_end_point(): 500"+"\"}")
+            "{\"msg\":\"login_end_point(): 500"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
             # Do something else if the condition is false
         return '500'
 
@@ -1622,7 +1718,7 @@ def get_image(_core_id,filename):
                     action.GET.value,
                     str(datetime.now()),
                     action.GET.value,
-                    "{\"msg\":\"get_image(filename): getting image"+"\"}")
+                    "{\"msg\":\"get_image(filename): getting image"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
     
     file_extension = os.path.splitext(filename)[1]
     mimetype_mapping = {
@@ -1643,12 +1739,12 @@ def get_image(_core_id,filename):
 @orm.db_session
 def download_files(_core_id):
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"download_files(): 401"+"\"}")
+                                "{\"msg\":\"download_files(): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         return '401', 401
     data = request.get_json() 
     directory_path =f'upl/{_core_id}_files'
@@ -1667,7 +1763,7 @@ def download_files(_core_id):
             action.GET.value,
             str(datetime.now()),
             action.ERROR.value,
-            "{\"msg\":\"download_files(_core_id): 500"+"\"}")
+            "{\"msg\":\"download_files(_core_id): 500"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
             # Do something else if the condition is false
         return '500', 500
 
@@ -1676,12 +1772,12 @@ def download_files(_core_id):
 def upload_file(_core_id):
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
     
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}")
+                                "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         return '401', 401
     #print(request.data['file'])
     if  request.data is None:
@@ -1691,7 +1787,7 @@ def upload_file(_core_id):
                     action.GET.value,
                     str(datetime.now()),
                     action.FAILED.value,
-                    "{\"msg\":\"get_image(filename): no file"+"\"}")
+                    "{\"msg\":\"get_image(filename): no file"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         return '403', 403
 
     file = request.files['file']
@@ -1703,7 +1799,7 @@ def upload_file(_core_id):
                     action.GET.value,
                     str(datetime.now()),
                     action.FAILED.value,
-                    "{\"msg\":\"get_image(filename): filename empty"+"\"}")
+                    "{\"msg\":\"get_image(filename): filename empty"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         return '403', 403
 
 
@@ -1715,7 +1811,7 @@ def upload_file(_core_id):
                     action.GET.value,
                     str(datetime.now()),
                     action.FAILED.value,
-                    "{\"msg\":\"get_image(filename): File already exists"+"\"}")
+                    "{\"msg\":\"get_image(filename): File already exists"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         return  '405 File exists'
     
 
@@ -1755,7 +1851,7 @@ def upload_file(_core_id):
                 action.GET.value,
                 str(datetime.now()),
                 action.SUCCESS.value,
-                "{\"msg\":\"get_image(filename): fileuploaded"+"\"}")
+                "{\"msg\":\"get_image(filename): fileuploaded"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         
         return '200'
     
@@ -1764,7 +1860,7 @@ def upload_file(_core_id):
                     action.GET.value,
                     str(datetime.now()),
                     action.ERROR.value,
-                    "{\"msg\":\"get_image(filename): invalid file type"+"\"}")
+                    "{\"msg\":\"get_image(filename): invalid file type"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
     return '405'
 
 
@@ -1775,12 +1871,12 @@ def upload_file(_core_id):
 def delete_files(_core_id):
 
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"def delete_files(_core_id): 401"+"\"}")
+                                "{\"msg\":\"def delete_files(_core_id): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         return '401', 401
     data = request.get_json() 
     directory_path =f'upl/{_core_id}_files'
@@ -1789,7 +1885,7 @@ def delete_files(_core_id):
             file_path = os.path.join(directory_path, file_name)
             try:
                 os.remove(file_path)
-                print(f"File {file_name} deleted successfully.")
+                print(f"File {file_name} deleted successfully.",_core_id) #LOGGE,_core_idR #LOGGER
                 f = Utility.Files.select(lambda i : i._filename == file_name).first()
                 f.delete()
                 orm.commit()
@@ -1798,7 +1894,7 @@ def delete_files(_core_id):
                     action.GET.value,
                     str(datetime.now()),
                     action.SUCCESS.value,
-                    "{\"msg\":\"def delete_files(_core_id):"+"\"}")
+                    "{\"msg\":\"def delete_files(_core_id):"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
             except OSError as e:
                 errorstr = f"msg:def delete_files(_core_id) Error deleting {file_name}: {e.strerror}"
                 Utility.Log.insert_log("",
@@ -1814,12 +1910,12 @@ def delete_files(_core_id):
 @app.route('/<_core_id>/dir',methods=['GET'])
 def get_directory_structure(_core_id):
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"def get_directory_structure(_core_id):401"+"\"}")
+                                "{\"msg\":\"def get_directory_structure(_core_id):401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         return '401', 401
   
 
@@ -1828,7 +1924,7 @@ def get_directory_structure(_core_id):
                     action.GET.value,
                     str(datetime.now()),
                     action.SUCCESS.value,
-                    "{\"msg\":\"def get_directory_structure(_core_id):"+"\"}")
+                    "{\"msg\":\"def get_directory_structure(_core_id):"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         
     DirectoryStructur = Utility.BuildStorageObjects(_core_id)
     return DirectoryStructur
@@ -1837,12 +1933,12 @@ def get_directory_structure(_core_id):
 @app.route('/upl/<_core_id>/<filename>', methods=['GET']) 
 def getfilecontent(_core_id,filename):
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
-        Utility.Log.insert_log(f"{_core_id}",
+        Utility.Log.insert_log(f"{request}",
                                 'invalid session',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"def getfilecontent(_core_id,filename):401"+"\"}")
+                                "{\"msg\":\"def getfilecontent(_core_id,filename):401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         return '401', 401
     try:
         current_path = os.getcwd()
@@ -1854,7 +1950,7 @@ def getfilecontent(_core_id,filename):
                     action.GET.value,
                     str(datetime.now()),
                     action.SUCCESS.value,
-                    "{\"msg\":\"def getfilecontent(_core_id,filename)::"+"\"}")
+                    "{\"msg\":\"def getfilecontent(_core_id,filename)::"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
             return f.read(), 200
     except Exception as e:
         Utility.Log.insert_log("",
@@ -1862,12 +1958,41 @@ def getfilecontent(_core_id,filename):
             action.GET.value,
             str(datetime.now()),
             action.ERROR.value,
-            "{\"msg\":\"def getfilecontent(_core_id,filename): 500, exception: \""+f"{e}"+"\"}")
+            "{\"msg\":\"def getfilecontent(_core_id,filename): 500, exception: \""+f"{e}"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
             # Do something else if the condition is false
     return '500', 500
     
 
+"""
 
+Use this template when defining server side handlers
+
+    <Precode? bad idea before authchecking>
+...
+    
+    try:
+        if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+       Utility.Log.insert_log(f"{request}",
+                                    'invalid session',
+                                    action.INSERT.value,
+                                    str(datetime.now()),
+                                    action.FAILED.value,
+                                    "{\"msg\":\"def FunctionName() 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+            return '401', 401 
+
+        <OTHER CODE>
+
+    except Exception as e:
+        
+   Utility.Log.insert_log(f"{request}",
+                        'count:0',
+                        action.GET.value,
+                        str(datetime.now()),
+                        action.ERROR.value,
+                        "{\"msg\":\"def FunctionName(): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+
+        return '500'  ,500
+"""
 # # Example usage of the update_field_by_id function
 # record_id = 1  # Replace with the desired record ID
 # field_to_update = "_lp"  # Replace with the name of the field you want to update
@@ -1893,9 +2018,6 @@ if '__main__' == __name__:
             exit(-1)
     print(f'{Utility.CYAN}* host: {Utility.LIGHT_YELLOW}{host} {Utility.CYAN} port: {Utility.LIGHT_YELLOW}{port}')
     print(f'{Utility.YELLOW}* START PROC{Utility.RESET}')
-
-
-
     #FIRE IT UP BABY!!!
     print(f'{Utility.GREEN}* SPINNING SERVER UP{Utility.RESET}')
     socketio.run(app,host=host, port=port,debug=True)

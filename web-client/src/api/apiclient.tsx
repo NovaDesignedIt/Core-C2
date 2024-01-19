@@ -785,16 +785,17 @@ export async function getallrecords(url: string, instance?: Instance, core?: Cor
  * @param {Core} [core] - The Core object (optional).
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function deleterecordbyid(url: string, record_id: string, core?: CoreC,): Promise<string> {
+export async function deleterecordbyid(url: string, records:number[], core?: CoreC,): Promise<string> {
   try {
-    const apiUrl = `http://${url}/${core?._core_id}/t/${record_id}`;
+    const apiUrl = `http://${url}/${core?._core_id}/d/t/`;
     const authoken = core?._sessiontoken ? core?._sessiontoken : ''
     const response = await fetch(apiUrl, {
-      method: 'DELETE',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'authtok': authoken,
       },
+      body:JSON.stringify(records)
     });
 
     console.log(response);
@@ -1062,6 +1063,40 @@ export async function deleteFiles(url: string, files: string[], core?: CoreC) {
 
 }
 
+
+
+// @app.route('/<_core_id>/cl/', methods=['GET'])
+// @orm.db_session
+// def ClearLogs(_core_id):
+
+
+/**
+ * getFileContent from the specified URL.
+ * @param {url} - The URL for the delete endpoint.
+ * @param {CoreC} - Core Object
+ * @returns A Promise that resolves when the deletion is complete.
+ */
+export async function ClearLogs(url: string, coreC:CoreC) {
+
+  const response = await fetch(`http://${url}/${coreC._core_id}/cl`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json", // Specify the content type as JSON
+      'authtok': coreC?._sessiontoken !== undefined ? coreC?._sessiontoken : '',
+    },
+  }).then(
+    (data) => {
+      return data.status
+    }
+  ).catch((error: Error) => {
+    console.log(error);
+  })
+
+  return response;
+
+}
+
+
 /**
  * getFileContent from the specified URL.
  * @param {url} - The URL for the delete endpoint.
@@ -1150,20 +1185,22 @@ export async function deleteListener(url: string, core:CoreC, id: number) {
  * @returns A Promise that resolves when the deletion is complete.
  */
 export async function getalllisteners(url: string, core:CoreC) {
-  const response = await fetch(`http://${url}/${core._core_id}/gl`, {
+  const response:any = await fetch(`http://${url}/${core._core_id}/gl`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json", // Specify the content type as JSON
       'authtok': core?._sessiontoken !== undefined ? core?._sessiontoken : '',
     }
   }).then(
+
     (data) => {
-      return data
+      return data.status === 200 ? data.json() : '';
     }
   ).catch((error: Error) => {
     console.log(error);
   })
-  return response;
+  
+  return response
 }
 
 

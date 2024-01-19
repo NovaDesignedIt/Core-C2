@@ -269,12 +269,12 @@ class Log(db.Entity):
     _msg = orm.Optional(str)
     # Insert operation
     @orm.db_session
-    def insert_log(instance_id, target_name, action, log_time,result,_msg):
+    def insert_log(instance_id, target_name, action, log_time,result,_msg,_core_id):
         try:
             #print()
             #print(f'{instance_id, target_name, action, log_time,result,_msg}******************************DEBUG ')
             serverPrinter(instance_id, target_name, action, log_time,result,_msg)
-            Log(_instance_id=instance_id, _target_name=target_name, _action=action, _time=log_time,_result=result,_msg=_msg)
+            Log(_instance_id=instance_id, _target_name=target_name, _action=action, _time=log_time,_result=result,_msg=_msg,_core_id=_core_id)
         except Exception as e:
             print(f'Exception: {e}')
                     
@@ -784,7 +784,7 @@ def return_core(core_id,sessiontoken):
                                 )
                 print(listeners)
                 coreJson = {"_core_id" :core._core_id,"_sessiontoken":sessiontoken ,"_config" :configJson, "_users":usersJson, "_listeners":listen, "_instances":InstanceJson}
-                return json.dumps(coreJson)
+                return json.dumps(coreJson) , core._core_id
     except Exception as e:
         print(f"Error: {e}")
         return None 

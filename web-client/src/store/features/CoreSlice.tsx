@@ -47,6 +47,10 @@ export const CoreSlice = createSlice({
         state.instanceObjects = action.payload.instances
         state.listenerObjects = action.payload.listeners
       },
+      SetListener:
+      (state, action: PayloadAction<{ listenerid: Listeners[] }>) => {
+        state.listenerObjects = action.payload.listenerid
+      },
       DeleteListener:
       (state, action: PayloadAction<{ listenerid: number }>) => {
         state.listenerObjects = state.listenerObjects.filter(i => i._id !== action.payload.listenerid);
@@ -109,5 +113,6 @@ export const { 	SetCore,
   SetInstance,
   SetSelectedTargets,
   SetSelectedInstance,
-  SetSelectedContent 
+  SetSelectedContent,
+  SetListener
 } = CoreSlice.actions;

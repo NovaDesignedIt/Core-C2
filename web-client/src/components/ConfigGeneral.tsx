@@ -1,13 +1,13 @@
-import { Alert, Box, Button, Checkbox, FormControlLabel, List, ListItem, ListItemIcon, ListItemText, Snackbar, Stack, Switch, TextField, Typography, styled } from '@mui/material';
+import { Alert, AlertColor,  Box, Button, Checkbox, FormControlLabel, List, ListItem, ListItemIcon, ListItemText, Snackbar, Stack, Switch, TextField, Typography, styled } from '@mui/material';
 import React, { SetStateAction } from 'react'
-import { Core, Listeners, addlistener } from '../api/apiclient';
+import { ClearLogs, Core, Listeners, addlistener, deleteListener, getalllisteners } from '../api/apiclient';
 import InstanceConfiguration from "./InstancesConfiguration";
 import ListenerComponent from "./Listeners";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { addlisteners } from '../store/features/CoreSlice';
+import { DeleteListener, SetListener, addlisteners } from '../store/features/CoreSlice';
 
 
 
@@ -18,13 +18,9 @@ const ConfigGeneralComp = () => {
   const configurationObject = useAppSelector(state => state.core.configObject)
   const corid = useAppSelector(state => state.core.configObject._core_id)
   const core = useAppSelector(state => state.core.coreObject)
-
-
   const sessionLength: number = configurationObject._session_len !== undefined ? configurationObject._session_len : 0
   const DaysRetLog: number = configurationObject?._log_ret_days !== undefined ? configurationObject?._log_ret_days : 0
-
- 
-
+  const [alertType,SetAlertType]  = React.useState<AlertColor>('success');
   const [daysretLog, setDaysretLog] = React.useState<number>(sessionLength);
   const [sessionlen, setsessionlen] = React.useState<number>(DaysRetLog);
   const [message, setmessage] = React.useState('');
@@ -42,8 +38,13 @@ const ConfigGeneralComp = () => {
   const [ipaddress, SetIpAddress] = React.useState('');
   const [selectedListener, SetSelectedListener] = React.useState(-1);
 
-  const HandleClearLogs = () => {
-    //alert(corid);
+  const HandleClearLogs = async () => {
+      const result:number | void =  await ClearLogs(core._url,core)
+      if(result === 200 && result !== undefined)
+      { 
+        SetAlertType('success')
+        SetOpen(true); setmessage('Logs Cleared')
+      }
   }
 
   const HandleSessionLength = (event: { target: { value: SetStateAction<string>; }; }) => {
@@ -75,9 +76,11 @@ const SelectedListener = (id :number) =>{
       dispatch(addlisteners({listener:l}))
       SetNewListener(false);
       }else if(result === 401){
+        SetAlertType('error')
         SetOpen(true);
         setmessage('Logged out')
       }else if(result === 500){
+        SetAlertType('error')
         SetOpen(true);
         setmessage('Error')
       }
@@ -85,9 +88,22 @@ const SelectedListener = (id :number) =>{
   }
 
   const HandleDeleteListener = async () => {
-    if (selectedListener  > 0) {
-      alert(selectedListener);
-    }else{
+    if (selectedListener !== undefined) {
+      const result = await deleteListener(core._url, core, selectedListener)
+      if (result !== undefined) {
+        if (result === 200) {
+          const res = await getalllisteners(core._url, core)
+          if(res !== undefined && res !== '' ){
+            const alllistners: Listeners[] = res as unknown as Listeners[]
+            dispatch(SetListener({listenerid:alllistners})) 
+     
+            
+          }
+        }else if(result === 404){
+          dispatch(SetListener({listenerid:[]})) 
+        }
+      }
+    } else {
       alert('Select Listener first')
     }
   }
@@ -377,8 +393,9 @@ const SelectedListener = (id :number) =>{
               borderRadius: "4px",
               display: 'flex',
               width: "90%",
-              height: "100%",
+              height: "50%",
               maxHeight:"80%",
+              minHeight:"250px",
               gap: "10px",
               padding: "1%",
               flexDirection: 'column',
@@ -405,11 +422,11 @@ const SelectedListener = (id :number) =>{
                   }
                 }} />
               </div>
-              <div style={{ padding: "1px", overflow: "hidden", width: "100%", gap: "10px", height: "100%", flexDirection: "column", display: "flex" }}>
+              <div style={{ padding: "10px", overflow: "hidden", width: "100%", gap: "10px", height: "100%", flexDirection: "column", display: "flex" }}>
 
                 {newlistener &&
                   //newlist
-                  <div style={{ padding: "1px", overflow: "hidden", gap: "10px", width: "100%", height: "50%" ,maxHeight:"40px", flexDirection: "row", display: "flex" }}>
+                  <div style={{ padding: "3px", overflow: "hidden", gap: "10px", width: "100%", height: "50%" ,maxHeight:"50px",minHeight:"50px", flexDirection: "row", display: "flex" }}>
                     <TextField
                       InputLabelProps={{ sx: { color: "#fff" } }}
                       inputProps={{ sx: { color: "#fff" } }}
@@ -430,7 +447,7 @@ const SelectedListener = (id :number) =>{
                       sx={{
 
                         border: "1px solid #333",
-                        color: '#fff',
+                        color: '#fff', 
                         ":hover": {
                           bgcolor: "#777",
                         }
@@ -451,7 +468,7 @@ const SelectedListener = (id :number) =>{
         </Stack>
       </Stack>
       <Snackbar open={open} autoHideDuration={2500} onClose={handleClose}>
-        <Alert onClose={handleClose} variant="filled" severity="error" sx={{ width: '100%' }}>
+        <Alert onClose={handleClose} variant="filled" severity={alertType} sx={{ width: '100%' }}>
           {message}
         </Alert >
       </Snackbar>

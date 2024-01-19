@@ -303,7 +303,7 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
 
           <Button
             onClick={HandleInsertRecords}
-            style={{ marginLeft: "auto", backgroundColor: "#7ff685", color: "#000", width: "20%", height: "80%" }}> Insert
+            style={{ marginLeft: "auto",  backgroundColor: "transparent",border:"1px solid #7ff685",  color: "#7ff685", width: "20%", height: "80%" }}> Insert
           </Button>
 
 

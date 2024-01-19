@@ -92,8 +92,8 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
     var t = rowSelected;
     setOpen(true)
     var ol = rowSelected !== undefined ? rowSelected : [].toString().split(',').map((id: string) => id.trim())
-    for (const id of ol) {
-      await deleterecordbyid(core._url, id.toString(), core);
+    if (rowSelected !== undefined) {
+      await deleterecordbyid(core._url,rowSelected , core);
     }
     //  fetchData();
     setSelectedRows([]);

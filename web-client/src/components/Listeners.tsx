@@ -13,7 +13,7 @@ interface ListenerProp {
 const ListenersComponent:React.FC<ListenerProp> = ({HandleSelectedInstance}) => {
 
     const listeners = useAppSelector(state => state.core.listenerObjects);
-    const [selected,setSelected] = useState(-1)
+    const [selected,setSelected] = useState(0)
 
     const HandleSelectedListener = (index:number,id:number)=>{
         setSelected(index)
@@ -25,7 +25,7 @@ const ListenersComponent:React.FC<ListenerProp> = ({HandleSelectedInstance}) => 
         <Box sx={{ padding: '1%',borderRadius: 1, cursor:"pointer",boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', backgroundColor: "#000", width: '100%', height: '100%' }} >
             <List style={{padding:"10px",flexDirection:"column",display:"flex",gap:"10px",overflow:"scroll",maxHeight:"100%"}}>      
                 {
-                listeners.map((lis:Listeners,index:number) => (
+                 listeners.map((lis:Listeners,index:number) => (
                     <ListItem 
                     key={index}
                     onClick={()=>{HandleSelectedListener(index,lis._id)}}
