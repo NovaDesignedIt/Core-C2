@@ -10,7 +10,7 @@ import { Button, TextField } from '@mui/material';
 import { Core, Instance, Target, deleteinstancebyid, getallinstance, insertinstance } from '../api/apiclient';
 import { AnyLayer } from 'react-map-gl';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { SetInstance } from '../store/features/CoreSlice';
+import { SetInstance,InsertInstance } from '../store/features/CoreSlice';
 
 
 const themeText = {
@@ -77,11 +77,9 @@ const instanceConfiguration = () => {
             const instance = Instances.find(i => i._id === rowid)
             if (instance !== undefined && CoreC !== undefined) {
                 const response = await deleteinstancebyid(CoreC._url, CoreC, instance)
-                if (response === "200") {
-                    const t = await getallinstance(CoreC._url, CoreC);
-                    console.log(t)
-                    const allinstances: Instance[] = t as unknown as Instance[]
-                    dispatch(SetInstance({ instance : allinstances}))
+                const allinstances: Instance[] = response as unknown as Instance[]
+                if (allinstances !== undefined) {
+                    dispatch(SetInstance({ instance: allinstances }))
                     setInstances(allinstances);
                 }
             }
@@ -96,18 +94,16 @@ const instanceConfiguration = () => {
                 InstanceName,
                 CoreC?._url,
                 config?._ip_address,
-                0, 
+                0,
                 CoreC?._core_id,
             );
             console.log(data)
             var t: string = ''
             if (CoreC !== undefined && InstanceName !== '') {
-                t = await insertinstance(CoreC._url, CoreC, data);
-                if (t === "200") {
-                    const t = await getallinstance(CoreC._url, CoreC);
-                    console.log(t)
-                    const allinstances: Instance[] = t as unknown as Instance[]
-                    dispatch(SetInstance({ instance : allinstances}))
+                const response = await insertinstance(CoreC._url, CoreC, data);
+                const allinstances: Instance[] = response as unknown as Instance[]
+                if (allinstances !== undefined) {
+                    dispatch(SetInstance({ instance: allinstances }))
                     setInstances(allinstances);
                 }
             }

@@ -33,10 +33,7 @@ const ConfigGeneralComp = () => {
   const [chkcmd, setChkcmd] = React.useState(false);
   const [chklp, setChklp] = React.useState(false);
   const [chktimeout, setchktimeout] = React.useState(false);
-  const [newlistener, SetNewListener] = React.useState(false);
-  const [name, SetName] = React.useState('');
-  const [ipaddress, SetIpAddress] = React.useState('');
-  const [selectedListener, SetSelectedListener] = React.useState(-1);
+
 
   const HandleClearLogs = async () => {
       const result:number | void =  await ClearLogs(core._url,core)
@@ -62,61 +59,7 @@ const ConfigGeneralComp = () => {
       event.preventDefault();
     }
   }
-const SelectedListener = (id :number) =>{
-  SetSelectedListener(id)
-}
 
-  const HandleInsertListener = async () => {
-    if (name !== '' && ipaddress !== '') {
-
-      const l: Listeners = new Listeners(corid, name, ipaddress, '', 0)
-
-      const result = await addlistener(core._url, core, l);
-      if(result === 200){
-      dispatch(addlisteners({listener:l}))
-      SetNewListener(false);
-      }else if(result === 401){
-        SetAlertType('error')
-        SetOpen(true);
-        setmessage('Logged out')
-      }else if(result === 500){
-        SetAlertType('error')
-        SetOpen(true);
-        setmessage('Error')
-      }
-    }
-  }
-
-  const HandleDeleteListener = async () => {
-    if (selectedListener !== undefined) {
-      const result = await deleteListener(core._url, core, selectedListener)
-      if (result !== undefined) {
-        if (result === 200) {
-          const res = await getalllisteners(core._url, core)
-          if(res !== undefined && res !== '' ){
-            const alllistners: Listeners[] = res as unknown as Listeners[]
-            dispatch(SetListener({listenerid:alllistners})) 
-     
-            
-          }
-        }else if(result === 404){
-          dispatch(SetListener({listenerid:[]})) 
-        }
-      }
-    } else {
-      alert('Select Listener first')
-    }
-  }
-
-
-
-  const HandleListenerName = (event: { target: { value: SetStateAction<string>; }; }) => {
-    SetName(event.target.value);
-  }
-
-  const HandleListenerIpAddress = (event: { target: { value: SetStateAction<string>; }; }) => {
-    SetIpAddress(event.target.value);
-  }
 
   const handleClose = () => {
     SetOpen(false)
@@ -386,92 +329,19 @@ const SelectedListener = (id :number) =>{
                 sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
             </div>
           </Stack>
-          <Stack spacing={2} width={'100%'}  >
+          <Stack spacing={2} width={'100%'} height={'100%'}  >
             <h5 style={{ color: "#fff", cursor: "default" }}>Listeners</h5>
-            <div style={{
-              border: "1px solid #222",
-              borderRadius: "4px",
-              display: 'flex',
-              width: "90%",
-              height: "50%",
-              maxHeight:"80%",
-              minHeight:"250px",
-              gap: "10px",
-              padding: "1%",
-              flexDirection: 'column',
-              backgroundColor: "#111",
-            }}>
-              <div style={{ flexDirection: "row", display: "flex", marginRight: "auto", height: "10%", gap: "20px", cursor: "pointer" }}>
-                <AddIcon
-                  onClick={() => { newlistener ? SetNewListener(false) : SetNewListener(true) }}
-                  sx={{
-                    "&:hover": {
-                      color: "#7ff685"
-                    }
-                  }} />
-                <EditNoteIcon sx={{
-                  "&:hover": {
-                    color: "#7ff685"
-                  }
-                }} />
-                <RemoveIcon 
-                onClick= {() => {HandleDeleteListener()}}
-                sx={{
-                  "&:hover": {
-                    color: "#7ff685"
-                  }
-                }} />
-              </div>
-              <div style={{ padding: "10px", overflow: "hidden", width: "100%", gap: "10px", height: "100%", flexDirection: "column", display: "flex" }}>
-
-                {newlistener &&
-                  //newlist
-                  <div style={{ padding: "3px", overflow: "hidden", gap: "10px", width: "100%", height: "50%" ,maxHeight:"50px",minHeight:"50px", flexDirection: "row", display: "flex" }}>
-                    <TextField
-                      InputLabelProps={{ sx: { color: "#fff" } }}
-                      inputProps={{ sx: { color: "#fff" } }}
-                      size='small'
-                      placeholder={'name'}
-                      onChange={(e) => { HandleListenerName(e) }}
-                      sx={{ ...themeText, width: "20%", borderRadius: "5px" }} ></TextField>
-                    <TextField
-
-                      InputLabelProps={{ sx: { color: "#fff" } }}
-                      inputProps={{ sx: { color: "#fff" } }}
-                      size='small'
-                      placeholder={'ipaddress'}
-                      onChange={(e) => { HandleListenerIpAddress(e) }}
-                      sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
-                    <Button
-                      onClick={() => { HandleInsertListener() }}
-                      sx={{
-
-                        border: "1px solid #333",
-                        color: '#fff', 
-                        ":hover": {
-                          bgcolor: "#777",
-                        }
-                      }}
-                      style={{ width: '5%', height: '100%', }} >
-                      +
-                    </Button>
-                  </div>
-
-                }
-                <div style={{ padding: "1px", overflow: "hidden", gap: "10px", width: "100%", height: "100%", flexDirection: "row", display: "flex" }}>
-
-                  <ListenerComponent HandleSelectedInstance={SelectedListener} />
-                </div>
-              </div>
-            </div>
+            <ListenerComponent/>
           </Stack>
         </Stack>
       </Stack>
+      
       <Snackbar open={open} autoHideDuration={2500} onClose={handleClose}>
         <Alert onClose={handleClose} variant="filled" severity={alertType} sx={{ width: '100%' }}>
           {message}
         </Alert >
       </Snackbar>
+
     </Stack>
   );
 

@@ -114,7 +114,7 @@ def insertinstance(_core_id):
                                 _instance_url=instance_url,
                                 _Instance_count=instance_count,
                                 _core_id=core_id)
-        Utility.db.commit()  # Commit the transactionType to save the record in the database
+        orm.commit()  # Commit the transactionType to save the record in the database
         
         Utility.Log.insert_log(f"{request}",
                                instance_name,
@@ -122,7 +122,18 @@ def insertinstance(_core_id):
                                str(datetime.now()),
                                action.SUCCESS.value,
                                "{\"msg\":\"insertinstance(_core_id): 201"+"\"}",_core_id) #LOGGER
-        return f'{jsonify(instance.__dict__)}', 200  # Return success message and status code 201 (Created)
+        
+
+        instances = orm.select(i for i in Utility.Instance if i._core_id == _core_id )  
+        records_data = [record.to_dict() for record in instances]
+        t = jsonify(records_data)
+        Utility.Log.insert_log(f"{request}",
+                                'getallisteners',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.SUCCESS.value,
+                                "{\"msg\":\"def getListeners(_core_id): 200"+"\"}",_core_id) #LOGGER
+        return t , 200  # Return success message and status code 201 (Created)
     except Exception as e:
         
         Utility.Log.insert_log(f"{request}",
@@ -130,7 +141,7 @@ def insertinstance(_core_id):
                                action.INSERT.value,
                                str(datetime.now()),
                                action.FAILED.value,
-                               "{\"msg\":\"insertinstance(_core_id): 400"+"\"}",_core_id) #LOGGER
+                               "{\"msg\":\"def insertinstance(_core_id): 400"+"\"}",_core_id) #LOGGER
         return str(e), 400  # Return error message and status code 400 (Bad Request) in case of errors
 
 @app.route('/<_core_id>/i/<int:record_id>', methods=['GET'])
@@ -272,8 +283,11 @@ def deleteinstancebyid(_core_id,record_id):
                 
                 orm.delete(entry for entry in Utility.Target if entry._isid == isid)
                 orm.commit()
-
-                return '200'  # Return '200' to indicate successful deletion
+                
+                instances = orm.select(i for i in Utility.Instance if i._core_id == _core_id )  
+                records_data = [record.to_dict() for record in instances]
+                t = jsonify(records_data)
+                return t, '200'  # Return '200' to indicate successful deletion
             else:
                 
                 Utility.Log.insert_log(f"{request}",
@@ -1154,7 +1168,7 @@ def updatemanyrecordsbyfield(_core_id,field,value,new_value):
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGER
+                                "{\"msg\":\"def updatemanyrecordsbyfield(_core_id,field,value,new_value):401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
@@ -1257,6 +1271,10 @@ def pinglistener(_core_id):
         print('pinging listener')
         #ping the Listener here.
 
+
+
+        ##BUILD PING AGENT HERE###SCAPY?
+
         data =  request.get_json()
         #data =  request.json()
         if data :
@@ -1274,7 +1292,16 @@ def pinglistener(_core_id):
                             str(datetime.now()),
                             action.SUCCESS.value,
                             "{\"msg\":\"def pinglistener(_core_id): 401"+"\"}",_core_id) #LOGGER
-        return data , 200
+        listeners = orm.select(i for i in Utility.Listeners if i._core_id == _core_id )  
+        records_data = [record.to_dict() for record in listeners]
+        t = jsonify(records_data)
+        Utility.Log.insert_log(f"{request}",
+                                'getallisteners',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.SUCCESS.value,
+                                "{\"msg\":\"def getListeners(_core_id): 200"+"\"}",_core_id) #LOGGER        
+        return  t, 200
     except Exception as e:
         
         Utility.Log.insert_log(f"{request}",
@@ -1332,15 +1359,17 @@ def deleteListener(_core_id,id):
             if listener:
                 # Delete the record from the database
                 listener.delete()
-            orm.commit()
-                
+        listeners = orm.select(i for i in Utility.Listeners if i._core_id == _core_id )  
+        records_data = [record.to_dict() for record in listeners]
+        t = jsonify(records_data)
         Utility.Log.insert_log(f"{request}",
-                                'invalid session',
+                                'getallisteners',
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.SUCCESS.value,
-                                "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}",_core_id) #LOGGER
-        return '200', 200
+                                "{\"msg\":\"def getListeners(_core_id): 200"+"\"}",_core_id) #LOGGER
+        print(t)
+        return  t, 200
         
     except Exception as e:
         
@@ -1375,11 +1404,11 @@ def getListeners(_core_id):
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.SUCCESS.value,
-                                "{\"msg\":\"def getListeners(_core_id): 401"+"\"}",_core_id) #LOGGER
+                                "{\"msg\":\"def getListeners(_core_id): 200"+"\"}",_core_id) #LOGGER
         if listeners :
             return  jsonify(records_data), 200
         else:
-            return '404', 404
+            return jsonify([]), 200
     except Exception as e:
         
         Utility.Log.insert_log(f"{request}",
@@ -1404,7 +1433,7 @@ def setconfigurations(_core_id):
                                     action.INSERT.value,
                                     str(datetime.now()),
                                     action.FAILED.value,
-                                    "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGER
+                                    "{\"msg\":\"def setconfigurations(_core_id): 401"+"\"}",_core_id) #LOGGER
             return '401', 401
         with orm.db_session:
             data = request.json()
@@ -1534,7 +1563,7 @@ def create_user(_core_id):
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGER
+                                "{\"msg\":\"def create_user(_core_id): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     
     data = request.get_json()
@@ -1590,7 +1619,7 @@ def create_user_core(_core_id):
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGER
+                                "{\"msg\":\"def create_user_core(_core_id): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     data = request.get_json()
     if 'password' not in data or 'username' not in data or 'core_id' not in data:
@@ -1777,7 +1806,7 @@ def upload_file(_core_id):
                                 action.INSERT.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+                                "{\"msg\":\"def upload_file(_core_id): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
         return '401', 401
     #print(request.data['file'])
     if  request.data is None:

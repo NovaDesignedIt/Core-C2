@@ -402,7 +402,7 @@ export async function getinstancebyfield(url: string, core: CoreC, recordId: str
  * @param {Instance} data - The Instance data.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function insertinstance(url: string, core: CoreC, data: Instance): Promise<string> {
+export async function insertinstance(url: string, core: CoreC, instance: Instance){
   try {
     const apiUrl = `http://${url}/${core._core_id}/i`;
 
@@ -412,22 +412,16 @@ export async function insertinstance(url: string, core: CoreC, data: Instance): 
         'Content-Type': 'application/json',
         'authtok': core._sessiontoken,
       },
-      body: JSON.stringify(data),
-    });
-
-    if (response.ok || response.status == 201) {
-      return '200';
-    } else if (response.status === 401) {
-      return '401';
-    } else if (response.status === 400) {
-      return '400';
-    } else {
-      return '500';
-    }
+      body: JSON.stringify(instance),
+    }).then(data=> {return data.json()}).catch(error => console.log(error));
+    console.log(response,'responseposdkfposdkfposdkfposdkfposdkfposdfk')
+    return response
+   
   } catch (error) {
     console.error('Error:', error);
-    return '500';
+
   }
+
 }
 
 
@@ -514,7 +508,7 @@ export async function getallinstance(url: string, core: CoreC): Promise<string> 
  * @param {Instance} instance - The Instance object.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function deleteinstancebyid(url: string, core: CoreC, instance: Instance): Promise<string> {
+export async function deleteinstancebyid(url: string, core: CoreC, instance: Instance) {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i/${instance._id}`;
 
@@ -524,21 +518,14 @@ export async function deleteinstancebyid(url: string, core: CoreC, instance: Ins
         'Content-Type': 'application/json',
         'authtok': core._sessiontoken,
       }
-    });
-
-    if (response.ok || response.status == 200) {
-      return '200';
-    } else if (response.status === 401) {
-      return '401';
-    } else if (response.status === 404) {
-      return '404';
-    } else {
-      return '500';
-    }
+    }).then(data => { return data.json() }).catch(error => console.log(error));
+    return response;
   } catch (error) {
     console.error('Error:', error);
     return '500';
-  } instance
+  }
+
+
 }
 
 
@@ -1142,7 +1129,7 @@ export async function addlistener(url: string, core:CoreC, Listener: Listeners) 
     body: JSON.stringify(Listener), // Convert the object to a JSON string
   }).then(
     (data) => {
-      return data.status
+      return data.json()
     }
   ).catch((error: Error) => {
     console.log(error);
@@ -1161,7 +1148,7 @@ export async function addlistener(url: string, core:CoreC, Listener: Listeners) 
  * @returns A Promise that resolves when the deletion is complete.
  */
 export async function deleteListener(url: string, core:CoreC, id: number) {
-  const response = await fetch(`http://${url}/${core._core_id}/dl/${id}`, {
+  const response = fetch(`http://${url}/${core._core_id}/dl/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json", // Specify the content type as JSON
@@ -1169,7 +1156,7 @@ export async function deleteListener(url: string, core:CoreC, id: number) {
     }
   }).then(
     (data) => {
-      return data.status
+      return data.json()
     }
   ).catch((error: Error) => {
     console.log(error);
