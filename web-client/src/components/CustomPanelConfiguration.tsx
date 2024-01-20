@@ -4,10 +4,11 @@ import { Core } from '../api/apiclient';
 import * as React from 'react';
 import ConfigGeneral from './ConfigGeneral';
 import InstancesConfiguration from './InstancesConfiguration'
-import CloudSyncIcon from '@mui/icons-material/CloudSync';
+
 import { AnySourceImpl } from 'mapbox-gl';
 import { Typography } from '@material-ui/core';
 import { useAppSelector } from '../store/store';
+
 
 
 const ConfigPanel = () => {
@@ -16,9 +17,7 @@ const ConfigPanel = () => {
   const configurationObject = useAppSelector(state => state.core.configObject)
   const core = useAppSelector(state => state.core.coreObject) 
 
-  const handleSelectTab = (index: React.SetStateAction<number>) => {
-    SetTabSelected(index);
-  }
+  
 
   return (
     <Typography
@@ -59,26 +58,12 @@ const ConfigPanel = () => {
           <p style={{ margin: "auto", cursor: "default" }}>
             <h6> {configurationObject?._host_name} - {configurationObject?._ip_address}</h6>
           </p>
-          <p style={{ margin: "auto", cursor: "default" }}>
+          <p style={{ marginLeft: "auto", cursor: "default" }}>
             <h6> Instance ID: {core?._core_id}</h6>
           </p>
-          <div style={{ marginLeft: "auto", cursor: "pointer" }}
-            onClick={() => { alert('syncing core'); }}
-          >
-            <Stack sx={{
-              "&:hover": {
-                color: "#7ff685"
-              }
-            }}>
-              <p  >
-                <h6>  save
-                  <CloudSyncIcon />
-                </h6>
-              </p>
-            </Stack>
-          </div>
+        
         </div>
-        <ConfigGeneral/>
+        <ConfigGeneral />
       </Stack>
     </Typography>
 

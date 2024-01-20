@@ -1,4 +1,4 @@
-import { Box, Button, List, ListItem, ListItemIcon, ListItemText, TextField, Typography } from "@mui/material";
+import { AlertColor, Box, Button, List, ListItem, ListItemIcon, ListItemText, TextField, Typography } from "@mui/material";
 import CircleIcon from '@mui/icons-material/Circle';
 import { Listeners, addlistener, deleteListener } from "../api/apiclient";
 import { SetStateAction, useEffect, useState } from "react";
@@ -7,6 +7,7 @@ import { SetListener, addlisteners } from "../store/features/CoreSlice";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import { DynamicAlert } from "./AlertFeedbackComponent";
 const listners = [1, 2, 6, 1, 1, 1, 1, 1, 1, 1]
 
 const ListenersComponent = () => {
@@ -21,7 +22,20 @@ const ListenersComponent = () => {
     const dispatch = useAppDispatch();
 
 
+ 
 
+    const [alertType, SetAlertType] = useState<AlertColor>('success');
+    const [message, setmessage] = useState('');
+    const [open, SetOpen] = useState(false);
+  
+    function ToggleAlertComponent(type:AlertColor,msg:string,open:boolean){
+      SetAlertType(type);
+      setmessage(msg)
+      SetOpen(open);
+    }
+
+  
+    
     const HandleSelectedListenerClick = (index: number, id: number) => {
         SetSelectedListener(id)
     }
@@ -32,25 +46,32 @@ const ListenersComponent = () => {
             const l: Listeners = new Listeners(corid, name, ipaddress, '', 0)
 
             const result = await addlistener(core._url, core, l);
-            if (result !== undefined) {
+            if (result !== undefined && result !== 401) {
 
                 const listListeners: Listeners[] = result as unknown as Listeners[]
                 dispatch(SetListener({ listenerid: listListeners }))
                 SetNewListener(false);
-
+                ToggleAlertComponent('success','Listener Inserted',true);
+            }else {
+                ToggleAlertComponent('error','session over',true);
             }
             SetSelectedListener(-1)
+        }else{
+            alert('provide name and ip address')
         }
     }
 
     const HandleDeleteListener = async () => {
         if (selectedListener !== undefined) {
             const result = await deleteListener(core._url, core, selectedListener)
-            if (result !== undefined) {
+            if (result !== undefined &&  result !== 401) {
                 console.log(result.body)
                 const listeners: Listeners[] = result as unknown as Listeners[]
                 dispatch(SetListener({ listenerid: listeners }))
                 SetSelectedListener(-1)
+                ToggleAlertComponent('success','Listener Deleted',true);
+            }else {
+                ToggleAlertComponent('error','error',true);
             }
         } else {
             alert('Select Listener first')
@@ -118,11 +139,7 @@ const ListenersComponent = () => {
                             color: "#7ff685"
                         }
                     }} />
-                <EditNoteIcon sx={{
-                    "&:hover": {
-                        color: "#7ff685"
-                    }
-                }} />
+           
                 <RemoveIcon
                     onClick={() => { HandleDeleteListener() }}
                     sx={{
@@ -242,6 +259,7 @@ const ListenersComponent = () => {
 
                     </Box>
 
+                    <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e)=>{SetOpen(false)}}/>
 
 
                 </div>

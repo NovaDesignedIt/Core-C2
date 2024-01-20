@@ -6,12 +6,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Button, TextField } from '@mui/material';
+import { AlertColor, Button, TextField } from '@mui/material';
 import { Core, Instance, Target, deleteinstancebyid, getallinstance, insertinstance } from '../api/apiclient';
 import { AnyLayer } from 'react-map-gl';
 import { useAppDispatch, useAppSelector } from '../store/store';
 import { SetInstance,InsertInstance } from '../store/features/CoreSlice';
-
+import { DynamicAlert } from './AlertFeedbackComponent';
 
 const themeText = {
     backgroundColor: "#333",
@@ -59,6 +59,15 @@ const instanceConfiguration = () => {
     const [insertRow, TogglePanel] = React.useState(false);
     const [InstanceName, SetInstanceName] = React.useState('')
 
+    const [alertType, SetAlertType] = React.useState<AlertColor>('success');
+    const [message, setmessage] = React.useState('');
+    const [open, SetOpen] = React.useState(false);
+  
+    function ToggleAlertComponent(type:AlertColor,msg:string,open:boolean){
+      SetAlertType(type);
+      setmessage(msg)
+      SetOpen(open);
+    }
    
 
     const handleInstanceNameChange = (event: any) => {
@@ -81,6 +90,9 @@ const instanceConfiguration = () => {
                 if (allinstances !== undefined) {
                     dispatch(SetInstance({ instance: allinstances }))
                     setInstances(allinstances);
+                    ToggleAlertComponent('success','Instance Deleted',true);
+                }else {
+                    ToggleAlertComponent('error','session over',true);
                 }
             }
         }
@@ -102,9 +114,12 @@ const instanceConfiguration = () => {
             if (CoreC !== undefined && InstanceName !== '') {
                 const response = await insertinstance(CoreC._url, CoreC, data);
                 const allinstances: Instance[] = response as unknown as Instance[]
-                if (allinstances !== undefined) {
+                if (allinstances !== undefined && response !== 401) {
                     dispatch(SetInstance({ instance: allinstances }))
                     setInstances(allinstances);
+                    ToggleAlertComponent('success','Instance Inserted',true);
+                }else {
+                    ToggleAlertComponent('error','session over',true);
                 }
             }
             TogglePanel(false);
@@ -202,6 +217,7 @@ const instanceConfiguration = () => {
                     </TableContainer>
                 </div>
             </div>
+            <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e)=>{SetOpen(false)}}/>
         </>
     );
 }

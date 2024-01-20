@@ -1072,9 +1072,9 @@ export async function ClearLogs(url: string, coreC:CoreC) {
       'authtok': coreC?._sessiontoken !== undefined ? coreC?._sessiontoken : '',
     },
   }).then(
-    (data) => {
-      return data.status
-    }
+   async (data) => {
+      return data.status === 200  ? await data.text() : 401
+       }
   ).catch((error: Error) => {
     console.log(error);
   })
@@ -1230,3 +1230,30 @@ export function getRootDirectory(url: string, core: string, _sessiontok: string,
 
 
 
+/**
+ * Delete an instance by ID.
+ *
+ * @async
+ * @function
+ * @param {string} url - The URL.
+ * @param {Core} core - The Core object.
+ * @returns {Promise<string>} A Promise with the result.
+ */
+export async function setconfigurations(url: string, core: CoreC,dat:any) {
+  try {
+    const apiUrl = `http://${url}/${core._core_id}/sconf`;
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'authtok': core._sessiontoken,
+      },
+      body :JSON.stringify(dat)
+    }).then(data => { return data.status }).catch(error => console.log(error));
+  } catch (error) {
+    console.error('Error:', error);
+    return '500';
+  }
+
+
+}

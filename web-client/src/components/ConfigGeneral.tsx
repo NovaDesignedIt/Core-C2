@@ -1,15 +1,15 @@
-import { Alert, AlertColor,  Box, Button, Checkbox, FormControlLabel, List, ListItem, ListItemIcon, ListItemText, Snackbar, Stack, Switch, TextField, Typography, styled } from '@mui/material';
+import { Alert, AlertColor, Button, Checkbox, Snackbar, Stack, Switch, TextField, styled } from '@mui/material';
 import React, { SetStateAction } from 'react'
-import { ClearLogs, Core, Listeners, addlistener, deleteListener, getalllisteners } from '../api/apiclient';
+import { ClearLogs, CoreC, setconfigurations } from '../api/apiclient';
 import InstanceConfiguration from "./InstancesConfiguration";
 import ListenerComponent from "./Listeners";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { DeleteListener, SetListener, addlisteners } from '../store/features/CoreSlice';
-
-
+import { DeleteListener, SetListener, addlisteners, BuildStateManagement } from '../store/features/CoreSlice';
+import CloudSyncIcon from '@mui/icons-material/CloudSync';
+import {  DynamicAlert } from './AlertFeedbackComponent';
 
 const ConfigGeneralComp = () => {
 
@@ -17,15 +17,26 @@ const ConfigGeneralComp = () => {
 
   const configurationObject = useAppSelector(state => state.core.configObject)
   const corid = useAppSelector(state => state.core.configObject._core_id)
-  const core = useAppSelector(state => state.core.coreObject)
+  const core: CoreC = useAppSelector(state => state.core.coreObject)
   const sessionLength: number = configurationObject._session_len !== undefined ? configurationObject._session_len : 0
   const DaysRetLog: number = configurationObject?._log_ret_days !== undefined ? configurationObject?._log_ret_days : 0
-  const [alertType,SetAlertType]  = React.useState<AlertColor>('success');
+
+  const configchkdump: boolean = configurationObject?._redirect_to_dump !== 1 ? true : false
+
+  const configchkping: boolean = configurationObject?._log_pings !== 1 ? true : false
+  const configchkhttp: boolean = configurationObject?._use_http !== 1 ? true : false
+  const asdas: boolean = configurationObject?._redirect_to_dump !== 1 ? true : false
+  const confidgchkdump: boolean = configurationObject?._redirect_to_dump !== 1 ? true : false
+  const confiasdasdgchkdump: boolean = configurationObject?._redirect_to_dump !== 1 ? true : false
+  const condfigchkdump: boolean = configurationObject?._redirect_to_dump !== 1 ? true : false
+  const configchakdump: boolean = configurationObject?._redirect_to_dump !== 1 ? true : false
+
+
+
+
   const [daysretLog, setDaysretLog] = React.useState<number>(sessionLength);
   const [sessionlen, setsessionlen] = React.useState<number>(DaysRetLog);
-  const [message, setmessage] = React.useState('');
   const [chckdmp, setChkdmp] = React.useState(false);
-  const [open, SetOpen] = React.useState(false);
   const [chkping, setChkping] = React.useState(false);
   const [chkhttp, setChkhttp] = React.useState(false);
   const [chkcreate, setCheckcreate] = React.useState(false);
@@ -35,14 +46,34 @@ const ConfigGeneralComp = () => {
   const [chktimeout, setchktimeout] = React.useState(false);
 
 
-  const HandleClearLogs = async () => {
-      const result:number | void =  await ClearLogs(core._url,core)
-      if(result === 200 && result !== undefined)
-      { 
-        SetAlertType('success')
-        SetOpen(true); setmessage('Logs Cleared')
-      }
+  
+
+  const [alertType, SetAlertType] = React.useState<AlertColor>('success');
+  const [message, setmessage] = React.useState('');
+  const [open, SetOpen] = React.useState(false);
+
+  function ToggleAlertComponent(type:AlertColor,msg:string,open:boolean){
+    SetAlertType(type);
+    setmessage(msg)
+    SetOpen(open);
   }
+
+  
+
+
+
+  
+ const HandleClearLogs = async () => {
+    const result : number | string | void  = await ClearLogs(core._url, core)
+    if (result !== 401 && result !== undefined) {
+      ToggleAlertComponent('success',`${result} entries deleted`,true);
+    }else{
+      ToggleAlertComponent('error','session over',true);
+    }
+  }
+
+
+  
 
   const HandleSessionLength = (event: { target: { value: SetStateAction<string>; }; }) => {
     const t: number = parseInt(event.target.value.toString());
@@ -61,10 +92,22 @@ const ConfigGeneralComp = () => {
   }
 
 
-  const handleClose = () => {
-    SetOpen(false)
-  }
 
+
+  const HandleSaveCore = async () => {
+    const settings: any = {
+      "_log_ret_days": daysretLog,
+      "_session_len": sessionlen,
+      "_redirect_to_dump": chckdmp,
+      "_log_pings ": chkping,
+      "_use_http ": chkhttp,
+      "_log_create ": chkcreate,
+      "_log_delete ": chkdelete,
+      "_log_commands ": chkcmd,
+      "_inactivitytimeout ": chktimeout
+    }
+    await setconfigurations(core._url, core, settings)
+  }
 
   const HandleTimeOut = (event: React.ChangeEvent<HTMLInputElement>) => {
     setchktimeout(event.target.checked)
@@ -237,7 +280,7 @@ const ConfigGeneralComp = () => {
           borderRadius: "4px",
           display: 'flex-end',
           width: "100%",
-          height: "35%",
+          height: "60%",
           padding: "10px",
           flexDirection: 'column',
           backgroundColor: "#111",
@@ -285,15 +328,14 @@ const ConfigGeneralComp = () => {
 
         </div>
 
-
       </Stack>
-      <Stack spacing={"2%"} sx={{ flexDirection: "column", width: "70%", height: "100%", padding: "15px", overflow: 'scroll' }}>
+      <Stack spacing={"2%"} sx={{ flexDirection: "column", width: "100%", height: "100%", padding: "10px", overflow: 'scroll' }}>
         <div style={{ maxHeight: "400px" }} >
           <h5 style={{ color: "#fff", cursor: "default" }}>Instances</h5>
           <InstanceConfiguration />
         </div>
         <Stack direction={'row'} spacing={5} >
-          <Stack spacing={3} width={'50%'}>
+          <Stack spacing={3} width={'100%'}>
 
             <h5 style={{ color: "#fff", cursor: "default" }}>Session</h5>
 
@@ -331,16 +373,66 @@ const ConfigGeneralComp = () => {
           </Stack>
           <Stack spacing={2} width={'100%'} height={'100%'}  >
             <h5 style={{ color: "#fff", cursor: "default" }}>Listeners</h5>
-            <ListenerComponent/>
+            <ListenerComponent />
+
           </Stack>
+
+        </Stack>
+
+
+        <Stack sx={{
+          height: "100%",
+          width: "100%",
+          minHeight: "100px",
+          "&:hover": {
+            color: "#7ff685"
+          }
+        }}>
+          <Button
+            onClick={() => { HandleSaveCore() }}
+            sx={{
+              marginTop: "auto",
+              marginLeft: "auto",
+              height: "100px",
+              maxHeight: "100px",
+              minHeight: "60px",
+              maxWidth: "250px",
+              border: "1px solid #7ff685",
+              color: '#fff',
+              bgcolor: "#000",
+              ":hover": {
+                color: '#7ff685'
+              }
+            }}
+            style={{ width: '100%', height: '15%', }}>
+            save
+            <CloudSyncIcon />
+          </Button>
         </Stack>
       </Stack>
-      
-      <Snackbar open={open} autoHideDuration={2500} onClose={handleClose}>
-        <Alert onClose={handleClose} variant="filled" severity={alertType} sx={{ width: '100%' }}>
-          {message}
-        </Alert >
-      </Snackbar>
+
+      <div style={{ marginLeft: "auto", cursor: "default", width: "20%",padding: "10px" }}>
+      <h5 style={{ color: "#fff", cursor: "default" }}>Users</h5>
+        <div style={{
+          border: "1px solid #222",
+          borderRadius: "4px",
+          display: 'flex-end',
+          width: "100%",
+          height: "35%",
+          padding: "10px",
+          flexDirection: 'column',
+          backgroundColor: "#111",
+
+        }}>
+
+
+
+        </div>
+
+
+      </div>
+
+      <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e)=>{SetOpen(false)}}/>
 
     </Stack>
   );
