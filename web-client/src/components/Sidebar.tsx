@@ -128,9 +128,7 @@ const CustomizedList =  ( ) => {
               <Divider />
               <ListItem key={2} component="div" disablePadding>
                 <ListItemButton
-                
-                  onClick={() => handleItemClick(6)}
-                  sx={{ height: 56 }}>
+                  sx={{ height: 56, "&:hover" :{backgroundColor:"transparent"} }}>
                   <ListItemIcon>
 
                        </ListItemIcon>
