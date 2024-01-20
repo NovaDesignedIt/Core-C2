@@ -59,7 +59,7 @@ const ConfigPanel = () => {
             <h6> {configurationObject?._host_name} - {configurationObject?._ip_address}</h6>
           </p>
           <p style={{ marginLeft: "auto", cursor: "default" }}>
-            <h6> Instance ID: {core?._core_id}</h6>
+            <h6> Core-Instance ID: {core?._core_id}</h6>
           </p>
         
         </div>

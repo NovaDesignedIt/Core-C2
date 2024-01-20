@@ -167,10 +167,9 @@ class Configuration(db.Entity):
     _port = orm.Required(int)
     _hash_id = orm.Required(str)
     _core_id = orm.Required(str)
+    
     _log_ret_days = orm.Optional(int)
-
     _inactivitytimeout  = orm.Optional(int)
-
     _redirect_to_dump  = orm.Optional(int)
     _create_on_ping  = orm.Optional(int)
     _use_http  = orm.Optional(int)

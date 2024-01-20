@@ -1436,22 +1436,33 @@ def setconfigurations(_core_id):
                                     "{\"msg\":\"def setconfigurations(_core_id): 401"+"\"}",_core_id) #LOGGER
             return '401', 401
         with orm.db_session:
-            data = request.json()
+            data = request.get_json()
             if data :
-                configuration = orm.select(c for c in Utility.Configuration if c._core_id == _core_id).first()
-                # Check if the configuration with the specified core_id exists
+                configuration = orm.select(i for i in Utility.Configuration if i._core_id == _core_id).first()# Check if the configuration with the specified core_id exists
                 if configuration:
-                    # Update the attributes of the configuration entity with new_data
-                    for key, value in data.get('_config').items():
+
+                    # configuration._log_ret_days = data["_log_ret_days"]
+                    # configuration._redirect_to_dump = data["_redirect_to_dump"]
+                    # configuration._session_len = data["_session_len"]
+                    # configuration._create_on_ping = data["_create_on_ping"]
+                    # configuration._use_http = data["_use_http"]
+                    # configuration._log_create = data["_log_create"]
+                    # configuration._log_delete = data["_log_delete"]
+                    # configuration._log_commands = data["_log_commands"]
+                    # configuration._log_pings = data["_log_pings"]
+                    # configuration._inactivitytimeou = data["_inactivitytimeout"]
+                      # Update the attributes of the configuration entity with new_data
+                    for key, value in data.items():
                         setattr(configuration, key, value)
-                    # Commit the changes to the database
-        Utility.Log.insert_log(f"{request}",
-                                    'invalid session',
-                                    action.INSERT.value,
-                                    str(datetime.now()),
-                                    action.SUCCESS.value,
-                                    "{\"msg\":\"def setconfigurations(_core_id): 401"+"\"}",_core_id) #LOGGER
-        return '200', 200    
+
+                    Utility.Log.insert_log(f"{request}",
+                                        f'saved configuration for: {_core_id}',
+                                        action.INSERT.value,
+                                        str(datetime.now()),
+                                        action.SUCCESS.value,
+                                        "{\"msg\":\"def setconfigurations(_core_id): 200 data: "+str(data)+"\"}",_core_id) #LOGGER
+                    
+                    return '200', 200    
     except Exception as e:
         
         Utility.Log.insert_log(f"{request}",
@@ -1459,7 +1470,7 @@ def setconfigurations(_core_id):
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\"def setconfigurations(_core_id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
+                        "{\"msg\":\"def setconfigurations(_core_id): 500"+f" Error: {e}"+"\"}",_core_id) #LOGGER
 
         return '500'  ,500
 
@@ -1484,7 +1495,7 @@ def ClearLogs(_core_id):
                             action.SUCCESS.value,
                             "{\"msg\":\"ClearLogs(_core_id): 200"+"\"}",_core_id) #LOGGER
         orm.commit()
-        print(numberofrecords , '**********************88')
+        # print(numberofrecords , '**********************88')
         return f'{numberofrecords}',200
     except Exception as e:
         

@@ -143,6 +143,8 @@ export class Config {
   _log_pings?: number;
   _inactivitytimeout?: number;
 
+  [key: string]: any;
+  
   constructor(
     _id = 0,
     _session_len = 0,
@@ -1250,9 +1252,11 @@ export async function setconfigurations(url: string, core: CoreC,dat:any) {
       },
       body :JSON.stringify(dat)
     }).then(data => { return data.status }).catch(error => console.log(error));
+
+  return response;
   } catch (error) {
     console.error('Error:', error);
-    return '500';
+  return 500;
   }
 
 
