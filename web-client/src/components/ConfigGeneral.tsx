@@ -1,10 +1,9 @@
-import { Alert, AlertColor, Button, Checkbox, Snackbar, Stack, Switch, TextField, styled } from '@mui/material';
+import { Alert, AlertColor, Avatar, Button, Checkbox, List, ListItem, ListItemText, Snackbar, Stack, Switch, TextField, ThemeProvider, createTheme, styled } from '@mui/material';
 import React, { SetStateAction } from 'react'
 import { ClearLogs, Config, CoreC, setconfigurations } from '../api/apiclient';
 import InstanceConfiguration from "./InstancesConfiguration";
 import ListenerComponent from "./Listeners";
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
+import Users from './userForm'
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useAppDispatch, useAppSelector } from '../store/store';
 import { DeleteListener, SetListener, addlisteners, BuildStateManagement, SetConfiguration } from '../store/features/CoreSlice';
@@ -77,7 +76,7 @@ const ConfigGeneralComp = () => {
   }
 
   const HandleSaveCore = async () => {
-    
+
     const settings: any = {
       "_log_ret_days": daysretLog,
       "_session_len": sessionlen,
@@ -176,10 +175,20 @@ const ConfigGeneralComp = () => {
     },
   }));
 
+
+  const theme = createTheme({
+    palette: {
+      secondary: {
+        main: '#fff', // Replace with your desired secondary color
+      },
+    },
+  });
+
+
   return (
 
     <Stack sx={{ borderStyle: 'none', padding: "1px", display: 'flex', backgroundColor: "#000", flexDirection: 'row', width: "100%", height: "100%", overflow: "scroll" }}>
-      <Stack spacing={'15px'} sx={{ width: "30%", height: "100%", padding: "10px", overflow: 'scroll' }}  >
+      <Stack spacing={'5px'} sx={{ width: "30%", height: "100%", padding: "10px", overflow: 'scroll' }}  >
         <h5 style={{ color: "#fff", cursor: "default" }}>Listener Configuration</h5>
         <div style={{
           border: "1px solid #222",
@@ -389,52 +398,44 @@ const ConfigGeneralComp = () => {
             color: "#7ff685"
           }
         }}>
-          <Button
-            onClick={() => { HandleSaveCore() }}
-            sx={{
-              marginTop: "auto",
-              marginLeft: "auto",
-              height: "100px",
-              maxHeight: "100px",
-              minHeight: "60px",
-              maxWidth: "250px",
-              border: "1px solid #7ff685",
-              color: '#fff',
-              bgcolor: "#000",
-              ":hover": {
-                color: '#7ff685'
-              }
-            }}
-            style={{ width: '100%', height: '15%', }}>
-            save
-            <CloudSyncIcon />
-          </Button>
+        
         </Stack>
       </Stack>
+      <div style={{
+        flexDirection:"column",
+        display:"flex",
+        marginLeft: "auto",
+        cursor: "default",
+        width: "20%",
+        maxWidth: "300px",
+        padding: "10px",
+        height:"100%",
+        
 
-      <div style={{ marginLeft: "auto", cursor: "default", width: "20%", padding: "10px" }}>
-        <h5 style={{ color: "#fff", cursor: "default" }}>Users</h5>
-        <div style={{
-          border: "1px solid #222",
-          borderRadius: "4px",
-          display: 'flex-end',
-          width: "100%",
-          height: "35%",
-          padding: "10px",
-          flexDirection: 'column',
-          backgroundColor: "#111",
-
-        }}>
-
-
-
-        </div>
-
-
+      }}>
+        <Users></Users>
+        
+        <Button
+          onClick={() => { HandleSaveCore() }}
+          sx={{
+            marginTop:"100%",
+            maxHeight: "50px",
+            minHeight: "50px",
+            maxWidth: "250px",
+            minWidth: "200px",
+            border: "1px solid #7ff685",
+            color: '#fff',
+            bgcolor: "#000",
+            ":hover": {
+              color: '#7ff685'
+            }
+          }}
+        >
+          save
+            <CloudSyncIcon />
+          </Button>
       </div>
-
       <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e) => { SetOpen(false) }} />
-
     </Stack>
   );
 

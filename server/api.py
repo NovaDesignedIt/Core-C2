@@ -1515,6 +1515,107 @@ def ClearLogs(_core_id):
 
 """ ATHENTICATION MANAGER OPERATIONS """
 
+@app.route('/<_core_id>/usrmgr/<int:operation>', methods=['POST'])
+@orm.db_session
+def usrmgr(_core_id,operation):
+    try:
+        if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+            Utility.Log.insert_log(f"{request}",
+                                    'invalid session',
+                                    action.INSERT.value,
+                                    str(datetime.now()),
+                                    action.FAILED.value,
+                                    "{\"msg\":\"def create_core(_core_id,operation): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+            return '401', 401 
+            
+        data = request.get_json()
+        
+        if data :
+          
+
+            if operation == 1 :
+                usrname  = data['username']
+                pwd = data['password']
+                randstring = Utility.generate_random_string(18)    
+            
+                if not Utility.create_user(usrname,pwd,_core_id,randstring):
+                    Utility.Log.insert_log(
+                        f"{request}",
+                        'create_user():',
+                        action.GET.value,
+                        str(datetime.now()),
+                        action.FAILED.value,
+                        "{\"msg\":\"create_user(): 401 'error': 'Already Exists'} "+"\"}",_core_id) #LOGGER
+                    return  "401",401
+   
+                #create our abstract user
+                Utility.User.insert_user(randstring,usrname,_core_id)
+                Utility.Log.insert_log(f"{request}",
+                                    'invalid session',
+                                    action.DELETE.value,
+                                    str(datetime.now()),
+                                    action.SUCCESS.value,
+                                    "{\"msg\":\"def create_core(_core_id,operation): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+            elif operation == 0 :
+                hashid = data['_hash_id']
+                with orm.db_session:
+                    hashid = data["_hash_id"]
+                    usr = Utility.User.get(_hash_id=hashid)
+                    # Check if the record exists
+                    if usr:
+                        # Delete the record from the database
+                        usr.delete()
+                        Utility.Log.insert_log(f"{request}",
+                                    'invalid session',
+                                    action.DELETE.value,
+                                    str(datetime.now()),
+                                    action.SUCCESS.value,
+                                    "{\"msg\":\"def create_core(_core_id,operation): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+                    hashValue = Utility.Hashtable.get(_hash_id=hashid)
+                    if hashValue:
+                        # Delete the record from the database
+                        hashValue.delete()
+                        Utility.Log.insert_log(f"{request}",
+                                    'invalid session',
+                                    action.DELETE.value,
+                                    str(datetime.now()),
+                                    action.SUCCESS.value,
+                                    "{\"msg\":\"def create_core(_core_id,operation): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+
+                print('Deleting')
+                return "200", 200
+            else:
+                Utility.Log.insert_log(f"{request}",
+                                        'bad request',
+                                        action.INSERT.value,
+                                        str(datetime.now()),
+                                        action.SUCCESS.value,
+                                        "{\"msg\":\"def create_core(_core_id,operation): 404"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+                return '404', 404 
+            
+        allUser = orm.select(i for i in Utility.User if i._core_id == _core_id )  
+        records_data = [record.to_dict() for record in allUser]
+        t = jsonify(records_data)
+
+        Utility.Log.insert_log(f"{request}",
+                                'getallisteners',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.SUCCESS.value,
+                                "{\"msg\":\"def getListeners(_core_id): 200"+"\"}",_core_id) #LOGGER
+        return t , 200
+
+    except Exception as e:
+
+        Utility.Log.insert_log(f"{request}",
+                        'count:0',
+                        action.GET.value,
+                        str(datetime.now()),
+                        action.ERROR.value,
+                        "{\"msg\":\"def create_core(_core_id,operation): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+
+        return '500'  ,500
+
 @app.route('/cc', methods=['POST'])
 @orm.db_session
 def create_core():
@@ -1535,7 +1636,7 @@ def create_core():
             Utility.Instance.insert_instance(0,Utility.generate_random_string(10),"default",data["_address"],data["_hostname"],0,coreid)
             Utility.Configuration.insert_Configuration(30,0,data["_hostname"],data["_hostname"],data["_address"],data["_port"],"3453453453",coreid,30,0,0,0,0,0,0,0)
             
-            if not Utility.create_user(usr,password,coreid):
+            if not Utility.create_user(usr,password,coreid,randstring):
                 Utility.Log.insert_log(f"{coreid}",
                     'create_user():',
                     action.GET.value,

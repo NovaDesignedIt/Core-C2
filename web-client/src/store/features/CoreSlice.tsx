@@ -1,5 +1,5 @@
 
-import { Core, Instance, Config, Target, File, CoreC,Listeners} from '../../api/apiclient';
+import { Core, Instance, Config, Target, File, CoreC,Listeners,User} from '../../api/apiclient';
 import { createSlice, configureStore, PayloadAction } from '@reduxjs/toolkit'
 
 const emptyCoreInstance = new Core();
@@ -10,6 +10,7 @@ const emptyinstanceobject: Instance[] = [];
 const emptyselectedtargets: number[] = [];
 const emptyListener: Listeners[] = [];
 const emptySelectedInstances = new Instance();
+const emptyUsers:User[] = [];
 
 interface CoreState {
   coreObject: CoreC
@@ -21,6 +22,7 @@ interface CoreState {
   targetObjects: Target[]
   listenerObjects: Listeners[]
   SelectedContent:number
+  Users:User[]
 }
 
 const initialState: CoreState = {
@@ -32,6 +34,7 @@ const initialState: CoreState = {
   selectedTargets: emptyselectedtargets,
   targetObjects: emptytargetObject,
   listenerObjects:emptyListener,
+  Users:emptyUsers,
   SelectedContent: -1,  
 }
 
@@ -40,12 +43,13 @@ export const CoreSlice = createSlice({
   initialState,
   reducers: {
     BuildStateManagement:
-      (state, action: PayloadAction<{ core: CoreC, config: Config, fstore: File[], instances: Instance[], listeners:Listeners[] }>) => {
+      (state, action: PayloadAction<{ core: CoreC, config: Config, fstore: File[], instances: Instance[], listeners:Listeners[],users:User[]}>) => {
         state.coreObject = action.payload.core
         state.configObject = action.payload.config
         state.fstoreObject = action.payload.fstore
         state.instanceObjects = action.payload.instances
         state.listenerObjects = action.payload.listeners
+        state.Users = action.payload.users
       },
       SetListener:
       (state, action: PayloadAction<{ listenerid: Listeners[] }>) => {
@@ -95,6 +99,10 @@ export const CoreSlice = createSlice({
     (state,action:PayloadAction<{instance:any[]}>) =>{
       state.targetObjects = action.payload.instance as unknown as Target[]
     },
+    SetUsers:
+    (state,action:PayloadAction<{users:User[]}>) =>{
+      state.Users  = action.payload.users
+    }
 
   }
 
@@ -114,5 +122,6 @@ export const { 	SetCore,
   SetSelectedTargets,
   SetSelectedInstance,
   SetSelectedContent,
-  SetListener
+  SetListener,
+  SetUsers
 } = CoreSlice.actions;

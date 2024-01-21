@@ -77,8 +77,9 @@ const Frame = () => {
     const ins: Instance[] = CORE?._instances ?? [];
     const fst: Files[] = CORE?._rootdir?._files ?? [];
     const listener: Listeners[] = CORE?._listeners ?? [];
+    const usrs: User[] = CORE?._users ?? [];
     if (CORE !== undefined) {
-      dispatch(BuildStateManagement({core:co,config:con,instances:ins,fstore:fst,listeners:listener}));
+      dispatch(BuildStateManagement({core:co,config:con,instances:ins,fstore:fst,listeners:listener,users:usrs}));
       setSelectedCore(CORE);
     }
   };

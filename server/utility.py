@@ -306,6 +306,7 @@ class Hashtable(db.Entity):
     _username = orm.Required(str, unique=True)
     _core_id = orm.Required(str)
     _id = orm.PrimaryKey(int, auto=True)
+    _hash_id = orm.Optional(str)
 
     @classmethod
     @orm.db_session
@@ -351,10 +352,10 @@ class Hashtable(db.Entity):
 
     @classmethod
     @orm.db_session
-    def insert_core_user(cls,username,password,coreid):
+    def insert_core_user(cls,username,password,coreid,randstring):
         hpassword = cls.generate_hash(username,password)
         with orm.db_session:
-            Hashtable(_password=hpassword, _username=username,_core_id=coreid)
+            Hashtable(_password=hpassword, _username=username,_core_id=coreid,_hash_id=randstring)
             orm.commit()
             return True
 
@@ -370,10 +371,10 @@ class Hashtable(db.Entity):
                 b = True  #successful authentication
                 return c, b
             else:
-                return None, False
+                return ' ', False
         except Exception as e:
             print(f"Authentication error: {e}")
-            return None, False
+            return ' ', False
 
 class Sessions(db.Entity):
     _session_token = orm.Required(str, unique=True)
@@ -659,26 +660,17 @@ def BuildStorageObjects(corestr):
 
 
 @orm.db_session
-def create_user(username,password,_core_id):
+def create_user(username,password,_core_id,randstring):
+    print('***********')
     if Hashtable.Authenticate(password,username)[1]:
+        print('********************************************')
         return  False
     try:
-        Hashtable.insert_core_user(username,password,_core_id)
-        Log.insert_log(f"{_core_id}",
-                'create_user():',
-                ActionType.GET.value,
-                datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                ActionType.SUCCESS.value,
-                "{\"msg\":\"create_user(): 201 {'message': 'user created successfully'}"+"\"}")
+        Hashtable.insert_core_user(username,password,_core_id,randstring)
+
         return  True
     except Exception as e:
         print(e)
-        Log.insert_log(f"{_core_id}",
-                'create_user():',
-                ActionType.GET.value,
-                datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                ActionType.ERROR.value,
-                "{\"msg\":\"def create_user(): 201\"}")
     return False
 
 """

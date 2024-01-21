@@ -57,7 +57,7 @@ export class User {
     _hash_id = "",
     _username = "",
     _AuthToken = "",
-    _core_id = ""
+    _core_id = "",
   ) {
     this._core_id = _core_id
     this._hash_id = _hash_id
@@ -67,26 +67,26 @@ export class User {
 }
 
 export class Listeners {
-    _core_id :string
-    _listener_name :string
-    _ipaddress :string
-    _last_ping  :string
-    _id :number
+  _core_id: string
+  _listener_name: string
+  _ipaddress: string
+  _last_ping: string
+  _id: number
 
   constructor(
-    _core_id ="",
-    _listener_name ="",
-    _ipaddress ="",
-    _last_ping  ="",
+    _core_id = "",
+    _listener_name = "",
+    _ipaddress = "",
+    _last_ping = "",
     _id = 0,
-    
+
   ) {
     this._core_id = _core_id
     this._listener_name = _listener_name
     this._ipaddress = _ipaddress
-    this._last_ping  = _last_ping
+    this._last_ping = _last_ping
     this._id = _id
-    
+
   }
 }
 
@@ -144,7 +144,7 @@ export class Config {
   _inactivitytimeout?: number;
 
   [key: string]: any;
-  
+
   constructor(
     _id = 0,
     _session_len = 0,
@@ -404,7 +404,7 @@ export async function getinstancebyfield(url: string, core: CoreC, recordId: str
  * @param {Instance} data - The Instance data.
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function insertinstance(url: string, core: CoreC, instance: Instance){
+export async function insertinstance(url: string, core: CoreC, instance: Instance) {
   try {
     const apiUrl = `http://${url}/${core._core_id}/i`;
 
@@ -415,10 +415,10 @@ export async function insertinstance(url: string, core: CoreC, instance: Instanc
         'authtok': core._sessiontoken,
       },
       body: JSON.stringify(instance),
-    }).then(data=> {return data.json()}).catch(error => console.log(error));
-    console.log(response,'responseposdkfposdkfposdkfposdkfposdkfposdfk')
+    }).then(data => { return data.json() }).catch(error => console.log(error));
+    //console.log(response, 'responseposdkfposdkfposdkfposdkfposdkfposdfk')
     return response
-   
+
   } catch (error) {
     console.error('Error:', error);
 
@@ -774,7 +774,7 @@ export async function getallrecords(url: string, instance?: Instance, core?: Cor
  * @param {Core} [core] - The Core object (optional).
  * @returns {Promise<string>} A Promise with the result.
  */
-export async function deleterecordbyid(url: string, records:number[], core?: CoreC,): Promise<string> {
+export async function deleterecordbyid(url: string, records: number[], core?: CoreC,): Promise<string> {
   try {
     const apiUrl = `http://${url}/${core?._core_id}/d/t/`;
     const authoken = core?._sessiontoken ? core?._sessiontoken : ''
@@ -784,7 +784,7 @@ export async function deleterecordbyid(url: string, records:number[], core?: Cor
         'Content-Type': 'application/json',
         'authtok': authoken,
       },
-      body:JSON.stringify(records)
+      body: JSON.stringify(records)
     });
 
     console.log(response);
@@ -1065,7 +1065,7 @@ export async function deleteFiles(url: string, files: string[], core?: CoreC) {
  * @param {CoreC} - Core Object
  * @returns A Promise that resolves when the deletion is complete.
  */
-export async function ClearLogs(url: string, coreC:CoreC) {
+export async function ClearLogs(url: string, coreC: CoreC) {
 
   const response = await fetch(`http://${url}/${coreC._core_id}/cl`, {
     method: "GET",
@@ -1074,9 +1074,9 @@ export async function ClearLogs(url: string, coreC:CoreC) {
       'authtok': coreC?._sessiontoken !== undefined ? coreC?._sessiontoken : '',
     },
   }).then(
-   async (data) => {
-      return data.status === 200  ? await data.text() : 401
-       }
+    async (data) => {
+      return data.status === 200 ? await data.text() : 401
+    }
   ).catch((error: Error) => {
     console.log(error);
   })
@@ -1121,7 +1121,7 @@ export async function CreateCore(url: string, coreStructure: any) {
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the deletion is complete.
  */
-export async function addlistener(url: string, core:CoreC, Listener: Listeners) {
+export async function addlistener(url: string, core: CoreC, Listener: Listeners) {
   const response = await fetch(`http://${url}/${core._core_id}/al`, {
     method: "POST",
     headers: {
@@ -1149,7 +1149,7 @@ export async function addlistener(url: string, core:CoreC, Listener: Listeners) 
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the deletion is complete.
  */
-export async function deleteListener(url: string, core:CoreC, id: number) {
+export async function deleteListener(url: string, core: CoreC, id: number) {
   const response = fetch(`http://${url}/${core._core_id}/dl/${id}`, {
     method: "DELETE",
     headers: {
@@ -1173,8 +1173,8 @@ export async function deleteListener(url: string, core:CoreC, id: number) {
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the deletion is complete.
  */
-export async function getalllisteners(url: string, core:CoreC) {
-  const response:any = await fetch(`http://${url}/${core._core_id}/gl`, {
+export async function getalllisteners(url: string, core: CoreC) {
+  const response: any = await fetch(`http://${url}/${core._core_id}/gl`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json", // Specify the content type as JSON
@@ -1188,7 +1188,7 @@ export async function getalllisteners(url: string, core:CoreC) {
   ).catch((error: Error) => {
     console.log(error);
   })
-  
+
   return response
 }
 
@@ -1230,18 +1230,17 @@ export function getRootDirectory(url: string, core: string, _sessiontok: string,
   });
 }
 
-
-
 /**
- * Delete an instance by ID.
+ * Set Configuration
  *
  * @async
  * @function
  * @param {string} url - The URL.
  * @param {Core} core - The Core object.
- * @returns {Promise<string>} A Promise with the result.
+ * @param {any} dat  - Data.
+ * @returns {status} - 200 or else
  */
-export async function setconfigurations(url: string, core: CoreC,dat:any) {
+export async function setconfigurations(url: string, core: CoreC, dat: any) {
   try {
     const apiUrl = `http://${url}/${core._core_id}/sconf`;
     const response = await fetch(apiUrl, {
@@ -1250,14 +1249,43 @@ export async function setconfigurations(url: string, core: CoreC,dat:any) {
         'Content-Type': 'application/json',
         'authtok': core._sessiontoken,
       },
-      body :JSON.stringify(dat)
+      body: JSON.stringify(dat)
     }).then(data => { return data.status }).catch(error => console.log(error));
 
-  return response;
+    return response;
   } catch (error) {
     console.error('Error:', error);
-  return 500;
+    return 500;
   }
+}
 
 
+
+
+/**
+ * Manage the users Insert or delete
+ *
+ * @async
+ * @function
+ * @param {string} url - The URL.
+ * @param {Core} core - The Core object.
+ * @param {any} dat  - Data.
+ * @returns {status} - json or nothing
+ */
+export async function ManageUser(url: string, core: CoreC, dat: any, InsertOrDelete: boolean) {
+  try {
+    const apiUrl = InsertOrDelete ?  `http://${url}/${core._core_id}/usrmgr/1` : `http://${url}/${core._core_id}/usrmgr/0` ;
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'authtok': core._sessiontoken,
+      },
+      body: JSON.stringify(dat)
+    }).then(data => { return data.json() }).catch(error => console.log(error));
+    return response;
+  } catch (error) {
+    console.error('Error:', error);
+    return 500;
+  }
 }
