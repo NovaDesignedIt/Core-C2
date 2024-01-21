@@ -117,7 +117,7 @@ const instanceConfiguration = () => {
         }
         TogglePanel(true);
     }
-    
+
     return (
         <>
             <div style={{ width: "100%", height: "35%", minHeight: "250px", backgroundColor: "#000",padding:"10px" }}>
@@ -131,7 +131,7 @@ const instanceConfiguration = () => {
                 </div>
                 <div style={{ border: "1px solid #222", borderRadius: "5px", overflow: "scroll",maxHeight:"100%" }}>
 
-
+                
                     <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "100%", minHeight: "10px", borderRadius: 0, backgroundColor: "#000" }} >
                         <Table size="small" sx={{
                     
