@@ -47,7 +47,7 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
             const user: string = current_user !== undefined ? current_user._username : "";
             const corec = new CoreC(sessiontok,corid,user,address);
             const c = new Core(corec,sessiontok, corid, configuration, instances,listeners, rdir, users, user,address);
-            console.log(c)
+            //console.log(c)
             onSetCore(c);
         };
 

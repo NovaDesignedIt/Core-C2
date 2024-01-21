@@ -85,8 +85,8 @@ const Frame = () => {
   };
 
   function handleResize(gutterIdx: number, allSizes: number[]) {
-    console.log('gutterIdx', gutterIdx);
-    console.log('allSizes in %', allSizes);
+    // console.log('gutterIdx', gutterIdx);
+    // console.log('allSizes in %', allSizes);
     setSizes(allSizes);
   }
 

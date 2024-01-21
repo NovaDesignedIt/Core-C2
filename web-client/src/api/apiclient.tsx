@@ -893,47 +893,33 @@ export async function updatemanyrecordsbyfield(url: string, core: CoreC, record_
  * @param {string} url - The URL.
  * @param {Core} core - The Core object.
  * @param {string} record_id - The ID of the record to retrieve.
- * @returns {Promise<string>} A Promise with the result.
+
  */
-export async function SetCommand(url: string, core: CoreC, instance: Instance, target: Target, command: string): Promise<string> {
+export async function SetCommand(url: string, core: CoreC, instance: Instance, target: Target, command: string) {
   try {
-
-    if (instance === undefined && core === undefined) {
-      return `no target with ${target._id}`;
-    }
-
-    //alert(typeof instance)
     const apiUrl = `http://${url}/${core._core_id}/${instance._instance_id}/c`;
-
-    target._st = 0;
-    target._in = command;
-    //@app.route('/<_core_id>/<_isid>/c',methods=['POST'])
-
-
-
-    const response = await fetch(apiUrl, {
+    const payload = {
+      _dmp : target._dmp,
+      _id : target._id,
+      _in : command,
+      _ip : target._ip,
+      _isid : target._isid,
+      _lp : target._lp,
+      _n : target._n,
+      _out : target._out,
+      _st : 0,
+      _zzz : target._zzz
+  }
+    await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'authtok': core._sessiontoken,
       },
-      body: JSON.stringify(target),
-    });
-
-    //console.log(JSON.stringify(target))
-
-    if (response.ok || response.status == 200) {
-      return '200';
-    } else if (response.status === 401) {
-      return '401';
-    } else if (response.status === 404) {
-      return '404';
-    } else {
-      return '500';
-    }
+      body: JSON.stringify(payload),
+    }).then(data => data).catch(error => console.log(error));
   } catch (error) {
-    console.error('Error:', error);
-    return '500';
+    console.log('Error:', error);
   }
 }
 

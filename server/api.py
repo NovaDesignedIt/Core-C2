@@ -535,13 +535,11 @@ def SyncCore(_core_id):
     return Utility.sync_core(request.data)
 
 
-
-
 @app.route('/<_core_id>/<_isid>/c',methods=['POST'])
 @orm.db_session
 def command(_core_id,_isid):
     try:
-        print(request.get_json())
+
         if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
                 #print(f'*******************{Utility.Sessions.session_valid(request.headers.get("authtok",_core_id) #LOGGER)}***************',request.headers.get('authtok'))
                 Utility.Log.insert_log(f"{request}",
@@ -551,7 +549,9 @@ def command(_core_id,_isid):
                                         action.FAILED.value,
                                         "{\"msg\":\"command(): 401"+"\"}",_core_id) #LOGGER
                 return '401', 401
+        
         target = request.get_json()
+        
         if target:
             if target['_isid'] == _isid :
                 command = target['_in'] 
@@ -645,7 +645,7 @@ def getcmd(isid,id):
                                     action.GET.value,
                                     str(datetime.now()),
                                     action.SUCCESS.value,
-                                    "{\"msg\":\" getcmd(isid,id) 200 \"}") #LOGGER
+                                    "{\"msg\":\" getcmd(isid,id) 200 \"}",targets._isid) #LOGGER
                 return command
     except Exception as e :
         
@@ -654,7 +654,7 @@ def getcmd(isid,id):
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\" getcmd(isid,id) 401 \"}"+f"\n{e}") #LOGGER
+                        "{\"msg\":\" getcmd(isid,id) 401 \"}"+f"\n{e}",targets._isid) #LOGGER
     return '401'
 
 
@@ -696,7 +696,9 @@ def setout(isid,id):
 @orm.db_session
 def getout(isid,id):
     try:
-
+        print(f'{Utility.RED}*********************************************************{Utility.RESET}')
+    
+        print(request)
         out=''
         targets  = orm.select(i for i in Utility.Target if  i._isid == isid and int(i._id) == int(id)).first()
         with orm.db_session: 
@@ -706,7 +708,7 @@ def getout(isid,id):
                         action.GET.value,
                         str(datetime.now()),
                         action.SUCCESS.value,
-                        "{\"msg\":\" def getout(isid,id): 200 \"}",targets._core_id) #LOGGER
+                        "{\"msg\":\" def getout(isid,id): 200 \"}",targets._isid) #LOGGER
                 out = getattr(targets,attribute.OUT.value)
                 setattr(targets,attribute.OUT.value,'')
                 orm.commit()
@@ -717,7 +719,7 @@ def getout(isid,id):
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\" def getout(isid,id): 401 \"}"+f"\n{e}",targets._core_id) #LOGGER
+                        "{\"msg\":\" def getout(isid,id): 401 \"}"+f"\n{e}",targets._isid) #LOGGER
     return '401'
 
 @app.route('/<isid>/<id>/gs',methods=["GET"])
@@ -740,7 +742,7 @@ def getstate(isid,id):
                         action.GET.value,
                         str(datetime.now()),
                         action.SUCCESS.value,
-                        "{\"msg\":\"getstate(): 200 \"}"+f"\n",targets._core_id) #LOGGER
+                        "{\"msg\":\"getstate(): 200 \"}"+f"\n",'') #LOGGER
             
             LiveViewObj = {"isid": f"{isid}", "status": '200', "time": f"{str(datetime.now())}", "msg": f"def getstate(isid,id):({id})"}
             LiveViewObjString = json.dumps(LiveViewObj)
@@ -927,6 +929,7 @@ def getallrecords(_core_id,_isid):
         LiveViewObj = {"isid": f"{_isid}", "status": '200', "time": f"{str(datetime.now())}", "msg": "getalltargets()"}
         LiveViewObjString = json.dumps(LiveViewObj)
         socketio.emit(f's/{_isid}', LiveViewObjString)
+        #socketio.emit(f'grid/{_isid}', LiveViewObjString)
 
         return jsonify(records_data), 200 # Return the records as JSON response
 
@@ -939,6 +942,24 @@ def getallrecords(_core_id,_isid):
                     action.ERROR.value,
                     "{\"msg\":\"getallrecords(): 500 "+f"Error: {e}"+"\"}",_core_id) #LOGGER
         return '500', 500  # Return '500' in case of any error during retrieval
+
+@socketio.on('rtgrid')
+@orm.db_session
+def fetchInstance(message):
+    data=''
+    if isinstance(message, dict):
+        # If message is already a dictionary
+        data = message
+    else:
+        try:
+            data = json.loads(message)
+        except json.JSONDecodeError as e:
+            print(f'Error parsing JSON: {e}')
+            return
+    records = orm.select(i for i in Utility.Target if i._isid == data['isid'] )
+    records_data = [record.to_dict() for record in records]
+    socketio.emit('rtgrid/'+data['isid'], records_data)
+
 
 
 @app.route('/<_core_id>/d/t/', methods=['POST'])
@@ -984,7 +1005,7 @@ def deleterecordbyid(_core_id,record_id):
                                 action.DELETE.value,
                                 str(datetime.now()),
                                 action.FAILED.value,
-                                "{\"msg\":\"insertinstance(): 401"+"\"}",_core_id) #LOGGER
+                                "{\"msg\":\"def deleterecordbyid(_core_id,record_id): 401"+"\"}",_core_id) #LOGGER
         return '401', 401
     try:
         with orm.db_session:
@@ -2167,6 +2188,7 @@ if '__main__' == __name__:
         else:
             print(f'{Utility.RED}* ERROR HOST OR PORT NULL: {Utility.LIGHT_RED} your config.xml must empty.{Utility.YELLOW}\n Try adding this .. in the <api> tags \n\t <host name="default" ip="localhost" port="8000"></host> ')
             exit(-1)
+
     print(f'{Utility.CYAN}* host: {Utility.LIGHT_YELLOW}{host} {Utility.CYAN} port: {Utility.LIGHT_YELLOW}{port}')
     print(f'{Utility.YELLOW}* START PROC{Utility.RESET}')
     #FIRE IT UP BABY!!!

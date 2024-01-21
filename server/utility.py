@@ -272,7 +272,7 @@ class Log(db.Entity):
         try:
             #print()
             #print(f'{instance_id, target_name, action, log_time,result,_msg}******************************DEBUG ')
-            serverPrinter(instance_id, target_name, action, log_time,result,_msg)
+            #serverPrinter(instance_id, target_name, action, log_time,result,_msg)
             Log(_instance_id=instance_id, _target_name=target_name, _action=action, _time=log_time,_result=result,_msg=_msg,_core_id=_core_id)
         except Exception as e:
             print(f'Exception: {e}')

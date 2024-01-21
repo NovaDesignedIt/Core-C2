@@ -17,6 +17,7 @@ import { Core, deleterecordbyid, Instance, getallrecords, CoreC, Config } from '
 import { Typography } from '@material-ui/core';
 import { useAppDispatch, useAppSelector } from '../store/store';
 import { BuildStateManagement, SetSelectedTargets } from '../store/features/CoreSlice';
+import { Socket, io } from 'socket.io-client';
 
 
 
@@ -24,7 +25,8 @@ import { BuildStateManagement, SetSelectedTargets } from '../store/features/Core
 const columns = [
   { field: '_id', headerName: 'ID', width: 70 },
   {
-    field: '_st', headerName: 'State', width: 130,},
+    field: '_st', headerName: 'State', width: 130,
+  },
   { field: '_isid', headerName: 'Instance ID', width: 120, },
   { field: '_zzz', headerName: 'Interval', width: 180, },
   { field: '_n', headerName: 'Name', width: 180, },
@@ -37,24 +39,24 @@ const columns = [
 
 
 interface gridViewProp {
-  GetAction: (index:number)=>void;
+  GetAction: (index: number) => void;
 }
 
-const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
-  const dispatch:any = useAppDispatch();
+const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
+  const dispatch: any = useAppDispatch();
 
-    // url={core !== undefined ? core?._url : ''}
-    // objs={objs}
-    // instance={Instance}
-    // handleSelectedTargets={handleSelectedTargets}
-    // core={core} selectedTargets={selectedTargets}
-    const config = useAppSelector(state => state.core.configObject);
-    const core = useAppSelector(state => state.core.coreObject); 
-    const Targets = useAppSelector(state => state.core.targetObjects); 
-    const SelectedTargets = useAppSelector(state => state.core.selectedTargets); 
-    const SelectedContent = useAppSelector(state => state.core.SelectedContent); 
-    const SelectedInstance = useAppSelector(state => state.core.SelectedInstances); 
-    
+  // url={core !== undefined ? core?._url : ''}
+  // objs={objs}
+  // instance={Instance}
+  // handleSelectedTargets={handleSelectedTargets}
+  // core={core} selectedTargets={selectedTargets}
+  const config = useAppSelector(state => state.core.configObject);
+  const core = useAppSelector(state => state.core.coreObject);
+  const Targets = useAppSelector(state => state.core.targetObjects);
+  const SelectedTargets = useAppSelector(state => state.core.selectedTargets);
+  const SelectedContent = useAppSelector(state => state.core.SelectedContent);
+  const SelectedInstance = useAppSelector(state => state.core.SelectedInstances);
+
 
 
 
@@ -93,7 +95,7 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
     setOpen(true)
     var ol = rowSelected !== undefined ? rowSelected : [].toString().split(',').map((id: string) => id.trim())
     if (rowSelected !== undefined) {
-      await deleterecordbyid(core._url,rowSelected , core);
+      await deleterecordbyid(core._url, rowSelected, core);
     }
     //  fetchData();
     setSelectedRows([]);
@@ -143,7 +145,7 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
         <button style={buttonstyle} onClick={(e) => {
           e.preventDefault();
           setPrompt(true);
-          
+
         }}>
           <span style={{ marginRight: '5px' }}>
             <RemoveIcon fontSize='small' /> {/* Add the AddIcon */}
@@ -165,17 +167,17 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
 
 
 
-        <GridToolbarColumnsButton onClick={() => {  }} />
+        <GridToolbarColumnsButton onClick={() => { }} />
 
-        <GridToolbarFilterButton enterDelay={0} onClick={() => {  }} />
-        
-        <GridToolbarDensitySelector 
+        <GridToolbarFilterButton enterDelay={0} onClick={() => { }} />
+
+        <GridToolbarDensitySelector
           onMouseEnter={() => { setRefresh(false); }}
-          onClick={() => {  }}
+          onClick={() => { }}
         />
         <GridToolbarExport
           onMouseEnter={() => { setRefresh(false); }}
-          onClick={() => {  }}
+          onClick={() => { }}
         />
 
 
@@ -186,16 +188,61 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
           alert('kidding. this is a demo Instance and should probably not unleash these things in the wild.')
         }}>
           <span style={{ marginRight: '5px' }}>
-          <SatelliteAltIcon style={{fontSize:"15px"}} /> 
+            <SatelliteAltIcon style={{ fontSize: "15px" }} />
           </span>
           DOWNLOAD AGENT
         </button>
 
-        
+
       </GridToolbarContainer>
     );
   }
 
+
+  const setData = (data: any) => {
+    const filteredRows = data !== undefined ? data : [{}].filter((row: any) => row._isid === SelectedInstance._instance_id ? SelectedInstance?._instance_id : new Instance()._instance_id);
+    //console.log(instance?._instance_id);
+    const filteredColumns = showDmpColumn
+      ? columns
+      : columns.filter((column) =>
+        column.field !== '_dmp'
+        && column.field !== '_out'
+        && column.field !== '_in'
+        && column.field !== '_isid'
+      );
+    SetFilteredColumns(filteredColumns)
+
+
+    if (Array.isArray(filteredRows)) {
+      const result = filteredRows.map((item: any) => {
+        // Your map logic hereRefresh
+        var statusText = '';
+        switch (item._st) {
+          case 0:
+            statusText = "Task";
+            break;
+          case 1:
+            statusText = "Sleep";
+            break;
+          case 2:
+            statusText = "dropped";
+            break;
+          case 3:
+            statusText = "Listen";
+            break;
+          default:
+            statusText = "awaiting";
+        }
+        item._zzz += ' seconds'
+        item._st = statusText;
+        return item;
+      });
+      const rowsWithIds: any[] = result.map((row: any, index: number) => ({ ...row, id: index + 1 }));
+
+         setRows(rowsWithIds)
+    }
+
+  }
 
 
 
@@ -204,57 +251,22 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
       let isMounted = true;
       if (isMounted) {
         const data = await getallrecords(core._url, inst, core)
-        if (data === '401' || typeof data  === "string") {
+        if (data === '401' || typeof data === "string") {
           setOpen2(true);
           return;
-        } 
-        const filteredRows = data !== undefined ? data : [{}].filter((row: any) => row._isid === inst._instance_id ? inst?._instance_id : new Instance()._instance_id);
-        //console.log(instance?._instance_id);
-        const filteredColumns = showDmpColumn
-          ? columns
-          : columns.filter((column) =>
-            column.field !== '_dmp'
-            && column.field !== '_out'
-            && column.field !== '_in'
-            && column.field !== '_isid'
-          );
-        SetFilteredColumns(filteredColumns)
+        }
+
         //const rowsWithIds = instance["_targets"].map( (row: any, index: number) => ({ ...row, id: index + 1 }));
 
-        if (Array.isArray(filteredRows)) {
-          const result = filteredRows.map((item: any) => {
-            // Your map logic hereRefresh
-            var statusText = '';
-            switch (item._st) {
-              case 0:
-                statusText = "Task";
-                break;
-              case 1:
-                statusText = "Sleep";
-                break;
-              case 2:
-                statusText = "dropped";
-                break;
-              case 3:
-                statusText = "Listen";
-                break;
-              default:
-                statusText = "awaiting";
-            }
-            item._zzz += ' seconds'
-            item._st = statusText;
-            return item;
-          });
-          const rowsWithIds: any[] = result.map((row: any, index: number) => ({ ...row, id: index + 1 }));
 
-          setRows(rowsWithIds);
-          // Now you can use 'result' as the mapped array
-        } else {
-          // Handle the case when data is a string
-          console.error("Data is a string. Unable to use map.");
-          // Additional error handling or return from the function as needed
-        }
+        // Now you can use 'result' as the mapped array
+      } else {
+        // Handle the case when data is a string
+        console.error("Data is a string. Unable to use map.");
+        // Additional error handling or return from the function as needed
       }
+
+
     } catch (error) {
 
       setRows([]);
@@ -262,13 +274,29 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
 
     }
   };
+
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      Refresh === true ? fetchData(SelectedInstance) : () => { }
-    }, 500); // Adjust the interval (in milliseconds) based on your preferred delay
-    // Cleanup function to clear the interval when the component unmounts or when needed
-    return () => clearInterval(intervalId);
-  }, [SelectedInstance, Refresh]);
+
+    const socks: Socket = io(`http://${core._url}`);
+
+    if (socks !== undefined) {
+      socks.on(
+        'rtgrid/' + SelectedInstance._instance_id,
+        (data: string) => {
+          setData(data);
+        });
+    }
+
+    socks.emit('rtgrid', { "isid": `${SelectedInstance._instance_id}` });
+
+
+    setInterval(() => {
+      socks.emit('rtgrid', { "isid": `${SelectedInstance._instance_id}` });
+    }, 3000);
+
+
+     return () => {socks.disconnect()};
+  }, [SelectedInstance]);
 
 
   //console.log(rowsWithIds);
@@ -276,9 +304,9 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
     //parse string.
     const indexArray = r.toString().split(',').map(Number);
     // Step 2: Iterate through the array and get corresponding _id values
-    const selectedIds:number[] = indexArray.map(index => rows[`${index - 1}`]?._id);
+    const selectedIds: number[] = indexArray.map(index => rows[`${index - 1}`]?._id);
     setSelectedRows(selectedIds);
-    dispatch(SetSelectedTargets({target_ids:selectedIds}))
+    dispatch(SetSelectedTargets({ target_ids: selectedIds }))
   }
 
   const handleOpen = () => {
@@ -307,14 +335,14 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
     }}
     >
 
-      <DataGrid onMenuClose={()=>{setRefresh(true)} } rows={rows} columns={filteredCols} rowHeight={30} columnHeaderHeight={30} checkboxSelection
+      <DataGrid onMenuClose={() => { setRefresh(true) }} rows={rows} columns={filteredCols} rowHeight={30} columnHeaderHeight={30} checkboxSelection
         style={{ borderRadius: 0, overflow: "hidden" }}
         onRowSelectionModelChange={(details) => { selectedRows(details.toString()) }}
         slots={{
           toolbar: CustomToolbar,
         }}
         sx={{
-         
+
           boxShadow: 0,
           color: 'rgb(255,255,255)',
           backgroundColor: '#202c22',
@@ -428,7 +456,8 @@ const MuiDataGrid:React.FC<gridViewProp> =  ({GetAction}) => {
 
         sx={{
           color: "#fff", padding: 0, width: "100%", height: "100%",
-          "& .MuiPaper-root": { bgcolor: "#111613", color: "fff", borderWidth: 1, borderStyle: "solid", borderColor: "#fff" }}
+          "& .MuiPaper-root": { bgcolor: "#111613", color: "fff", borderWidth: 1, borderStyle: "solid", borderColor: "#fff" }
+        }
         } open={promptopen}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"

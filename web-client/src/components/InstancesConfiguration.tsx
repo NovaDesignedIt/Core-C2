@@ -62,16 +62,16 @@ const instanceConfiguration = () => {
 
     const handleInstanceNameChange = (event: any) => {
         SetInstanceName(event.target.value)
-        console.log(InstanceName)
+        //console.log(InstanceName)
     }
 
     const handleRowClick = (rowId: number) => {
         setSelectedRowId(rowId);
-        console.log(rowId);
+        //console.log(rowId);
     };
 
     const HandleDelete = async (rowid: number) => {
-        console.log(rowid)
+        //console.log(rowid)
         if (rowid !== undefined) {
             const instance = Instances.find(i => i._id === rowid)
             if (instance !== undefined && CoreC !== undefined) {
@@ -99,7 +99,7 @@ const instanceConfiguration = () => {
                 0,
                 CoreC?._core_id,
             );
-            console.log(data)
+            //console.log(data)
             var t: string = ''
             if (CoreC !== undefined && InstanceName !== '') {
                 const response = await insertinstance(CoreC._url, CoreC, data);

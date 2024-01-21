@@ -89,7 +89,7 @@ const Shell = ()  => {
   const core = useAppSelector(state => state.core.coreObject);
   const instance = useAppSelector(state => state.core.SelectedInstances);
   const selectedTargets = useAppSelector(state => state.core.selectedTargets);
-  const AllTargets = useAppSelector(state => state.core.targetObjects);
+  const AllTargets:Target[] = useAppSelector(state => state.core.targetObjects);
   const url = core._url  
   
 
@@ -97,14 +97,10 @@ const Shell = ()  => {
 
 
   const Command = async (arg: string) => {
-    //need to be Posting to this
-    //@app.route('/<_core_id>/<_isid>/c',methods=['POST'])
-    if (core !== undefined && instance !== undefined) {
-      selectedTargets.forEach((id: number, index: number) => {
-        const target: Target = (AllTargets.find(t => t._id === id)) ?? new Target();
-        const out = SetCommand(url, core, instance, target, arg);
-      })
-    }
+    selectedTargets.forEach((id: number, index: number) => {
+      const target: Target = (AllTargets.find(t => t._id === id)) ?? new Target();      
+      SetCommand(url, core, instance, target, arg);
+    });
   }
 
   const CommandById = async (arg: string, id: number) => {
@@ -168,14 +164,11 @@ const Shell = ()  => {
     //setSocket(io(`http://192.168.2.196:8000/`));
  
     //Connect to the server with the specified query parameters
-    const socks:Socket = io(`http://${url}/`);
+        const socks: Socket = io(`http://${url}`);   
     
-    
-
     if (socks !== undefined) {
       socks.on(
-        typeof instance?._instance_id === 'string'
-          ? instance?._instance_id : '',
+          instance._instance_id,
         (data: string) => {
           console.log(data)
           const recv = data !== undefined ? data.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\r/g, '')  : 'undefined'
