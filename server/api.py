@@ -1509,10 +1509,6 @@ def ClearLogs(_core_id):
         return '500'  ,500
 
 
-
-
-
-
 """ ATHENTICATION MANAGER OPERATIONS """
 
 @app.route('/<_core_id>/usrmgr/<int:operation>', methods=['POST'])
@@ -1525,13 +1521,13 @@ def usrmgr(_core_id,operation):
                                     action.INSERT.value,
                                     str(datetime.now()),
                                     action.FAILED.value,
-                                    "{\"msg\":\"def create_core(_core_id,operation): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+                                    "{\"msg\":\"def usrmgr(_core_id,operation): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
             return '401', 401 
             
         data = request.get_json()
         
         if data :
-          
+        
 
             if operation == 1 :
                 usrname  = data['username']
@@ -1545,8 +1541,8 @@ def usrmgr(_core_id,operation):
                         action.GET.value,
                         str(datetime.now()),
                         action.FAILED.value,
-                        "{\"msg\":\"create_user(): 401 'error': 'Already Exists'} "+"\"}",_core_id) #LOGGER
-                    return  "401",401
+                        "{\"msg\":\"def usrmgr(_core_id,operation): "+"\"}",_core_id) #LOGGER
+                    return  "403",403
    
                 #create our abstract user
                 Utility.User.insert_user(randstring,usrname,_core_id)
@@ -1555,9 +1551,10 @@ def usrmgr(_core_id,operation):
                                     action.DELETE.value,
                                     str(datetime.now()),
                                     action.SUCCESS.value,
-                                    "{\"msg\":\"def create_core(_core_id,operation): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+                                    "{\"msg\":\"def usrmgr(_core_id,operation): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
             elif operation == 0 :
                 hashid = data['_hash_id']
+
                 with orm.db_session:
                     hashid = data["_hash_id"]
                     usr = Utility.User.get(_hash_id=hashid)
@@ -1570,7 +1567,7 @@ def usrmgr(_core_id,operation):
                                     action.DELETE.value,
                                     str(datetime.now()),
                                     action.SUCCESS.value,
-                                    "{\"msg\":\"def create_core(_core_id,operation): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+                                    "{\"msg\":\"def usrmgr(_core_id,operation): 200"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
                     hashValue = Utility.Hashtable.get(_hash_id=hashid)
                     if hashValue:
                         # Delete the record from the database
@@ -1580,10 +1577,7 @@ def usrmgr(_core_id,operation):
                                     action.DELETE.value,
                                     str(datetime.now()),
                                     action.SUCCESS.value,
-                                    "{\"msg\":\"def create_core(_core_id,operation): 401"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
-
-                print('Deleting')
-                return "200", 200
+                                    "{\"msg\":\"def usrmgr(_core_id,operation): 200"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
             else:
                 Utility.Log.insert_log(f"{request}",
                                         'bad request',
@@ -1596,7 +1590,6 @@ def usrmgr(_core_id,operation):
         allUser = orm.select(i for i in Utility.User if i._core_id == _core_id )  
         records_data = [record.to_dict() for record in allUser]
         t = jsonify(records_data)
-
         Utility.Log.insert_log(f"{request}",
                                 'getallisteners',
                                 action.INSERT.value,
@@ -1614,7 +1607,22 @@ def usrmgr(_core_id,operation):
                         action.ERROR.value,
                         "{\"msg\":\"def create_core(_core_id,operation): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
 
-        return '500'  ,500
+        return '404'  ,404
+    
+
+@app.route('/<_core_id>/<usr>', methods=['GET'])
+@orm.db_session
+def CheckUserExists(_core_id,usr):
+    if Utility.Hashtable.UserExists(usr): 
+        Utility.Log.insert_log(f"{_core_id}",
+            'create_user():',
+            action.GET.value,
+            str(datetime.now()),
+            action.FAILED.value,
+            "{\"msg\":\"def CheckUserExists(_core_id,usr):'Already Exists'} "+"\"}",_core_id) #LOGGER
+        return "403", 403
+    return "200", 200
+            
 
 @app.route('/cc', methods=['POST'])
 @orm.db_session

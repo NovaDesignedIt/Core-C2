@@ -102,7 +102,7 @@ const ConfigGeneralComp = () => {
         }
       });
       dispatch(SetConfiguration({ configuration: configInstance }))
-      console.log(configInstance)
+      //console.log(configInstance)
       ToggleAlertComponent('success', `configuration saved`, true);
     } else {
       ToggleAlertComponent('error', 'error', true);

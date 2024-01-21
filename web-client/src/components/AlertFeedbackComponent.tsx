@@ -14,7 +14,6 @@ export const DynamicAlert: React.FC<AlertProp> = ({ open, msg, type,closeParent}
     const [isopen,setOpen] = React.useState(false);
     useEffect(() => {
         setOpen(open);
-        console.log(open,'test9')
       }, [{open,msg,type}]);
     
     const handleClose = () => {

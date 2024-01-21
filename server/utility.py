@@ -361,6 +361,16 @@ class Hashtable(db.Entity):
 
     @classmethod
     @orm.db_session
+    def UserExists(cls,username):
+        htpwd = orm.select(ht for ht in Hashtable if ht._username == username).first()
+        # Check if the user exists and the password is correct
+        if htpwd:
+             return True
+        else :
+             return False
+
+    @classmethod
+    @orm.db_session
     def Authenticate(cls, password, username):
         try:
             # Query the database for the user
@@ -661,9 +671,8 @@ def BuildStorageObjects(corestr):
 
 @orm.db_session
 def create_user(username,password,_core_id,randstring):
-    print('***********')
     if Hashtable.Authenticate(password,username)[1]:
-        print('********************************************')
+        
         return  False
     try:
         Hashtable.insert_core_user(username,password,_core_id,randstring)

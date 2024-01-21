@@ -36,16 +36,6 @@ const themeText = {
     boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)',
 }
 
-function createData(
-    name: string,
-    calories: number,
-    fat: number,
-    carbs: number,
-    protein: number,
-) {
-    return { name, calories, fat, carbs, protein };
-}
-
 const instanceConfiguration = () => {
     const dispatch:any = useAppDispatch();
 
@@ -127,9 +117,7 @@ const instanceConfiguration = () => {
         }
         TogglePanel(true);
     }
-
-
-
+    
     return (
         <>
             <div style={{ width: "100%", height: "35%", minHeight: "250px", backgroundColor: "#000",padding:"10px" }}>

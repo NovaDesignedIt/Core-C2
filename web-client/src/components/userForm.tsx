@@ -1,5 +1,5 @@
 
-import { List, ListItem, Avatar, AlertColor } from '@mui/material';
+import { List, ListItem, Avatar, AlertColor, TextField, Stack, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useAppDispatch, useAppSelector } from '../store/store';
@@ -7,150 +7,241 @@ import { SetUsers } from '../store/features/CoreSlice';
 import { ManageUser, User } from '../api/apiclient';
 import React from 'react';
 import { DynamicAlert } from './AlertFeedbackComponent';
+import { FaRegSquareCaretLeft } from 'react-icons/fa6';
 
+
+interface newUser {
+    username: string;
+    password: string;
+    confirm :string;
+
+}
 
 const usersComponent = () => {
 
     const dispatch = useAppDispatch();
-    const users = useAppSelector(state => state.core.Users)
+    const users: User[] = useAppSelector(state => state.core.Users)
     const core = useAppSelector(state => state.core.coreObject)
+    const [UserList, SetUserList] = React.useState<User[]>(users ?? [])
     const [alertType, SetAlertType] = React.useState<AlertColor>('success');
     const [message, setmessage] = React.useState('');
     const [open, SetOpen] = React.useState(false);
-    const [selectedUser,SetSelectedUser] = React.useState(-1);
-  
-    function ToggleAlertComponent(type:AlertColor,msg:string,open:boolean){
-      SetAlertType(type);
-      setmessage(msg)
-      SetOpen(open);
+    const [selectedUser, SetSelectedUser] = React.useState<User>();
+    const [insertRow, SetInsertRow] = React.useState(false);
+    const [NewUser, SetNewUser] = React.useState<newUser>({
+        username: "",
+        password: "",
+        confirm:""
+    });
+
+    const HandleUsernameChange = (event: any) => {
+        SetNewUser(prevState => ({
+            ...prevState,
+            username: event.target.value
+          }));
+    }
+    const HandlePasswordChange = (event: any) => {
+        SetNewUser(prevState => ({
+            ...prevState,
+            password: event.target.value
+          }));
+    }
+    const HandleConfirmChange = (event: any) => {
+        SetNewUser(prevState => ({
+            ...prevState,
+            confirm: event.target.value
+          }));
     }
 
-    const handleSelectedUser = (index:number) =>{
-        SetSelectedUser(index)
+    function ToggleAlertComponent(type: AlertColor, msg: string, open: boolean) {
+        SetAlertType(type);
+        setmessage(msg)
+        SetOpen(open);
     }
 
+    const handleSelectedUser = (user: User) => {
+        SetSelectedUser(user)
+    }
 
-    const HandleInsertUsers = async () => {
-        if (true) {
-            // const l: User = new Listeners(corid, name, ipaddress, '', 0)
-            const result = await ManageUser(core._url, core, { username:"dada",password:"nigga"},true);
-            if (result !== undefined && result !== 401) {
-                const usrs: User[] = result as unknown as User[]
-                dispatch(SetUsers({ users: usrs }))
-                ToggleAlertComponent('success','Listener Inserted',true);
-            }else {
-                ToggleAlertComponent('error','session over',true);
-            }
-            SetSelectedUser(-1)
+    const HandleInsertUser = () => {
+        if(NewUser.password !== '' && NewUser.username !== '' &&  NewUser.confirm !== '' && (NewUser.password === NewUser.confirm)){
+            console.log('good to add')   
+            HandleManageUserOperations(true);
+            SetInsertRow(false);
         }else{
-            alert('provide name and ip address')
+            console.log('No Can do ')
         }
     }
 
-    const HandleDeleteUsers = async () => {
+    const HandleManageUserOperations = async (operation: boolean) => {
         if (true) {
-            const result = await ManageUser(core._url, core, {},false)
-            if (result !== undefined &&  result !== 401) {
-                console.log(result.body)
-                const usrs: User[] = result as unknown as User[]
-                dispatch(SetUsers({ users: usrs }))
-                SetSelectedUser(-1)
-                ToggleAlertComponent('success','Listener Deleted',true);
-            }else {
-                ToggleAlertComponent('error','error',true);
+            const Payload = !operation ? selectedUser !== undefined ? { _hash_id: selectedUser._hash_id } : undefined : NewUser !== undefined ? NewUser : undefined
+            if (Payload === undefined) {
+                operation ? alert('enter username/password') : alert('you have no user selected');
+                return
             }
-        } else {
-            alert('Select Listener first')
+            console.log(Payload)
+            const result: any = await ManageUser(core._url, core, Payload, operation);
+            if (result !== undefined) {
+                if (typeof result !== 'number' && Array.isArray(result)) {
+                    const usrs: User[] = result as unknown as User[]
+                    dispatch(SetUsers({ users: usrs }))
+                    ToggleAlertComponent('success', 'user Inserted', true);
+                    SetUserList(usrs)
+                } else if (result === 403) {
+                    ToggleAlertComponent('error', 'user already exists', true);
+                } else if (result === 401) {
+                    ToggleAlertComponent('error', 'session over', true);
+                } else {
+                    ToggleAlertComponent('error', 'error', true);
+                }
+                SetSelectedUser(undefined)
+            } else {
+                alert('provide name and ip address')
+            }
         }
     }
 
-    function getRandomBlackOrWhiteColor(): string {
-        const randomComponent = () => Math.floor(Math.random() * 156) + 100; // Random value between 100 and 255
-        const lightColor = `rgb(${randomComponent()}, ${randomComponent()}, ${randomComponent()})`;
-        return lightColor;
-      }
+    const themeText = {
+        backgroundColor: "#333",
+        "&:Hover,focus": {
+            backgroundColor: "#555"
+        },
+        "& .MuiOutlinedInput-root": {
+            ":Hover,focus,selected,fieldset, &:not(:focus)": {
+                "& > fieldset": { borderColor: "transparent", borderRadius: 0, },
 
+            },
+            "& > fieldset": { borderColor: "transparent", borderRadius: 0 },
+            borderColor: "transparent", borderRadius: 0,
+        },
+        "& .root": { color: "#fff" },
+        "& .MuiInputLabel-root": { color: '#fff' },
+        "& .MuiInput-root": { ":focused, selected": { color: '#fff' } },
+        input: { color: '#fff' },
+        inputProps: {
+            style: { fontFamily: 'nunito', },
+        },
+        boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)',
+    }
 
-return (
-<>
-<h5 style={{ color: "#fff", cursor: "default" }}>Users</h5>
-        <div style={{
-          border: "1px solid #222",
-          borderRadius: "4px",
-          display: 'flex',
-          width: "100%",
-          height: "35%",
-          padding: "5px",
-          flexDirection: 'column',
-          backgroundColor: "#111",
-      
-
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'row', cursor: "default", width: "100%" }}>
-
-            <AddIcon
-              onClick={() => { HandleInsertUsers() }}
-              sx={{
-                marginRight: "auto",
-                cursor: "pointer",
-                "&:hover": {
-                  color: "#7ff685"
-                }
-              }} />
-
-            <RemoveIcon
-
-              onClick={() => { HandleDeleteUsers() }}
-              sx={{
-                marginLeft: "auto",
-                cursor: "pointer",
-                "&:hover": {
-                  color: "#7ff685"
-                }
-              }} />
-          </div>
+    return (
+        <>
+            <h5 style={{ color: "#fff", cursor: "default" }}>Users</h5>
             <div style={{
-                overflow: "auto",
-                height: "100%",
-                width: "calc(100% + 17px)", // Adjust the width to hide the scrollbar
-                backgroundColor: "transparent",
+                border: "1px solid #222",
+                borderRadius: "4px",
+                display: 'flex',
+                width: "100%",
+                height: "35%",
+                padding: "5px",
+                flexDirection: 'column',
+                backgroundColor: "#111",
+
+
             }}>
-          <List style={{ paddingRight:"15px"}} >
-                {
-                    (users !== undefined ? users : []).map((i: User, index: number) => (
-                        <ListItem
-                            onClick={()=>{
-                                handleSelectedUser(index)
-                            }}
-                            sx={{
-                                cursor:"pointer",
-                                height: "90%",
-                                maxHeight:"60px",
-                                backgroundColor: selectedUser === index ? "#555" : "#111", "&:hover": { backgroundColor: "#333" },
-                                borderRadius: "55px",
-                            }}
-                        >
-                            {/* <div style={{flexDirection:"row",display:"flex",}}> */}
-                            <Avatar sx={{ scale: "0.7", backgroundColor: getRandomBlackOrWhiteColor(), color: "#111", cursor: "pointer", fontSize: "15px" }}>
-                                { i._username !== undefined ? i._username.substring(0, 2) : ""} 
-                            </Avatar>
-                            <div style={{ display: 'flex', flexDirection: 'column', borderCollapse: 'collapse' }}>
-                                <p style={{ fontSize: '10px', color: '#fff', overflowWrap: 'break-word', margin: '0' }}>{i._username}</p>
-                                <p style={{ fontSize: '9px', color: '#fff', overflowWrap: 'break-word', margin: '0' }}>2024/1/30</p>
-                            </div>
-                            {/* </div> */}
-                        </ListItem>
-                    ))}
+                <div style={{ display: 'flex', flexDirection: 'row', cursor: "default", width: "100%" }}>
+                    {/* HandleManageUserOperations(true) */}
+                    <AddIcon
+                        onClick={() => { insertRow ? SetInsertRow(false) : SetInsertRow(true) }}
+                        sx={{
+                            marginRight: "auto",
+                            cursor: "pointer",
+                            "&:hover": {
+                                color: "#7ff685"
+                            }
+                        }} />
+
+                    <RemoveIcon
+
+                        onClick={() => { HandleManageUserOperations(false) }}
+                        sx={{
+                            marginLeft: "auto",
+                            cursor: "pointer",
+                            "&:hover": {
+                                color: "#7ff685"
+                            }
+                        }} />
+                </div>
+                <div style={{
+                    overflow: "auto",
+                    height: "100%",
+                    width: "calc(100% + 17px)", // Adjust the width to hide the scrollbar
+                    backgroundColor: "transparent",
+                }}>
+                    <List style={{ paddingRight: "15px" }} >
+                        {
+                            insertRow &&
+                            <Stack spacing={'10px'} sx={{ flexDirection: "column", width: "100%", padding: "5px" }}>
+                                <h5 style={{ color: "#fff", cursor: "default" }}>new user</h5>
+                                <TextField
+                                    fullWidth={true}
+                                    InputLabelProps={{ sx: { color: "#fff" } }}
+
+                                    inputProps={{ sx: { color: "#fff" } }}
+                                    size='small'
+                                    placeholder='username'
+                                    onChange={(e) => { HandleUsernameChange(e) }}
+                                    sx={{ ...themeText, width: "100%", borderRadius: "5px" }} ></TextField>
+                                <TextField
+                                    fullWidth={true}
+                                    InputLabelProps={{ sx: { color: "#fff" } }}
+                                    inputProps={{ sx: { color: "#fff" } }}
+                                    size='small'
+                                    placeholder='password'
+                                    onChange={(e) => { HandlePasswordChange(e) }}
+                                    type={'password'}
+                                    sx={{ ...themeText, width: "100%", borderRadius: "5px" }} ></TextField>
+                                <TextField
+                                    fullWidth={true}
+                                    InputLabelProps={{ sx: { color: "#fff" } }}
+                                    inputProps={{ sx: { color: "#fff" } }}
+                                    size='small'
+                                    placeholder='confirm'
+                                    onChange={(e) => { HandleConfirmChange(e) }}
+                                    type={'password'}
+                                    sx={{ ...themeText, width: "100%", borderRadius: "5px" }} ></TextField>
+                                <Button
+                                    onClick={() => { HandleInsertUser() }}
+                                    sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}>{insertRow ? "Save" : "Insert"}  </Button>
+                            </Stack>
+                        }
+
+                        {
+                            UserList.map((i: User, index: number) => (
+                                <ListItem
+                                    onClick={() => {
+                                        handleSelectedUser(i)
+                                    }}
+                                    sx={{
+                                        cursor: "pointer",
+                                        height: "90%",
+                                        maxHeight: "60px",
+                                        backgroundColor: i === selectedUser ? "#555" : "#111", "&:hover": { backgroundColor: "#333" },
+                                        borderRadius: "55px",
+                                    }}
+                                >
+                                    {/* <div style={{flexDirection:"row",display:"flex",}}> */}
+                                    <Avatar sx={{ scale: "0.7", backgroundColor: "#AAA", color: "#111", cursor: "pointer", fontSize: "15px" }}>
+                                        {i._username !== undefined ? i._username.substring(0, 2) : ""}
+                                    </Avatar>
+                                    <div style={{ display: 'flex', flexDirection: 'column', borderCollapse: 'collapse' }}>
+                                        <p style={{ fontSize: '10px', color: '#fff', overflowWrap: 'break-word', margin: '0' }}>{i._username}</p>
+                                        <p style={{ fontSize: '9px', color: '#fff', overflowWrap: 'break-word', margin: '0' }}>2024/1/30</p>
+                                    </div>
+                                    {/* </div> */}
+                                </ListItem>
+                            ))}
 
 
-          </List>
-          </div>
-          <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e) => { SetOpen(false) }} />
+                    </List>
+                </div>
+                <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e) => { SetOpen(false) }} />
 
-        </div>
+            </div>
 
-</>
-);
+        </>
+    );
 
 }
 

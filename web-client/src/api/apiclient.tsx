@@ -1286,6 +1286,5 @@ export async function ManageUser(url: string, core: CoreC, dat: any, InsertOrDel
     return response;
   } catch (error) {
     console.error('Error:', error);
-    return 500;
   }
 }

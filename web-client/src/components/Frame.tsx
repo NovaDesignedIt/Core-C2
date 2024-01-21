@@ -9,7 +9,7 @@ import react from 'react';
 import LoginHome from './LoginHome';
 import FileStorage from './FileStorage';
 import CustomPanelConfiguration from './CustomPanelConfiguration';
-import { Config, Core, CoreC, File as Files, Instance, Listeners } from '../api/apiclient';
+import { Config, Core, CoreC, File as Files, Instance, Listeners, User } from '../api/apiclient';
 import { useAppDispatch,useAppSelector } from '../store/store';
 
 
