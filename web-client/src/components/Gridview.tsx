@@ -5,7 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Switch from '@mui/material/Switch';
 import SatelliteAltIcon from '@mui/icons-material/SatelliteAlt';
-import { Alert, Box, Checkbox, DialogContentText, Modal, Snackbar, Stack, styled } from '@mui/material';
+import { Alert, AlertColor, Box, Checkbox, DialogContentText, Modal, Snackbar, Stack, styled } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import InsertForm from './InsertForm'
@@ -13,11 +13,12 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import ClearIcon from '@mui/icons-material/Clear';
 import UpdateForm from './UpdateForm';
 import ArchiveIcon from '@mui/icons-material/Archive';
-import { Core, deleterecordbyid, Instance, getallrecords, CoreC, Config } from '../api/apiclient';
+import { Core, deleterecordbyid, Instance, getallrecords, CoreC, Config, ExportDumpToFile } from '../api/apiclient';
 import { Typography } from '@material-ui/core';
 import { useAppDispatch, useAppSelector } from '../store/store';
 import { BuildStateManagement, SetSelectedTargets } from '../store/features/CoreSlice';
 import { Socket, io } from 'socket.io-client';
+import { DynamicAlert } from './AlertFeedbackComponent';
 
 
 
@@ -82,6 +83,16 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
     _zzz: '',
     _n: ''
   });
+  //alert
+  const [alertType, SetAlertType] = React.useState<AlertColor>('success');
+  const [message, setmessage] = React.useState('');
+  const [openAlert, SetOpenAlert] = React.useState(false);
+
+  function ToggleAlertComponent(type: AlertColor, msg: string, open: boolean) {
+    SetAlertType(type);
+    setmessage(msg)
+    SetOpenAlert(open);
+  }
 
   const handleSelectedAction = (index: number) => {
     GetAction(index)
@@ -114,7 +125,14 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
   }));
 
 
-
+  const handleExportDump = async () => {
+    const result = await ExportDumpToFile(core._url, SelectedInstance, core);
+    if (result == 200){
+      ToggleAlertComponent('success', `Exported Check your store`, true);
+    }else{
+      ToggleAlertComponent('error', `Error while exporting Dump`, true);
+    }
+  }
   //console.log(instance['_targets']);
   const buttonstyle = {
     backgroundColor: "Transparent",
@@ -155,8 +173,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
 
         <button style={buttonstyle} onClick={(e) => {
           e.preventDefault();
-
-          alert('DUMPED TO ARCHIVES')
+          handleExportDump()
         }}>
           <span style={{ marginRight: '5px' }}>
             <ArchiveIcon fontSize='small' /> {/* Add the Dump Icon */}
@@ -474,6 +491,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
           </Stack>
         </DialogContent>
       </Dialog>
+      <DynamicAlert open={openAlert} msg={message} type={alertType} closeParent={(e) => { SetOpenAlert(false) }} />
     </Box>
   );
 };

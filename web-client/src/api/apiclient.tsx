@@ -1274,3 +1274,30 @@ export async function ManageUser(url: string, core: CoreC, dat: any, InsertOrDel
     console.error('Error:', error);
   }
 }
+
+
+/**
+ * Export to Dump
+ *
+ * @async
+ * @function
+ * @param {string} url - The URL.
+ * @param {Core} CoreC - The Core object.
+ * @param {instance} Instance - The Current isntance.
+ * @returns {status} - json or nothing
+ */
+export async function ExportDumpToFile(url:string,instance:Instance,core:CoreC) {
+  try {
+    const apiUrl =  `http://${url}/${core._core_id}/${instance._instance_id}/exdump`
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'authtok': core._sessiontoken,
+      }
+    }).then(data => { return data.status }).catch(error => console.log(error));
+    return response;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}

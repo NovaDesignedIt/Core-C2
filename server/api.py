@@ -956,6 +956,10 @@ def fetchInstance(message):
         except json.JSONDecodeError as e:
             print(f'Error parsing JSON: {e}')
             return
+        
+
+
+    
     records = orm.select(i for i in Utility.Target if i._isid == data['isid'] )
     records_data = [record.to_dict() for record in records]
     socketio.emit('rtgrid/'+data['isid'], records_data)
@@ -1044,6 +1048,63 @@ def deleterecordbyid(_core_id,record_id):
                         "{\"msg\":\"deleterecordbyid(record_id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
         return '500'  # Return '500' in case of any error during deletion
 
+#exportdmp
+@app.route('/<_core_id>/<_isid>/exdump',methods=['GET'])
+@orm.db_session
+def Export_To_Dump(_core_id,_isid):
+    if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+        
+        Utility.Log.insert_log(f"{request}",
+                                'invalid session',
+                                action.INSERT.value,
+                                str(datetime.now()),
+                                action.FAILED.value,
+                                "{\"msg\":\"sleepAgent(): 401"+"\"}",_core_id) #LOGGER
+        return '401', 401
+    
+    instance = orm.select(i for i in Utility.Instance if  i._instance_id == _isid).first()
+    targets = orm.select(i for i in Utility.Target if i._isid == _isid)
+    if targets:
+        dumpContent = ''
+        for i in targets:
+            dumpContent += f"dump content for: {i._n}\n" + i._dmp
+                    # Ensure the directory exists
+        
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        filename = f"{instance._instance_name}_dump_{timestamp}.txt"
+
+        os.makedirs(os.path.dirname(app.config['IMAGE_FOLDER']), exist_ok=True)
+        
+        upload_folder = f'upl/{_core_id}_files'
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder)
+
+        filename = secure_filename(filename)
+        file_path = os.path.join(upload_folder, filename)
+
+
+        _, file_extension = os.path.splitext(filename)
+
+
+
+        with open(file_path, "w") as log_file:
+        # Add a header to the log file
+            log_file.write("Log entries for _isid: {}\n\n".format(_isid)+("****"*10)+'\n')
+            content = dumpContent.replace('\\n','\n').replace('\\r','\r')
+            log_file.write(content)
+        
+        # Get the file size
+        file_size = os.path.getsize(file_path)
+
+        Utility.Files(
+                    _filename=filename,
+                    _core_id=_core_id,
+                    _extension=file_extension,
+                    _filesize = file_size
+                      )
+        orm.commit()
+    return "200", 200
+    
 
 
 @app.route('/<_isid>/<_id>/<int:sleep>/<interval>/z',methods=['GET'])

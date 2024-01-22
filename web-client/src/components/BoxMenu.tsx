@@ -166,9 +166,6 @@ const BoxMenu = () => {
 
   return (
     <>
-
-      
-
       <Splitter direction={SplitDirection.Vertical}
         onResizeFinished={handleResize}
         initialSizes={sizes}>
@@ -237,7 +234,6 @@ const BoxMenu = () => {
 
         </div>
       </Splitter>
-
     </>
 
   );
