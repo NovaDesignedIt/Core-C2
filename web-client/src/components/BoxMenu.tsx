@@ -14,71 +14,71 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ObjectView from './ObjectView'
 import LiveView from './LiveView'
 import { useAppSelector } from '../store/store';
+import Splitter, { SplitDirection } from '@devbookhq/splitter'
 
-
-export function liveView(value:number) {
+export function liveView(value: number) {
 
   return (
-    <Box sx={{ color: '#fff' }}> 
-    <Box sx={{
-     height: '20%',
-     width: '100%',
-     flexDirection: 'row',
-     backgroundColor: '#111',
-     padding: '2%',
-     JustifyContent:"center",
-     display: 'flex',
-     flexWrap: 'nowrap',
-     fontSize:"10px"
-   }}>
-     {value == 1 ? <p >live View</p> : <p >Object</p> }
-   </Box>
-
-    <List sx={{ gap: '10px' }} >
-      <ListItem sx={{
-        ":Hover": { opacity: '0.8' },
-        borderRadius: '0px', marginBottom: '1%', backgroundColor: '#222', gap: '1px'
+    <Box sx={{ color: '#fff' }}>
+      <Box sx={{
+        height: '20%',
+        width: '100%',
+        flexDirection: 'row',
+        backgroundColor: '#111',
+        padding: '2%',
+        JustifyContent: "center",
+        display: 'flex',
+        flexWrap: 'nowrap',
+        fontSize: "10px"
       }}>
-        <ListItemIcon >
-          <CircleIcon sx={{ fontSize: '10px', color: '#21fd0a', width: '10px' }} />
-        </ListItemIcon>
-        <div style={{ flexDirection: 'column', display: 'flex', }}>
-          <ListItemText style={{ color: '#fff' }}>
-            <Typography
-              style={{
-                color: '#fff',
-                fontSize: '10px',
-              }}
-            >
-              TARGET : (GET)
-            </Typography>
-          </ListItemText>
-          <div style={{ gap: '10px', flexDirection: 'row', display: 'flex', }}>
+        {value == 1 ? <p >live View</p> : <p >Object</p>}
+      </Box>
+
+      <List sx={{ gap: '10px' }} >
+        <ListItem sx={{
+          ":Hover": { opacity: '0.8' },
+          borderRadius: '0px', marginBottom: '1%', backgroundColor: '#222', gap: '1px'
+        }}>
+          <ListItemIcon >
+            <CircleIcon sx={{ fontSize: '10px', color: '#21fd0a', width: '10px' }} />
+          </ListItemIcon>
+          <div style={{ flexDirection: 'column', display: 'flex', }}>
             <ListItemText style={{ color: '#fff' }}>
               <Typography
                 style={{
                   color: '#fff',
                   fontSize: '10px',
+                }}
+              >
+                TARGET : (GET)
+              </Typography>
+            </ListItemText>
+            <div style={{ gap: '10px', flexDirection: 'row', display: 'flex', }}>
+              <ListItemText style={{ color: '#fff' }}>
+                <Typography
+                  style={{
+                    color: '#fff',
+                    fontSize: '10px',
 
-                }}
-              >
-                MACHINE-01
-              </Typography>
-            </ListItemText>
-            <ListItemText >
-              <Typography
-                style={{
-                  color: '#fff',
-                  fontSize: '8px'
-                }}
-              >
-                2023/12/27 16:20:11
-              </Typography>
-            </ListItemText>
+                  }}
+                >
+                  MACHINE-01
+                </Typography>
+              </ListItemText>
+              <ListItemText >
+                <Typography
+                  style={{
+                    color: '#fff',
+                    fontSize: '8px'
+                  }}
+                >
+                  2023/12/27 16:20:11
+                </Typography>
+              </ListItemText>
+            </div>
           </div>
-        </div>
-      </ListItem>
-    </List>
+        </ListItem>
+      </List>
     </Box>
   )
 }
@@ -91,8 +91,8 @@ interface TabPanelProps {
   value: number;
 }
 
-const tabpanel: React.FC<TabPanelProps> = ({children, index, value }) => {
-  
+const tabpanel: React.FC<TabPanelProps> = ({ children, index, value }) => {
+
 
   return (
     <div
@@ -119,7 +119,7 @@ function a11yProps(index: number) {
 }
 
 interface InstanceContainerProps {
-  url:string;
+  url: string;
   objs: any;
   instance?: Instance;
   selectedTargets: number[];
@@ -129,11 +129,11 @@ interface InstanceContainerProps {
 const BoxMenu = () => {
   //{ url,objs, instance, selectedTargets, core }
   //url={url} objs={objs} instance={instance} selectedTargets={selectedTargets} core={core}
-  const core = useAppSelector(state=> state.core.coreObject);
+  const core = useAppSelector(state => state.core.coreObject);
   const url = core._url
-  const instance  = useAppSelector(state=>state.core.SelectedInstances)
-  const selectedTargets = useAppSelector(state=>state.core.selectedTargets)
-  
+  const instance = useAppSelector(state => state.core.SelectedInstances)
+  const selectedTargets = useAppSelector(state => state.core.selectedTargets)
+
 
 
 
@@ -145,115 +145,98 @@ const BoxMenu = () => {
     animation: 'blinking 1s infinite',
     '@keyframes blinking': {
       '0%': { opacity: '0' },
-      '25%': { opacity: '0.25'  },
-      '50%': { opacity: '0.5'  },
-      '75%': {opacity: '0.75'  },
-      '100%': { opacity: '1'  },
+      '25%': { opacity: '0.25' },
+      '50%': { opacity: '0.5' },
+      '75%': { opacity: '0.75' },
+      '100%': { opacity: '1' },
     },
   };
+  const [sizes, setSizes] = React.useState([30, 30, 30]);
+  const ScriptsRunningColor = () => {
+    return running ? 'red' : '#fff'
+  }
 
- const ScriptsRunningColor = () => {
-  return running ? 'red' : '#fff'
- }
 
+
+  function handleResize(gutterIdx: number, allSizes: number[]) {
+    //console.log('gutterIdx', gutterIdx);
+    //console.log('allSizes in %', allSizes);
+    setSizes(allSizes);
+  }
 
   return (
     <>
 
-      <BottomNavigation
-        style={{ justifyContent: 'center', backgroundColor: '#222', marginTop: '-10px',height: '5%', verticalAlign: 'center', overflow: 'hidden' }}
-      >
       
-        <BottomNavigationAction
-          selected={value === 1}
-          style={{ height: '100%',
-          backgroundColor:"#222",
-          }}
-          onClick={() => setValue(1)}      
-          icon={<AutoModeIcon fontSize='small' sx={{ color: "#7ff685",opacity: value !== 1 ? "0.5" : "", height: '15px' }} />} />
-        <BottomNavigationAction
-          style={{ height: '100%', 
-          backgroundColor:"#222"
-        }}
-          onClick={() => setValue(2)}
-          selected={value === 2}
-          icon={<DataObjectIcon fontSize='small' sx={{ color: "#7ff685", opacity: value !== 2 ? "0.5" : "", height: '15px' }} />} />
-        <BottomNavigationAction
-          style={{ height: '100%',
-          backgroundColor:"#222"
-        }}
-          onClick={() => setValue(3)}
-          selected={value === 3}
-          icon={<CodeIcon fontSize='small' sx={{ color: "#7ff685",opacity: value !== 3 ? "0.5" : "", height: '15px' }} />} />
-      </BottomNavigation>
-     
-     
-      {
-          value === 1 && 
-          (
-            <LiveView />
-          )   
-        ||
-        value === 2 && 
-        (
-        <Box sx={{ color: 'blue' }}>
 
-          <Box sx={{
-            height: '40%',
-            width: '100%',
-            flexDirection: 'row',
-            backgroundColor: '#111',
-            padding: '2%',
-            display: 'flex',
-            flexWrap: 'nowrap'
-          }}>
-            <Button style={{ width: '50%', borderRadius: '0px', backgroundColor: 'Transparent', color: '#7ff685' }}><FormatListNumberedOutlinedIcon /></Button>
-            <Button
-              onClick={(e) =>  {e.preventDefault(); setRunning(!running)}}
-              style={{
-                width: '50%',
-                borderRadius: '0px',
-                backgroundColor: 'Transparent', 
-              
+      <Splitter direction={SplitDirection.Vertical}
+        onResizeFinished={handleResize}
+        initialSizes={sizes}>
+
+        <div style={{overflow:"auto", height:"100%"  }}>
+          <LiveView />
+        </div>
+        <div style={{overflow:"auto", height:"100%"  }}>
+          <Box sx={{ color: 'blue' }}>
+
+            <Box sx={{
+              height: '40%',
+              width: '100%',
+              flexDirection: 'row',
+              backgroundColor: '#111',
+              padding: '2%',
+              display: 'flex',
+              flexWrap: 'nowrap'
+            }}>
+              <Button style={{ width: '50%', borderRadius: '0px', backgroundColor: 'Transparent', color: '#7ff685' }}><FormatListNumberedOutlinedIcon /></Button>
+              <Button
+                onClick={(e) => { e.preventDefault(); setRunning(!running) }}
+                style={{
+                  width: '50%',
+                  borderRadius: '0px',
+                  backgroundColor: 'Transparent',
+
+                }}>
+                {running ? <StopCircleOutlinedIcon sx={{ ...styles, color: 'red' }} /> : <PlayArrowIcon sx={{ color: ScriptsRunningColor }} />}
+              </Button>
+
+            </Box>
+
+
+            <List sx={{ gap: '10px' }} >
+
+
+              <ListItem sx={{
+                ":Hover": { opacity: '0.8' },
+                borderRadius: '0px', marginBottom: '1%', backgroundColor: '#222', gap: '1px'
               }}>
-              {running ? <StopCircleOutlinedIcon sx={{ ...styles, color:'red' }} /> : <PlayArrowIcon sx={{  color: ScriptsRunningColor }} />}
-            </Button>
+                <ListItemIcon >
+                  <CircleIcon sx={{ fontSize: '10px', color: running ? '#21fd0a' : '#555', width: '10px' }} />
+                </ListItemIcon>
+                <div style={{ flexDirection: 'column', display: 'flex', }}>
+                  <ListItemText style={{ color: '#fff' }}>
+                    <Typography
+                      style={{
+                        color: '#fff',
+                        fontSize: '10px',
+                      }}>
+                      SCRIPT 1 - {running ? 'RUNNING' : 'STOPPED'}
+                    </Typography>
+                  </ListItemText>
+
+                </div>
+              </ListItem>
+
+            </List>
+
 
           </Box>
+        </div>
+        <div style={{overflow:"auto", height:"100%",backgroundColor:"#111"  }}>
+          <ObjectView />
 
-
-          <List sx={{ gap: '10px' }} >
-
-
-            <ListItem sx={{
-              ":Hover": { opacity: '0.8' },
-              borderRadius: '0px', marginBottom: '1%', backgroundColor: '#222', gap: '1px'
-            }}>
-              <ListItemIcon >
-                <CircleIcon sx={{ fontSize: '10px', color: running ? '#21fd0a' : '#555', width: '10px' }} />
-              </ListItemIcon>
-              <div style={{ flexDirection: 'column', display: 'flex', }}>
-                <ListItemText style={{ color: '#fff' }}>
-                  <Typography
-                    style={{
-                      color: '#fff',
-                      fontSize: '10px',
-                    }}>
-                    SCRIPT 1 - {running? 'RUNNING' : 'STOPPED' }
-                  </Typography>
-                </ListItemText>
-
-              </div>
-            </ListItem>
-
-          </List>
-
-
-        </Box>
-        ) ||
-        value === 3 && 
-        <ObjectView/>
-      }
+        </div>
+      </Splitter>
 
     </>
 
@@ -262,3 +245,74 @@ const BoxMenu = () => {
 }
 
 export default BoxMenu;
+
+
+{/* <Splitter>
+{
+    value === 1 && 
+    (
+      <LiveView />
+    )   
+  ||
+  value === 2 && 
+  (
+  <Box sx={{ color: 'blue' }}>
+
+    <Box sx={{
+      height: '40%',
+      width: '100%',
+      flexDirection: 'row',
+      backgroundColor: '#111',
+      padding: '2%',
+      display: 'flex',
+      flexWrap: 'nowrap'
+    }}>
+      <Button style={{ width: '50%', borderRadius: '0px', backgroundColor: 'Transparent', color: '#7ff685' }}><FormatListNumberedOutlinedIcon /></Button>
+      <Button
+        onClick={(e) =>  {e.preventDefault(); setRunning(!running)}}
+        style={{
+          width: '50%',
+          borderRadius: '0px',
+          backgroundColor: 'Transparent', 
+        
+        }}>
+        {running ? <StopCircleOutlinedIcon sx={{ ...styles, color:'red' }} /> : <PlayArrowIcon sx={{  color: ScriptsRunningColor }} />}
+      </Button>
+
+    </Box>
+
+
+    <List sx={{ gap: '10px' }} >
+
+
+      <ListItem sx={{
+        ":Hover": { opacity: '0.8' },
+        borderRadius: '0px', marginBottom: '1%', backgroundColor: '#222', gap: '1px'
+      }}>
+        <ListItemIcon >
+          <CircleIcon sx={{ fontSize: '10px', color: running ? '#21fd0a' : '#555', width: '10px' }} />
+        </ListItemIcon>
+        <div style={{ flexDirection: 'column', display: 'flex', }}>
+          <ListItemText style={{ color: '#fff' }}>
+            <Typography
+              style={{
+                color: '#fff',
+                fontSize: '10px',
+              }}>
+              SCRIPT 1 - {running? 'RUNNING' : 'STOPPED' }
+            </Typography>
+          </ListItemText>
+
+        </div>
+      </ListItem>
+
+    </List>
+
+
+  </Box>
+  ) ||
+  value === 3 && 
+  <ObjectView/>
+
+}
+    </Splitter> */}

@@ -18,21 +18,23 @@ const ObjectView = () => {
     const targets = useAppSelector(state=>state.core.targetObjects)
     console.log(targets)
     return (
-      <Box sx={{ color: '#fff' }}> 
-      <Box sx={{
-       width: '100%',
-       flexDirection: 'row',
-       backgroundColor: '#111',
-       padding: '2%',
-       JustifyContent:"center",
-       display: 'flex',
-       flexWrap: 'nowrap',
-       fontSize:"10px"
-     }}>
+        <Box sx={{ color: '#fff',height:"100%",overflow: 'auto' }}>
+        <Box
+sx={{
+  backgroundColor: '#111',
+  padding: '2%',
+  display: 'flex',
+  justifyContent: 'center',
+  fontSize: '10px',
+  position:'sticky',
+  top: 0,
+  zIndex: 1,
+}}
+>
        <p >Object View</p> 
      </Box>
   
-      <List sx={{ gap: '10px' }} >
+      <List sx={{ gap: '10px', }} >
                 {
                     
                     (targets).map((item: any) =>

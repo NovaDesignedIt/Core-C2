@@ -75,22 +75,22 @@ const LiveView  = () => {
 
 
     return (
-        <Box sx={{ color: '#fff',height:"80%" }}>
-            <Box sx={{
-                width: '100%',
-                flexDirection: 'row',
-                backgroundColor: '#111',
-                padding: '2%',
-                JustifyContent: "center",
-                display: 'flex',
-                flexWrap: 'nowrap',
-         
-                fontSize: "10px"
-            }}>
+        <Box sx={{ color: '#fff',height:"100%",overflow: 'auto' }}>
+                <Box
+        sx={{
+          backgroundColor: '#111',
+          padding: '2%',
+          display: 'flex',
+          justifyContent: 'center',
+          fontSize: '10px',
+          position:'sticky',
+          top: 0,
+          zIndex: 1,
+        }}
+      >
                 <p >live View</p>
             </Box>
-
-            <List sx={{ gap: '5px',padding:"5px" }} >
+            <List sx={{ gap: '5px', padding: '5px', overflow: 'auto' }}>
                 {
 
                     (LogEvent !== undefined ? LogEvent.reverse() : []).map((item: LiveViewObject, index: number) =>
