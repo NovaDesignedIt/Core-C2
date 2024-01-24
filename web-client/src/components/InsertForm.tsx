@@ -3,7 +3,7 @@ import { Checkbox, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Core, Instance, Target, insertrecord } from '../api/apiclient';
 import CloseIcon from '@mui/icons-material/Close';
-import { useAppSelector } from '../store/store';
+import { useAppSelector,useAppDispatch } from '../store/store';
 
 declare module '@mui/material/styles' {
   interface PaletteColor {
@@ -24,6 +24,10 @@ interface DataGridComponents {
 }
 
 const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
+
+  const targets = useAppSelector(state=>state.core.targetObjects)
+  const dispatch = useAppDispatch()
+
   const [_n, setname] = React.useState('');
   const [_it, setInterval] = React.useState('');
   const [CommandText, SetCommandText] = React.useState('');
@@ -66,7 +70,7 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
       targetData.forEach((item: Target, index: number) => {
         insertrecord(core._url, core, item);
       })
-
+     
       setTargetData([])
       closePanel()
     } else {

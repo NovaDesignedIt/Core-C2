@@ -96,14 +96,13 @@ export const CoreSlice = createSlice({
         state.configObject = action.payload.configuration;
       },
     SetInstanceTargets:
-    (state,action:PayloadAction<{instance:any[]}>) =>{
-      state.targetObjects = action.payload.instance as unknown as Target[]
+    (state,action:PayloadAction<{targets:any[]}>) =>{
+      state.targetObjects = action.payload.targets as unknown as Target[]
     },
     SetUsers:
     (state,action:PayloadAction<{users:User[]}>) =>{
       state.Users  = action.payload.users
     }
-
   }
 
 });

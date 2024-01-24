@@ -16,7 +16,7 @@ import ArchiveIcon from '@mui/icons-material/Archive';
 import { Core, deleterecordbyid, Instance, getallrecords, CoreC, Config, ExportDumpToFile } from '../api/apiclient';
 import { Typography } from '@material-ui/core';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { BuildStateManagement, SetSelectedTargets } from '../store/features/CoreSlice';
+import { BuildStateManagement, SetInstanceTargets, SetSelectedTargets } from '../store/features/CoreSlice';
 import { Socket, io } from 'socket.io-client';
 import { DynamicAlert } from './AlertFeedbackComponent';
 
@@ -217,7 +217,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
 
 
   const setData = (data: any) => {
-    const filteredRows = data !== undefined ? data : [{}].filter((row: any) => row._isid === SelectedInstance._instance_id ? SelectedInstance?._instance_id : new Instance()._instance_id);
+    const filteredRows = data 
     //console.log(instance?._instance_id);
     const filteredColumns = showDmpColumn
       ? columns
@@ -299,8 +299,10 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
     if (socks !== undefined) {
       socks.on(
         'rtgrid/' + SelectedInstance._instance_id,
-        (data: string) => {
-          setData(data);
+        (data: any) => {
+          const payload =  data !== undefined ? data : [{}].filter((row: any) => row._isid === SelectedInstance._instance_id ? SelectedInstance?._instance_id : new Instance()._instance_id);
+          setData(payload);
+          dispatch(SetInstanceTargets({targets:payload}))
         });
     }
 
@@ -324,6 +326,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
     const selectedIds: number[] = indexArray.map(index => rows[`${index - 1}`]?._id);
     setSelectedRows(selectedIds);
     dispatch(SetSelectedTargets({ target_ids: selectedIds }))
+    
   }
 
   const handleOpen = () => {

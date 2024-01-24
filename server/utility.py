@@ -175,6 +175,27 @@ class Configuration(db.Entity):
     _log_pings  = orm.Optional(int)
 
 
+    def to_dict(self):
+        return {
+            "_id": self._id,
+            "_session_len": self._session_len,
+            "_theme": self._theme,
+            "_title": self._title,
+            "_host_name": self._host_name,
+            "_ip_address": self._ip_address,
+            "_port": self._port,
+            "_hash_id": self._hash_id,
+            "_core_id": self._core_id,
+            "_log_ret_days": self._log_ret_days,
+            "_inactivitytimeout": self._inactivitytimeout,
+            "_redirect_to_dump": self._redirect_to_dump,
+            "_create_on_ping": self._create_on_ping,
+            "_use_http": self._use_http,
+            "_log_create": self._log_create,
+            "_log_delete": self._log_delete,
+            "_log_commands": self._log_commands,
+            "_log_pings": self._log_pings,
+        }
 
     def insert_Configuration(
                             session_len,
@@ -395,9 +416,12 @@ class Sessions(db.Entity):
         
     @classmethod
     @orm.db_session
-    def GenerateSession(cls):
+    def GenerateSession(cls,_core_id):
+        c = orm.select(i for i in Configuration if i._core_id == _core_id).first()
+        time_minutes = c._session_len
+        #print(time_minutes,'***'*100)
         token = generate_random_string(25)
-        thirty_minutes_from_now = datetime.datetime.now() + datetime.timedelta(minutes=30)
+        thirty_minutes_from_now = datetime.datetime.now() + datetime.timedelta(minutes=time_minutes)
         cls.create_session(token,  str(thirty_minutes_from_now))
         return token
 
@@ -686,7 +710,7 @@ def build_payload(core,isid,id):
 """
 THE GOD GUID 26f713dd-4ab9-4b65-88c4-ac2792240afe
 """
-def return_core(core_id,sessiontoken):
+def return_core(core_id):
     try:
         with orm.db_session:
             # Retrieve the record by ID
@@ -772,7 +796,8 @@ def return_core(core_id,sessiontoken):
                                 }
                                 )
                 print(listeners)
-                coreJson = {"_core_id" :core._core_id,"_sessiontoken":sessiontoken ,"_config" :configJson, "_users":usersJson, "_listeners":listen, "_instances":InstanceJson}
+                s = Sessions.GenerateSession(core._core_id)
+                coreJson = {"_core_id" :core._core_id,"_sessiontoken":s ,"_config" :configJson, "_users":usersJson, "_listeners":listen, "_instances":InstanceJson}
                 return json.dumps(coreJson) , core._core_id
     except Exception as e:
         print(f"Error: {e}")
