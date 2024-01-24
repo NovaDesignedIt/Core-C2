@@ -90,10 +90,10 @@ const ConfigGeneralComp = () => {
       "_inactivitytimeout": chktimeout ? 1 : 0
     }
     const result = await setconfigurations(core._url, core, settings)
-    if (result === 200 && result !== undefined) {
-
-      const configInstance = new Config();
+    if (result !== undefined) {
+      const configInstance = result as unknown as Config
       // Update Config instance with values from settings
+      console.log(configInstance)
       Object.keys(settings).forEach((key) => {
         if (configurationObject.hasOwnProperty(key)) {
           configInstance[key] = settings[key];

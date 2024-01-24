@@ -4,21 +4,26 @@ import { Core, Config, Instance, Root, getRootDirectory, User, CreateCore, CoreC
 import CloseIcon from '@mui/icons-material/Close';
 
 
+const apiKey:string = import.meta.env.VITE_MAPS_KEY !== undefined ?  import.meta.env.VITE_MAPS_KEY : '' ;
+const apiUrl:string = import.meta.env.VITE_URL !== undefined ? import.meta.env.VITE_URL : "";
+const apiUsername:string = import.meta.env.VITE_USERNAME !== undefined ? import.meta.env.VITE_USERNAME: "";
+const apipassword:string = import.meta.env.VITE_PASSWORD !== undefined ? import.meta.env.VITE_PASSWORD: "";
+
 export default function LoginHome({ onSetCore = (core: Core) => { } }) {
-    const [password, setPassword] = useState('password');
-    const [username, setUsername] = useState('username');
-    const [address, setAddress] = useState('192.168.2.196:8000');
+    const [password, setPassword] = useState(apipassword);
+    const [username, setUsername] = useState(apiUsername);
+    const [address, setAddress] = useState(apiUrl);
     const [color, setColor] = useState('#ffffff');
     const [explode, setExplode] = useState(false);
     const [open, setOpen] = useState(false);
     const [IsCreating, SetIsCreating] = useState(false);
-    const [titlecc , settitle ] = useState('title');
-    const [hostnamecc , sethostname ] = useState('host.name.com');
-    const [addresscc , setaddress ] = useState('10.0.0.52');
-    const [portcc , setport ] = useState('4444');
-    const [usernamecc , setusername ] = useState('username');
-    const [passwordcc , setpassword ] = useState('password');
-    const [confirmcc , setconfirm ] = useState('password');
+    const [titlecc , settitle ] = useState('cloud.core');
+    const [hostnamecc , sethostname ] = useState(apiUrl);
+    const [addresscc , setaddresscc ] = useState('0.0.0.0');
+    const [portcc , setport ] = useState('8000');
+    const [usernamecc , setusername ] = useState(apiUsername);
+    const [passwordcc , setpassword ] = useState(apipassword);
+    const [confirmcc , setconfirm ] = useState(apipassword);
 
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -121,18 +126,18 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
             "_confirm": confirmcc
         }
 
-        await CreateCore("192.168.2.196:8000", JSON.stringify(CoreRequest));
+        const result = await CreateCore(hostnamecc, JSON.stringify(CoreRequest));
         
         SetIsCreating(false)
-        setPassword('')
-        setAddress('')
-        settitle('')
-        sethostname('')
-        setaddress('')
-        setport('')
-        setusername('')
-        setpassword('')
-        setconfirm('')
+        // setPassword('')
+        // setAddress('')
+        // settitle('')
+        // sethostname('')
+        // setaddresscc('')
+        // setport('')
+        // setusername('')
+        // setpassword('')
+        // setconfirm('')
 
 
     }
@@ -157,7 +162,7 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
         sethostname(event.target.value);
     }
     const Handleaddresscc =  (event: { target: { value: SetStateAction<string>; }; }) => {
-        setaddress(event.target.value);
+        setaddresscc(event.target.value);
     }
     const Handleportcc =  (event: { target: { value: SetStateAction<string>; }; }) => {
         setport(event.target.value);

@@ -39,7 +39,7 @@ DARK_GRAY = "\033[90m"             # Dark gray text
 RESET = "\033[0m"
 color_codes = [RED ,GREEN ,YELLOW ,BLUE ,MAGENTA ,CYAN ,LIGHT_RED ,LIGHT_GREEN ,LIGHT_YELLOW ,LIGHT_BLUE ,LIGHT_MAGENTA ,LIGHT_CYAN ,WHITE,DARK_RED,DARK_GREEN,DARK_YELLOW,DARK_BLUE,DARK_MAGENTA,DARK_CYAN,DARK_GRAY ]
 
-db = orm.Database("sqlite", "server.db")
+db = orm.Database("sqlite", "server.db",create_db=True)
 # Define the Targ entity using Pony ORM
 
 """ 
@@ -86,12 +86,9 @@ class ActionType(Enum):
     AUTHENTICATED = 10
 
 
-class Core:
-    instance_id = orm.Required(str)
-    _id = orm.PrimaryKey(int,auto=True)
-
 
 # Define the Targ entity using Pony ORM
+    
 class Target(db.Entity):
     _id = orm.PrimaryKey(int, auto=True)
     _st = orm.Required(int, auto=True)
@@ -137,8 +134,7 @@ class Instance(db.Entity):
     _Instance_count = orm.Optional(int)
     _core_id = orm.Optional(str)
 
-    @orm.db_session
-    def insert_instance(_id,
+    def insert_instance(
                                 _instance_id,
                                 _instance_name ,
                                 _instance_ip ,
@@ -146,7 +142,7 @@ class Instance(db.Entity):
                                 _Instance_count, 
                                 _core_id ):
         Instance(
-        _id  =  _id ,
+
         _instance_id  =     _instance_id ,
         _instance_name  =     _instance_name ,
         _instance_ip  =     _instance_ip ,
@@ -180,7 +176,6 @@ class Configuration(db.Entity):
 
 
 
-    @orm.db_session
     def insert_Configuration(
                             session_len,
                             theme,
@@ -224,9 +219,8 @@ class User(db.Entity):
     _username = orm.Required(str)
     _AuthToken = orm.Optional(str)
     _core_id = orm.Required(str)
-    _id = orm.PrimaryKey(int,auto=True)
+    _id = orm.PrimaryKey(int, auto=True)
     
-    @orm.db_session
     def insert_user(hashid,user,core):
         User(_hash_id=hashid,_core_id=core,_username=user,_AuthToken="")
 
@@ -245,7 +239,6 @@ class Listeners(db.Entity):
     _last_ping  = orm.Optional(str)
     _id = orm.PrimaryKey(int,auto=True)
     
-    @orm.db_session
     def insert_Listener(_core_id,_listener_name,_listener_IpAddress,_last_ping):
         Listeners(_core_id=_core_id,
                   _listener_name=_listener_name,
@@ -257,7 +250,7 @@ class Listeners(db.Entity):
 LOGGING CLASS.
 """
 class Log(db.Entity):
-    _id = orm.PrimaryKey(str,auto=True)
+    _id = orm.PrimaryKey(int,auto=True)
     _instance_id = orm.Optional(str)
     _target_name = orm.Optional(str)
     _action = orm.Optional(int)
@@ -267,7 +260,6 @@ class Log(db.Entity):
     _target_id = orm.Optional(int)
     _msg = orm.Optional(str)
     # Insert operation
-    @orm.db_session
     def insert_log(instance_id, target_name, action, log_time,result,_msg,_core_id):
         try:
             #print()
@@ -279,22 +271,19 @@ class Log(db.Entity):
                     
 
     # Delete all logs
-    @orm.db_session
     def delete_all_logs():
         delete(l for l in Log)
 
 
 
 class Core(db.Entity):
-    _core_id = orm.PrimaryKey(str )
-    _id = orm.Required(int, auto=True)
+    _id = orm.PrimaryKey(int, auto=True) 
+    _core_id = orm.Required(str) 
     
-    @orm.db_session
     def insert_core(core_id):
         Core(_core_id=core_id)
         return core_id
     
-    @orm.db_session
     def delete_core(core_id):
         core = Core.get(_core_id=core_id)
         if core:

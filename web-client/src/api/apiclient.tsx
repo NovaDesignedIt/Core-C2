@@ -1079,7 +1079,7 @@ export async function ClearLogs(url: string, coreC: CoreC) {
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the deletion is complete.
  */
-export async function CreateCore(url: string, coreStructure: any) {
+export async function CreateCore(url: string, coreStructure: string) {
 
   const response = await fetch(`http://${url}/cc`, {
     method: "POST",
@@ -1089,6 +1089,7 @@ export async function CreateCore(url: string, coreStructure: any) {
     body: coreStructure, // Convert the object to a JSON string
   }).then(
     (data) => {
+      console.log(data.text())
       return data.status
     }
   ).catch((error: Error) => {
@@ -1236,7 +1237,7 @@ export async function setconfigurations(url: string, core: CoreC, dat: any) {
         'authtok': core._sessiontoken,
       },
       body: JSON.stringify(dat)
-    }).then(data => { return data.status }).catch(error => console.log(error));
+    }).then(data => { return data.json() }).catch(error => console.log(error));
 
     return response;
   } catch (error) {

@@ -1,11 +1,12 @@
 import sys
+import traceback
 from flask import Flask,request,abort, send_file, send_from_directory,session,jsonify,redirect,render_template,url_for
 from datetime import datetime
 from pony import orm
 import json
 from time import sleep
 import Utility
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import os
 from werkzeug.utils import secure_filename
 from Utility import Attribute as attribute
@@ -18,12 +19,28 @@ host=''
 port=0
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="http://localhost:5173") 
+socketio = SocketIO(app, cors_allowed_origins="*")
+
 app.secret_key = 'your_secret_key'
 secrets = 'ziggy'
 IMAGE_FOLDER = './upl/ph/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif','txt','js','sh','bat','php'}
 app.config['IMAGE_FOLDER'] = IMAGE_FOLDER
+
+
+@app.route('/t')
+@orm.db_session
+def testEndpoint():
+    Utility.Target(_st=0,
+                              _dmp='dmp',
+                              _ip='ip',
+                              _in='in',
+                              _out='out',
+                              _lp='lp',
+                              _zzz=0,
+                              _n='n',
+                              _isid='isid')
+    return f'coreC2 {datetime.now()}, Debug Version 3.1', 200
 
 """ INSTANCE MANAGER OPERATIONS """ 
 #Instance Manager
@@ -428,6 +445,7 @@ def insertrecord(_core_id):
                                 str(datetime.now()),
                                 action.FAILED.value,
                                 "{\"msg\":\"insertrecord(_core_id): 401"+"\"}",_core_id) #LOGGER
+
         return '401', 401
     try:
         data = request.get_json()  # Assuming the client sends JSON data in the request body
@@ -444,7 +462,7 @@ def insertrecord(_core_id):
                               _isid=data.get('_isid'))
             print(new_record)
             # Commit the new record to the database
-            orm.commit()
+        _isid = data.get('_isid')
             
         Utility.Log.insert_log(f"{request}",
                         f'{data.get("_n",_core_id)} inserted success',
@@ -452,6 +470,10 @@ def insertrecord(_core_id):
                         str(datetime.now()),
                         action.SUCCESS.value,
                         "{\"msg\":\"insertrecord(_core_id): 200"+"\"}",_core_id) #LOGGER
+        LiveViewObj = {"isid": f"{_isid}", "status": '200', "time": f"{str(datetime.now())}", "msg": f"def insertrecord(isid,id):({new_record._id})"}
+        LiveViewObjString = json.dumps(LiveViewObj)
+        socketio.emit(f's/{_isid}', LiveViewObjString)
+        orm.commit()
         return '200'  # Return '200' to indicate successful insertion
     except Exception as e:
         
@@ -956,10 +978,7 @@ def fetchInstance(message):
         except json.JSONDecodeError as e:
             print(f'Error parsing JSON: {e}')
             return
-        
 
-
-    
     records = orm.select(i for i in Utility.Target if i._isid == data['isid'] )
     records_data = [record.to_dict() for record in records]
     socketio.emit('rtgrid/'+data['isid'], records_data)
@@ -1543,8 +1562,8 @@ def setconfigurations(_core_id):
                                         str(datetime.now()),
                                         action.SUCCESS.value,
                                         "{\"msg\":\"def setconfigurations(_core_id): 200 data: "+str(data)+"\"}",_core_id) #LOGGER
-                    
-                    return '200', 200    
+                    orm.commit()
+                    return jsonify(configuration), 200    
     except Exception as e:
         
         Utility.Log.insert_log(f"{request}",
@@ -1553,8 +1572,8 @@ def setconfigurations(_core_id):
                         str(datetime.now()),
                         action.ERROR.value,
                         "{\"msg\":\"def setconfigurations(_core_id): 500"+f" Error: {e}"+"\"}",_core_id) #LOGGER
-
-        return '500'  ,500
+        print(f'Exception: {e}')
+        return f'exception: {e}'  ,500
 
 @app.route('/<_core_id>/cl', methods=['GET'])
 @orm.db_session
@@ -1713,18 +1732,18 @@ def create_core():
     try:
         if data :
                 # Ensure that data is a dictionary
-            print(data)
             if not isinstance(data, dict):
-                return jsonify({'error': 'Invalid JSON data'}), 400
+#                return jsonify({'error': 'Invalid JSON data'}), 404
+                return jsonify(data),401
             # Now you can safely access dictionary keys
-            usr = data.get("_username", None)
             usr = data["_username"]
             password = data["_password"]
             randstring = Utility.generate_random_string(18)
             coreid = Utility.Guid()
+
             Utility.Core.insert_core(coreid)
-            Utility.Instance.insert_instance(0,Utility.generate_random_string(10),"default",data["_address"],data["_hostname"],0,coreid)
-            Utility.Configuration.insert_Configuration(30,0,data["_hostname"],data["_hostname"],data["_address"],data["_port"],"3453453453",coreid,30,0,0,0,0,0,0,0)
+            Utility.Instance.insert_instance(Utility.generate_random_string(10),"default",data["_address"],data["_hostname"],0,coreid)
+            Utility.Configuration.insert_Configuration(30,0,data["_title"],data["_hostname"],data["_address"],data["_port"],"3453453453",coreid,30,0,0,0,0,0,0,0,30)
             
             if not Utility.create_user(usr,password,coreid,randstring):
                 Utility.Log.insert_log(f"{coreid}",
@@ -1733,7 +1752,7 @@ def create_core():
                     str(datetime.now()),
                     action.FAILED.value,
                     "{\"msg\":\"create_user(): 401 'error': 'Already Exists'} "+"\"}",coreid) #LOGGER
-                return 401, "400"
+                return "400", 400
             
             #creates abstract user
             Utility.User.insert_user(randstring,usr,coreid)
@@ -1746,6 +1765,8 @@ def create_core():
                         action.SUCCESS.value,
                         "{\"msg\":\"create_core(): 200 "+"\"}",coreid) #LOGGER
         #{"_title":"Title","_hostname":"com.mother.Ship.com","_address":"10.0.0.10","_port":":5675","_username":"username","_password":"password","_confirm":"password"}
+         # Set CORS headers for this route
+
         return "200", 200
     except Exception as e:
         Utility.Log.insert_log("",
@@ -1754,7 +1775,8 @@ def create_core():
                         str(datetime.now()),
                         action.FAILED.value,
                         "{\"msg\":\"create_core(): 500 "+"\"}",coreid) #LOGGER
-        return  jsonify({'error': f' error :{e}'}), 500
+        print(e)
+        return "500" , 500
 
 @app.route('/<_core_id>/c/u', methods=['POST'])
 @orm.db_session
@@ -1915,7 +1937,7 @@ def login_end_point():
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\"login_end_point(): failed login"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+                        "{\"msg\":\"login_end_point(): failed login"+"\"}",value) #LOGGE,_core_idR #LOGGER
             # Do something else if the condition is false
             return '500'
     except Exception as e:
@@ -2195,6 +2217,10 @@ def getfilecontent(_core_id,filename):
             # Do something else if the condition is false
     return '500', 500
     
+@app.errorhandler(500)
+def internal_server_error(e):
+    traceback.print_exc()
+    return render_template('500.html'), 500
 
 """
 

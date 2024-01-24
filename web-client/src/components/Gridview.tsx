@@ -228,7 +228,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
         && column.field !== '_isid'
       );
     SetFilteredColumns(filteredColumns)
-
+   //console.log(filteredRows,'************************')
 
     if (Array.isArray(filteredRows)) {
       const result = filteredRows.map((item: any) => {
@@ -256,7 +256,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
       });
       const rowsWithIds: any[] = result.map((row: any, index: number) => ({ ...row, id: index + 1 }));
 
-         setRows(rowsWithIds)
+      setRows(rowsWithIds)
     }
 
   }
@@ -309,7 +309,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
 
     setInterval(() => {
       socks.emit('rtgrid', { "isid": `${SelectedInstance._instance_id}` });
-    }, 3000);
+    }, 1000);
 
 
      return () => {socks.disconnect()};
