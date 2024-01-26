@@ -418,11 +418,12 @@ class Sessions(db.Entity):
     @orm.db_session
     def GenerateSession(cls,_core_id):
         c = orm.select(i for i in Configuration if i._core_id == _core_id).first()
-        time_minutes = c._session_len
-        #print(time_minutes,'***'*100)
+        if c :
+            time_minutes = c._session_len
+        else : time_minutes = 30
         token = generate_random_string(25)
-        thirty_minutes_from_now = datetime.datetime.now() + datetime.timedelta(minutes=time_minutes)
-        cls.create_session(token,  str(thirty_minutes_from_now))
+        timtefromnow = datetime.datetime.now() + datetime.timedelta(minutes=time_minutes)
+        cls.create_session(token,  str(timtefromnow))
         return token
 
     @classmethod

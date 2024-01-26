@@ -89,6 +89,9 @@ const ConfigGeneralComp = () => {
       "_log_commands": chkcmd ? 1 : 0,
       "_inactivitytimeout": chktimeout ? 1 : 0
     }
+
+
+
     const result = await setconfigurations(core._url, core, settings)
     if (result !== undefined) {
       const configInstance = result as unknown as Config

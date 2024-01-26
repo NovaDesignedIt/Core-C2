@@ -682,6 +682,7 @@ def getcmd(isid,id):
 @app.route('/<isid>/<id>/so',methods=["POST"])
 @orm.db_session
 def setout(isid,id):
+    print(f'{isid}')
     try:
         targets  = Utility.Target.select(lambda i : i._isid == isid and int(i._id) == int(id)).first()
         if targets is not None:
@@ -699,9 +700,9 @@ def setout(isid,id):
                                     action.GET.value,
                                     str(datetime.now()),
                                     action.SUCCESS.value,
-                                    "{\"msg\":\" setout(isid,id) 200 \"}") #LOGGER
+                                    "{\"msg\":\" setout(isid,id) 200 \"}",isid  ) #LOGGER
                     #orm.commit()
-                    return '200'
+                    return '200',200
     except Exception as e :
         
         Utility.Log.insert_log(f"{request}",
@@ -709,7 +710,7 @@ def setout(isid,id):
                         action.GET.value,
                         str(datetime.now()),
                         action.ERROR.value,
-                        "{\"msg\":\" setout(isid,id) 400 \"}"+f"\n{e}") #LOGGER
+                        "{\"msg\":\" setout(isid,id) 400 \"}"+f"\n{e}",isid) #LOGGER
     return '200', 200
 
 @app.route('/<isid>/<id>/go',methods=["GET"])
@@ -731,6 +732,11 @@ def getout(isid,id):
                         "{\"msg\":\" def getout(isid,id): 200 \"}",targets._isid) #LOGGER
                 out = getattr(targets,attribute.OUT.value)
                 setattr(targets,attribute.OUT.value,'')
+                
+                setattr(targets,
+                attribute.STATE.value,
+                state.LISTEN.value)
+                
                 orm.commit()
                 return out
     except Exception as e :
@@ -762,7 +768,7 @@ def getstate(isid,id):
                         str(datetime.now()),
                         action.SUCCESS.value,
                         "{\"msg\":\"getstate(): 200 \"}"+f"\n",'') #LOGGER
-            
+
             LiveViewObj = {"isid": f"{isid}", "status": '200', "time": f"{str(datetime.now())}", "msg": f"def getstate(isid,id):({id})"}
             LiveViewObjString = json.dumps(LiveViewObj)
             socketio.emit(f's/{isid}', LiveViewObjString)
@@ -1792,7 +1798,6 @@ def create_user(_core_id):
     data = request.get_json()
 
     if 'password' not in data or 'username' not in data or 'hash_id' not in data:
-        
         Utility.Log.insert_log("",
                         'create_user',
                         action.GET.value,
@@ -1910,9 +1915,9 @@ def login_end_point():
         if b and c and '&' in value:
             # Do something if the condition is true
             
-            core, _core_id = Utility.return_core(c)
-
-            print()
+            #core, _core_id = Utility.return_core(c)
+            core, coreid = Utility.return_core(c)
+            print(core)
             if core :
                 
                 Utility.Log.insert_log(f"{request}",
@@ -1920,7 +1925,7 @@ def login_end_point():
                             action.GET.value,
                             str(datetime.now()),
                             action.AUTHENTICATED.value,
-                            "{\"msg\":\"login_end_point(): 200 core: "+core+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+                            "{\"msg\":\"login_end_point(): 200 core: "+core+"\"}",'_core_id') #LOGGE,_core_idR #LOGGER
                 return core
             
             Utility.Log.insert_log(f"{request}",
@@ -1928,7 +1933,7 @@ def login_end_point():
                         action.GET.value,
                         str(datetime.now()),
                         action.FAILED.value,
-                        "{\"msg\":\"login_end_point() !core? : 500"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+                        "{\"msg\":\"login_end_point() !core? : 500"+"\"}",'_core_id') #LOGGE,_core_idR #LOGGER
             return "400",400
         else:
             Utility.Log.insert_log("",
