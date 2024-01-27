@@ -156,7 +156,7 @@ const map_basic = () => {
     const position = {lat: 53, lng: 13};
     return (
         <ThemeProvider   theme={{styles: exampleMapStyles}}>
-        <APIProvider apiKey={"AIzaSyBb0s86NebFPpQ33KCzK3LykpMc8Wz6C88"}>
+        <APIProvider apiKey={import.meta.env.VITE_MAPS_KEY !== undefined ?  import.meta.env.VITE_MAPS_KEY : ''}>
             <div style={{ height: "100%", width: "100%",backgroundColor:"#628565" }}>
              <div style={{  height: "100%", width: "100%",backgroundColor:"#628565" }}>
                 <Map zoom={8} center={position}><Marker 

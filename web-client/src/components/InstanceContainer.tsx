@@ -8,6 +8,7 @@ import { Box, Modal, Stack, fabClasses } from '@mui/material';
 import { Core, Instance } from '../api/apiclient';
 import { Visibility } from '@mui/icons-material';
 import { useAppSelector } from '../store/store';
+import { adjustSizes } from '../Utilities/Utilities';
 
 
 const style = {
@@ -30,6 +31,7 @@ const style = {
 //{ url, objs, instance, handleSelectedTargets, core, selectedTargets }
 
 const InstanceContainer = () => {
+
     const [sizes, setSizes] = React.useState([85, 15]);
     const [sizes2, setSizes2] = React.useState([80, 20]);
     const [action,setSelectedAction] = React.useState(0);
@@ -39,14 +41,17 @@ const InstanceContainer = () => {
     function handleResize(gutterIdx: number, allSizes: number[]) {
         //console.log('gutterIdx', gutterIdx);
         //console.log('allSizes in %', allSizes);
-        setSizes(allSizes);
+        const adjustedSizes = adjustSizes(allSizes, 70, 3);
+        setSizes(adjustedSizes);
     }
 
     function handleResize2(gutterIdx: number, allSizes: number[]) {
         //console.log('gutterIdx', gutterIdx);
         console.log('allSizes in %', allSizes);
-        setSizes2(allSizes);
+        const adjustedSizes = adjustSizes(allSizes, 30, 15);
+        setSizes2(adjustedSizes);
     }
+
 
 
     const GetSelectedAction = (index:number) =>{

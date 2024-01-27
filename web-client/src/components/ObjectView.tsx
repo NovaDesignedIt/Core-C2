@@ -13,7 +13,7 @@ const ObjectView = () => {
     const selectedTargets = useAppSelector(state => state.core.selectedTargets)
     const targets = useAppSelector(state => state.core.targetObjects)
     const currentTargs  = targets ?? [];
-    console.log(targets)
+    //console.log(targets)
     return (
         <Box sx={{ color: '#fff', height: "100%", overflow: 'auto' }}>
             <Box

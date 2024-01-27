@@ -11,7 +11,7 @@ import FileStorage from './FileStorage';
 import CustomPanelConfiguration from './CustomPanelConfiguration';
 import { Config, Core, CoreC, File as Files, Instance, Listeners, User } from '../api/apiclient';
 import { useAppDispatch,useAppSelector } from '../store/store';
-
+import { adjustSizes } from '../Utilities/Utilities'
 
 import {BuildStateManagement} from  '../store/features/CoreSlice';
 
@@ -41,7 +41,6 @@ const Frame = () => {
 
 
   const inst = useAppSelector(state => state.core.instanceObjects)
-
   const content = useAppSelector(state => state.core.SelectedContent)
 
 
@@ -87,8 +86,12 @@ const Frame = () => {
   function handleResize(gutterIdx: number, allSizes: number[]) {
     // console.log('gutterIdx', gutterIdx);
     // console.log('allSizes in %', allSizes);
-    setSizes(allSizes);
+    const sizxs =  adjustSizes(allSizes,1,80)
+    setSizes(sizxs);
   }
+
+ 
+
 
   return (
     <Box flexDirection="column" width="100%" height="100vh" sx={{ sm: "70vh", }}>

@@ -2340,17 +2340,17 @@ Use this template when defining server side handlers
 # success = update_field_by_id(record_id, field_to_update, new_value)
 if '__main__' == __name__:
 
-
-    text = """╦ ╦┌─┐┌┬┐┌─┐  ┬┌─┐  ┬ ┬┬ ┬┌─┐┬─┐┌─┐   
+    authortext = "\nCoreC2 HomeService - Author:mlam || NovaDesignedit @ github\n\n"
+    text = f"""╦ ╦┌─┐┌┬┐┌─┐  ┬┌─┐  ┬ ┬┬ ┬┌─┐┬─┐┌─┐   
 ╠═╣│ ││││├┤   │└─┐  │││├─┤├┤ ├┬┘├┤    
 ╩ ╩└─┘┴ ┴└─┘  ┴└─┘  └┴┘┴ ┴└─┘┴└─└─┘   
-┌┬┐┬ ┬┌─┐  ╔═╗┌─┐┬─┐┬  ┬┬┌─┐┌─┐  ┬┌─┐ 
- │ ├─┤├┤   ╚═╗├┤ ├┬┘└┐┌┘││  ├┤   │└─┐ 
- ┴ ┴ ┴└─┘  ╚═╝└─┘┴└─ └┘ ┴└─┘└─┘  ┴└─┘ 
+┌┬┐┬ ┬┌─┐  {Utility.DARK_RED}╔═╗┌─┐┬─┐┬  ┬┬┌─┐┌─┐ {Utility.RESET}┬┌─┐ 
+ │ ├─┤├┤   {Utility.RED}╚═╗├┤ ├┬┘└┐┌┘││  ├┤{Utility.RESET}  │└─┐ 
+ ┴ ┴ ┴└─┘  {Utility.DARK_YELLOW}╚═╝└─┘┴└─ └┘ ┴└─┘└─┘{Utility.RESET} ┴└─┘ 
+ {Utility.RED}
  
  
- 
-          .                      .
+         .                      .
          .                      ;
          :                  - --+- -
          !           .          !
@@ -2363,9 +2363,15 @@ if '__main__' == __name__:
          |
          !
          :         . : 
-         .       *"""
+         .       *
+         
+      {Utility.RESET}    
+         
+         
+         
+         """
 
-    print(f'{text.strip()}')
+    print(f'{authortext}{text.strip()}\n\n\n\n')
     # Call the create_target_table function to create the Target table if it does not exist
     print(f'{Utility.YELLOW}* CONFIGURING HOST{Utility.RESET}')
     if len(sys.argv) > 1 :
@@ -2384,17 +2390,17 @@ if '__main__' == __name__:
             exit(-1)
 
     
-    print(f'{Utility.CYAN}* host: {Utility.LIGHT_YELLOW}{host} {Utility.CYAN} port: {Utility.LIGHT_YELLOW}{port}')
-    print(f'{Utility.YELLOW}* START PROC{Utility.RESET}')
+    print(f'{Utility.CYAN}* hosted @ {Utility.LIGHT_YELLOW}{host} {Utility.CYAN} \n* port: {Utility.LIGHT_YELLOW}{port}')
+    print(f'{Utility.GREEN}* START{Utility.RESET}')
 
     icmp_packet = create_icmp_echo_request()
 
 
 
-    # Example usage
-    with socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP) as s:
-        s.sendto(icmp_packet, ('192.168.2.196', 0))
-    receive_ping()
+    # # Example usage
+    # with socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP) as s:
+    #     s.sendto(icmp_packet, ('192.168.2.196', 0))
+    # receive_ping()
 
-
-    #socketio.run(app,host=host, port=port)
+    #socketio.run(app,host=host, port=port,debug=True)
+    socketio.run(app,host=host, port=port)
