@@ -1,19 +1,25 @@
+import json
 import sys
 import traceback
-from flask import Flask,request,abort, send_file, send_from_directory,session,jsonify,redirect,render_template,url_for
-from datetime import datetime
-from pony import orm
-import json
-from time import sleep
-import Utility
-from flask_cors import CORS, cross_origin
+import subprocess
+import socket
+import struct
+import time
 import os
-from werkzeug.utils import secure_filename
-from Utility import Attribute as attribute
-from Utility import ActionType as action
-from Utility import _state as state
+import Utility
+from flask      import Flask,request,abort, send_file, send_from_directory,session,jsonify,redirect,render_template,url_for
+from datetime   import datetime
+from pony       import orm
+from time       import sleep
+from flask_cors import CORS, cross_origin
+from zipfile    import ZipFile
+from Utility    import Attribute as attribute
+from Utility    import ActionType as action
+from Utility    import _state as state
 from flask_socketio import SocketIO
-from zipfile import ZipFile
+from werkzeug.utils import secure_filename
+
+
 
 host=''
 port=0
@@ -2164,6 +2170,77 @@ def delete_files(_core_id):
                 return '500', 500
     return '200', 200
 
+
+def ping(host):
+    try:
+        result = subprocess.run(['ping', '-c', '1', host], capture_output=True, text=True, check=True)
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
+        print(e.stderr)
+
+
+
+def calculate_checksum(data):
+    # Calculate the checksum for the ICMP packet
+    if len(data) % 2 != 0:
+        data += b'\0'
+    checksum = sum(struct.unpack('!H', data[i:i+2])[0] for i in range(0, len(data), 2))
+    checksum = (checksum >> 16) + (checksum & 0xFFFF)
+    checksum = checksum + (checksum >> 16)
+    return ~checksum & 0xFFFF
+
+def create_icmp_echo_request():
+    icmp_type = 8  # ICMP Echo Request
+    icmp_code = 0
+    icmp_checksum = 0
+    icmp_id = 123
+    icmp_sequence = 1
+    payload = b'Hello, World!'
+    
+    # Create ICMP header
+    icmp_header = struct.pack('!BBHHH', icmp_type, icmp_code, icmp_checksum, icmp_id, icmp_sequence)
+    
+    # Combine header and payload
+    packet = icmp_header + payload
+    
+    # Calculate checksum
+    icmp_checksum = calculate_checksum(packet)
+    
+    # Update ICMP header with the correct checksum
+    icmp_header = struct.pack('!BBHHH', icmp_type, icmp_code, icmp_checksum, icmp_id, icmp_sequence)
+    
+    # Combine header and payload with the correct checksum
+    packet = icmp_header + payload
+    
+    return packet
+
+def receive_ping():
+    # Create a raw socket
+    with socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP) as s:
+        s.settimeout(3)  # Set a timeout for receiving
+
+        icmp_filter = "icmp and icmp[icmptype] == 8"
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1024)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1)
+        s.bind(('0.0.0.0', 0))
+
+        try:
+            while True:
+                # Receive the packet
+                packet, addr = s.recvfrom(1024)
+
+                # Extract the ICMP header
+                icmp_header = struct.unpack('!BBHHH', packet[20:28])
+
+                # Check if it's an ICMP Echo Reply
+                if icmp_header[0] == 0 and icmp_header[1] == 0:
+                    print(f"Received ICMP Echo Reply from {addr[0]}")
+                    break
+
+        except socket.timeout:
+            print("No response received within the timeout")
+
 #icci
 @app.route('/<_core_id>/dir',methods=['GET'])
 def get_directory_structure(_core_id):
@@ -2262,8 +2339,35 @@ Use this template when defining server side handlers
 # # Call the update_field_by_id function
 # success = update_field_by_id(record_id, field_to_update, new_value)
 if '__main__' == __name__:
-# Call the create_target_table function to create the Target table if it does not exist
-    print(f'{Utility.YELLOW}* CONFIGURING SERVER{Utility.RESET}')
+
+
+    text = """╦ ╦┌─┐┌┬┐┌─┐  ┬┌─┐  ┬ ┬┬ ┬┌─┐┬─┐┌─┐   
+╠═╣│ ││││├┤   │└─┐  │││├─┤├┤ ├┬┘├┤    
+╩ ╩└─┘┴ ┴└─┘  ┴└─┘  └┴┘┴ ┴└─┘┴└─└─┘   
+┌┬┐┬ ┬┌─┐  ╔═╗┌─┐┬─┐┬  ┬┬┌─┐┌─┐  ┬┌─┐ 
+ │ ├─┤├┤   ╚═╗├┤ ├┬┘└┐┌┘││  ├┤   │└─┐ 
+ ┴ ┴ ┴└─┘  ╚═╝└─┘┴└─ └┘ ┴└─┘└─┘  ┴└─┘ 
+ 
+ 
+ 
+          .                      .
+         .                      ;
+         :                  - --+- -
+         !           .          !
+         |        .             .
+         |_         +
+      ,  | `.
+--- --+-<#>-+- ---  --  -
+      `._|_,'
+         T
+         |
+         !
+         :         . : 
+         .       *"""
+
+    print(f'{text.strip()}')
+    # Call the create_target_table function to create the Target table if it does not exist
+    print(f'{Utility.YELLOW}* CONFIGURING HOST{Utility.RESET}')
     if len(sys.argv) > 1 :
         connob = host, port = Utility.gethostname(f'{sys.argv[1]}')
         if connob: 
@@ -2279,8 +2383,18 @@ if '__main__' == __name__:
             print(f'{Utility.RED}* ERROR HOST OR PORT NULL: {Utility.LIGHT_RED} your config.xml must empty.{Utility.YELLOW}\n Try adding this .. in the <api> tags \n\t <host name="default" ip="localhost" port="8000"></host> ')
             exit(-1)
 
+    
     print(f'{Utility.CYAN}* host: {Utility.LIGHT_YELLOW}{host} {Utility.CYAN} port: {Utility.LIGHT_YELLOW}{port}')
     print(f'{Utility.YELLOW}* START PROC{Utility.RESET}')
-    #FIRE IT UP BABY!!!
-    print(f'{Utility.GREEN}* SPINNING SERVER UP{Utility.RESET}')
-    socketio.run(app,host=host, port=port, debug=True)
+
+    icmp_packet = create_icmp_echo_request()
+
+
+
+    # Example usage
+    with socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP) as s:
+        s.sendto(icmp_packet, ('192.168.2.196', 0))
+    receive_ping()
+
+
+    #socketio.run(app,host=host, port=port)
