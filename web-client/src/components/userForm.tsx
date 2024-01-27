@@ -126,14 +126,14 @@ const usersComponent = () => {
     }
 
     return (
-        <>
-            <h5 style={{ color: "#fff", cursor: "default" }}>Users</h5>
+      
+          
             <div style={{
                 border: "1px solid #222",
                 borderRadius: "4px",
                 display: 'flex',
                 width: "100%",
-                height: "35%",
+                height: "100%",
                 padding: "5px",
                 flexDirection: 'column',
                 backgroundColor: "#111",
@@ -240,7 +240,7 @@ const usersComponent = () => {
 
             </div>
 
-        </>
+     
     );
 
 }

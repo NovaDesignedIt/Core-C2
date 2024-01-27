@@ -9,6 +9,8 @@ import { useAppDispatch, useAppSelector } from '../store/store';
 import { DeleteListener, SetListener, addlisteners, BuildStateManagement, SetConfiguration } from '../store/features/CoreSlice';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import { DynamicAlert } from './AlertFeedbackComponent';
+import { motion } from "framer-motion";
+
 
 const ConfigGeneralComp = () => {
 
@@ -191,237 +193,311 @@ const ConfigGeneralComp = () => {
   return (
 
     <Stack sx={{ borderStyle: 'none', padding: "1px", display: 'flex', backgroundColor: "#000", flexDirection: 'row', width: "100%", height: "100%", overflow: "scroll" }}>
+
+
       <Stack spacing={'5px'} sx={{ width: "30%", height: "100%", padding: "10px", overflow: 'scroll' }}  >
         <h5 style={{ color: "#fff", cursor: "default" }}>Listener Configuration</h5>
-        <div style={{
-          border: "1px solid #222",
-          borderRadius: "4px",
-          display: 'flex-end',
-          width: "100%",
-          padding: "10px",
-          flexDirection: 'column',
-          backgroundColor: "#111",
-        }}>
-          <div style={{ display: "flex", justifyContent: 'space-between' }}>
-            send to dump
-            <Checkbox sx={{
-              color: "#fff",
-              '&.Mui-checked': {
-                color: '#fff',
-              }
-            }} checked={chckdmp} onChange={(e) => { HandlesetChkdmp(e) }} />
-          </div>
-          <div style={{ display: "flex", justifyContent: 'space-between' }}>
-            create on ping
-            <Checkbox sx={{
-              color: "#fff",
-              '&.Mui-checked': {
-                color: '#fff',
-              }
-            }} checked={chkping} onChange={(e) => { HandlesetChkping(e) }} />
-          </div>
-          <div style={{ display: "flex", justifyContent: 'space-between' }}>
-            use http
-            <Checkbox sx={{
-              color: "#fff",
-              '&.Mui-checked': {
-                color: '#fff',
-              }
-            }} checked={chkhttp} onChange={(e) => { HandlesetChkhttp(e) }} />
-          </div>
-        </div>
+        <motion.div
+          className="box"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+        >
 
-        <div>
-          <h5 style={{ cursor: "default" }}>Targets</h5>
           <div style={{
             border: "1px solid #222",
             borderRadius: "4px",
             display: 'flex-end',
             width: "100%",
-            height: "87%",
-            paddingLeft: "10px",
-            paddingRight: "10px",
+            padding: "10px",
             flexDirection: 'column',
             backgroundColor: "#111",
-
           }}>
-            <p style={{ opacity: "0.5" }}> Log target Creations,Deletion,commands or last known ping </p>
             <div style={{ display: "flex", justifyContent: 'space-between' }}>
-              create
+              send to dump
               <Checkbox sx={{
                 color: "#fff",
                 '&.Mui-checked': {
                   color: '#fff',
                 }
-              }} checked={chkcreate} onChange={(e) => { HandlessetCheckcreate(e) }} />
+              }} checked={chckdmp} onChange={(e) => { HandlesetChkdmp(e) }} />
             </div>
             <div style={{ display: "flex", justifyContent: 'space-between' }}>
-              delete
+              create on ping
               <Checkbox sx={{
                 color: "#fff",
                 '&.Mui-checked': {
                   color: '#fff',
                 }
-              }} checked={chkdelete} onChange={(e) => { HandlesetChkdelete(e) }} />
-            </div>
-
-            <div style={{ display: "flex", justifyContent: 'space-between' }}>
-              Commands
-              <Checkbox sx={{
-                color: "#fff",
-                '&.Mui-checked': {
-                  color: '#fff',
-                }
-              }} checked={chkcmd} onChange={(e) => { HandlesetChkcmd(e) }} />
+              }} checked={chkping} onChange={(e) => { HandlesetChkping(e) }} />
             </div>
             <div style={{ display: "flex", justifyContent: 'space-between' }}>
-              last ping
+              use http
               <Checkbox sx={{
                 color: "#fff",
                 '&.Mui-checked': {
                   color: '#fff',
                 }
-              }} checked={chklp} onChange={(e) => { HandlesetChklp(e) }} />
+              }} checked={chkhttp} onChange={(e) => { HandlesetChkhttp(e) }} />
             </div>
           </div>
-        </div>
 
-        <h5 style={{ color: "#fff", cursor: "default" }}>Clear data</h5>
-        {/* CLEARING LOGS */}
-        <div style={{
-          border: "1px solid #222",
-          borderRadius: "4px",
-          display: 'flex-end',
-          width: "100%",
-          height: "60%",
-          padding: "10px",
-          flexDirection: 'column',
-          backgroundColor: "#111",
 
-        }}>
-          <p style={{ opacity: "0.5" }}>
-            Deleting Logs will not delete your dumps or Target info.
-          </p>
-          <TextField
-            fullWidth={true}
-            InputLabelProps={{ sx: { color: "#fff" } }}
-            inputProps={{ sx: { color: "#fff" } }}
-            label={'days'}
-            size='small'
-            type={'number'}
-            value={daysretLog}
-            onKeyDown={(e: any) => { HandleDaysretChanged_KeyDown(e) }}
-            onChange={(e) => { HandleDaysretChanged(e) }}
-            sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
+        </motion.div>
 
-          <div style={{ padding: "10px" }} >
-            <p style={{ color: "#fff" }}>
-              files: 3 files
-            </p>
-            <p style={{ color: "#fff" }}>
-              total space: 250mb
-            </p>
-            <p style={{ color: "#fff" }}>
-              Log records: 22453 rows
-            </p>
-          </div>
-          <Button
-            onClick={() => { HandleClearLogs() }}
-            sx={{
+        <h5 style={{ cursor: "default" }}>Targets</h5>
 
-              border: "1px solid #FF3635",
-              color: '#fff',
-              ":hover": {
-                bgcolor: "#ff7776",
-              }
-            }}
-            style={{ width: '100%', height: '15%', }} >
-            Clear Logs
-          </Button>
+        <motion.div
+          className="box"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15 }}
+        >
 
-        </div>
-
-      </Stack>
-      <Stack spacing={"2%"} sx={{ flexDirection: "column", width: "100%", height: "100%", padding: "10px", overflow: 'scroll' }}>
-        <div style={{ maxHeight: "400px" }} >
-          <h5 style={{ color: "#fff", cursor: "default" }}>Instances</h5>
-          <InstanceConfiguration />
-        </div>
-        <Stack direction={'row'} spacing={5} >
-          <Stack spacing={3} width={'100%'}>
-
-            <h5 style={{ color: "#fff", cursor: "default" }}>Session</h5>
+          <div>
 
             <div style={{
               border: "1px solid #222",
               borderRadius: "4px",
               display: 'flex-end',
               width: "100%",
-
-              padding: "15px",
+              height: "87%",
+              paddingLeft: "10px",
+              paddingRight: "10px",
               flexDirection: 'column',
               backgroundColor: "#111",
+
             }}>
-              <p style={{ opacity: "0.5" }}>
-                Stay logged in?
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: "20px" }}>
-                <h6 style={{ color: "#fff", cursor: "default" }}>Inactivity Timeout?</h6>
-                <SwitchTheme defaultChecked checked={chktimeout} onChange={(e) => { HandleTimeOut(e) }} />
+              <p style={{ opacity: "0.5" }}> Log target Creations,Deletion,commands or last known ping </p>
+              <div style={{ display: "flex", justifyContent: 'space-between' }}>
+                create
+                <Checkbox sx={{
+                  color: "#fff",
+                  '&.Mui-checked': {
+                    color: '#fff',
+                  }
+                }} checked={chkcreate} onChange={(e) => { HandlessetCheckcreate(e) }} />
               </div>
-              <p style={{ opacity: "0.5" }}>
-                set Session length
-              </p>
-              <TextField
-                fullWidth={true}
-                type={'number'}
-                InputLabelProps={{ sx: { color: "#fff" } }}
-                inputProps={{ sx: { color: "#fff" } }}
-                label={'minutes'}
-                size='small'
-                value={sessionlen}
-                onChange={(e) => { HandleSessionLength(e) }}
-                sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
+              <div style={{ display: "flex", justifyContent: 'space-between' }}>
+                delete
+                <Checkbox sx={{
+                  color: "#fff",
+                  '&.Mui-checked': {
+                    color: '#fff',
+                  }
+                }} checked={chkdelete} onChange={(e) => { HandlesetChkdelete(e) }} />
+              </div>
+
+              <div style={{ display: "flex", justifyContent: 'space-between' }}>
+                Commands
+                <Checkbox sx={{
+                  color: "#fff",
+                  '&.Mui-checked': {
+                    color: '#fff',
+                  }
+                }} checked={chkcmd} onChange={(e) => { HandlesetChkcmd(e) }} />
+              </div>
+              <div style={{ display: "flex", justifyContent: 'space-between' }}>
+                last ping
+                <Checkbox sx={{
+                  color: "#fff",
+                  '&.Mui-checked': {
+                    color: '#fff',
+                  }
+                }} checked={chklp} onChange={(e) => { HandlesetChklp(e) }} />
+              </div>
             </div>
-          </Stack>
-          <Stack spacing={2} width={'100%'} height={'100%'}  >
-            <h5 style={{ color: "#fff", cursor: "default" }}>Listeners</h5>
-            <ListenerComponent />
+          </div>
 
-          </Stack>
-
-        </Stack>
+        </motion.div>
 
 
-        <Stack sx={{
-          height: "100%",
-          width: "100%",
-          minHeight: "100px",
-          "&:hover": {
-            color: "#7ff685"
-          }
-        }}>
-        
-        </Stack>
+        <h5 style={{ color: "#fff", cursor: "default" }}>Clear data</h5>
+
+        <motion.div
+          className="box"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          {/* CLEARING LOGS */}
+          <div style={{
+            border: "1px solid #222",
+            borderRadius: "4px",
+            display: 'flex-end',
+            width: "100%",
+            height: "100%",
+            padding: "10px",
+            flexDirection: 'column',
+            backgroundColor: "#111",
+
+          }}>
+            <p style={{ opacity: "0.5" }}>
+              Deleting Logs will not delete your dumps or Target info.
+            </p>
+            <TextField
+              fullWidth={true}
+              InputLabelProps={{ sx: { color: "#fff" } }}
+              inputProps={{ sx: { color: "#fff" } }}
+              label={'days'}
+              size='small'
+              type={'number'}
+              value={daysretLog}
+              onKeyDown={(e: any) => { HandleDaysretChanged_KeyDown(e) }}
+              onChange={(e) => { HandleDaysretChanged(e) }}
+              sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
+
+            <div style={{ padding: "10px" }} >
+              <p style={{ color: "#fff" }}>
+                files: 3 files
+              </p>
+              <p style={{ color: "#fff" }}>
+                total space: 250mb
+              </p>
+              <p style={{ color: "#fff" }}>
+                Log records: 22453 rows
+              </p>
+            </div>
+            <Button
+              onClick={() => { HandleClearLogs() }}
+              sx={{
+
+                border: "1px solid #FF3635",
+                color: '#fff',
+                ":hover": {
+                  bgcolor: "#ff7776",
+                }
+              }}
+              style={{ width: '100%', height: '15%', }} >
+              Clear Logs
+            </Button>
+
+          </div>
+
+        </motion.div>
+
+
+
       </Stack>
+
+
+
+      <Stack spacing={"2%"} sx={{ flexDirection: "column", width: "100%", height: "100%", padding: "10px", overflow: 'scroll' }}>
+
+        <h5 style={{ color: "#fff", cursor: "default" }}>Instances</h5>
+
+        <motion.div
+          className="box"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.25 }}
+        >
+
+          <div style={{ maxHeight: "400px" }} >
+
+            <InstanceConfiguration />
+
+          </div>
+
+
+        </motion.div>
+
+
+
+        <Stack direction={'row'} spacing={5} >
+
+
+          <Stack spacing={3} width={'100%'}>
+            <h5 style={{ color: "#fff", cursor: "default" }}>Session</h5>
+
+
+            <motion.div
+              className="box"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+
+              <div style={{
+                border: "1px solid #222",
+                borderRadius: "4px",
+                display: 'flex-end',
+                width: "100%",
+
+                padding: "15px",
+                flexDirection: 'column',
+                backgroundColor: "#111",
+              }}>
+                <p style={{ opacity: "0.5" }}>
+                  Stay logged in?
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: "20px" }}>
+                  <h6 style={{ color: "#fff", cursor: "default" }}>Inactivity Timeout?</h6>
+                  <SwitchTheme defaultChecked checked={chktimeout} onChange={(e) => { HandleTimeOut(e) }} />
+                </div>
+                <p style={{ opacity: "0.5" }}>
+                  set Session length
+                </p>
+                <TextField
+                  fullWidth={true}
+                  type={'number'}
+                  InputLabelProps={{ sx: { color: "#fff" } }}
+                  inputProps={{ sx: { color: "#fff" } }}
+                  label={'minutes'}
+                  size='small'
+                  value={sessionlen}
+                  onChange={(e) => { HandleSessionLength(e) }}
+                  sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
+              </div>
+            </motion.div>
+          </Stack>
+
+          <Stack spacing={2} width={'100%'} height={'100%'}  >
+
+            <h5 style={{ color: "#fff", cursor: "default" }}>Listeners</h5>
+
+
+            <motion.div
+              className="box"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.35 }}
+            >
+              <ListenerComponent />
+            </motion.div>
+          </Stack>
+        </Stack>
+
+      </Stack>
+
       <div style={{
-        flexDirection:"column",
-        display:"flex",
+        flexDirection: "column",
+        display: "flex",
         marginLeft: "auto",
         cursor: "default",
         width: "20%",
         maxWidth: "300px",
         padding: "10px",
-        height:"100%",
-        
+        height: "100%",
+
 
       }}>
-        <Users></Users>
-        
+
+        <motion.div
+          className="box"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <h5 style={{ color: "#fff", cursor: "default" }}>Users</h5>
+          <Users></Users>
+
+        </motion.div>
+
         <Button
           onClick={() => { HandleSaveCore() }}
           sx={{
-            marginTop:"100%",
+            marginTop: "auto",
             maxHeight: "50px",
             minHeight: "50px",
             maxWidth: "250px",
@@ -435,9 +511,13 @@ const ConfigGeneralComp = () => {
           }}
         >
           save
-            <CloudSyncIcon />
-          </Button>
+          <CloudSyncIcon />
+
+        </Button>
+        
       </div>
+
+
       <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e) => { SetOpen(false) }} />
     </Stack>
   );
