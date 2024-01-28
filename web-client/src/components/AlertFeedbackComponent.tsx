@@ -19,6 +19,7 @@ export const DynamicAlert: React.FC<AlertProp> = ({ open, msg, type,closeParent}
     const handleClose = () => {
         setOpen( false);
         closeParent(false)
+        
     }
     return (
         <Snackbar open={isopen} autoHideDuration={2500} onClose={handleClose} sx={{ width:"10%"}}>

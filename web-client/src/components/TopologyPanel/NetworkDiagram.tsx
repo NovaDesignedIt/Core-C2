@@ -1,56 +1,72 @@
 
 import React, { useCallback, useState } from 'react';
-import ReactFlow, { Position, useNodesState, useEdgesState, addEdge, Connection, Edge, OnConnect, OnEdgesChange, OnNodesChange, applyEdgeChanges, applyNodeChanges,Node} from 'reactflow';
+import ReactFlow, { Position, useNodesState, useEdgesState, addEdge, Connection, Edge, OnConnect, OnEdgesChange, OnNodesChange, applyEdgeChanges, applyNodeChanges, Node, NodeTypes } from 'reactflow';
 import 'reactflow/dist/style.css';
-import ColorChooserNode from './customNodes';
+import  CustomNode from './customNodes';
+import { Button } from '@mui/material';
 
 const nodeDefaults = {
   sourcePosition: Position.Right,
   targetPosition: Position.Left,
 };
 const nodeStyle = {
-  background:"#222",
-  borderRadius:"15px",
-  border:"none",
-  fontSize:"10px",
-  color:"#fff",
-  height:"30px"
-  
+
+  border: "none",
+  fontSize: "10px",
+  color: "#fff",
+  height: "30px",
+  width: "30px"
+
 }
 
-const initialNodes:Node[] = [
- { id: '1',sourcePosition:Position.Right,targetPosition:Position.Right,position:{ x: 0, y: 105 }, data: { label: '1' }, style:nodeStyle,  },
 
-
- { id: '2',targetPosition:Position.Left, sourcePosition:Position.Left,  position: { x: 300, y: 5 }, data: { label: '2' }, style:nodeStyle },
- { id: '3',targetPosition:Position.Left, sourcePosition:Position.Left, position: { x: 300, y: 55 }, data: { label: '3' }, style:nodeStyle },
- { id: '4',targetPosition:Position.Left, sourcePosition:Position.Left, position: { x: 300, y: 105 }, data: { label: '4' }, style:nodeStyle },
- { id: '5',targetPosition:Position.Left, sourcePosition:Position.Left, position: { x: 300, y: 155 }, data: { label: '5' }, style:nodeStyle },
- { id: '6',targetPosition:Position.Left, sourcePosition:Position.Left, position: { x: 300, y: 205 }, data: { label: '6' }, style:nodeStyle },
- { id: '7',targetPosition:Position.Left, sourcePosition:Position.Left, position: { x: 300, y: 255 }, data: { label: '7' }, style:nodeStyle },
-
+const initialNodes: Node[] = [
+  { id: '0', type: 'custom', position: { x: 50, y: 50 }, data:{ id :'0' , type:'mother'}  },
+  { id: '1', type: 'custom', position: { x: 300, y: 200 }, data:{ id :'1' , type:'proxy'}  },
+  { id: '2', type: 'custom', position: { x: 700, y: 5 }, data:{ id :'2' , type:'target'} },
+  { id: '3', type: 'custom', position: { x: 500, y: 55 }, data:{ id :'3' , type:'target'} },
+  { id: '4', type: 'custom', position: { x: 700, y: 105 }, data:{ id :'4' , type:'target'} },
+  { id: '5', type: 'custom', position: { x: 500, y: 155 }, data:{ id :'5' , type:'target'} },
+  { id: '6', type: 'custom', position: { x: 700, y: 205 }, data:{ id :'6' , type:'target'} },
+  { id: '7', type: 'custom', position: { x: 500, y: 255 }, data:{ id :'7' , type:'target'} }
 
 ];
-const initialEdges: Edge[]  = [
-        { id: 'e1-2', source: '1', target: '2'},
-        { id: 'e1-2', source: '1', target: '3' },
-        { id: 'e1-2', source: '1', target: '4'},
-        { id: 'e1-2', source: '1', target: '5'},
-        { id: 'e1-2', source: '1', target: '6'},
-        { id: 'e1-2', source: '1', target: '7'},];
 
-const networkDiagram = () =>  {
+const initialEdges: Edge[] = [
+  { id: 'e0-1', type:"step", source: '0', target: '1' },
+  { id: 'e1-2', type:"straight", source: '1', target: '2' },
+  { id: 'e1-3', type:"straight", source: '1', target: '3' },
+  { id: 'e1-4', type:"straight", source: '1', target: '4' },
+  { id: 'e1-5', type:"straight", source: '1', target: '5' },
+  { id: 'e1-6', type:"straight", source: '1', target: '6' },
+  { id: 'e1-7', type:"straight", source: '1', target: '7' },
+];
+
+const nodeTypes:NodeTypes = { 
+  custom : CustomNode
+ };
+
+const networkDiagram = () => {
+
+  const [SelectedNode, setSelectedNode] = useState(-1);
 
 
 
-
-  const [selectedNode,SetSelectedNodes] = useState(-1);
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
- 
+
+  const handleSelectedNode = (e: any) => {
+    const id = e.currentTarget.getAttribute('data-id')
+    if (id !== undefined) {
+      //console.log(id)
+      setSelectedNode(parseInt(id));
+    }
+  }
+
+
   const onNodesChange: OnNodesChange = useCallback(
-    (changes:any) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [setNodes],
+    (changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    [setNodes,setSelectedNode],
   );
   const onEdgesChange: OnEdgesChange = useCallback(
     (changes: any) => setEdges((eds) => applyEdgeChanges(changes, eds)),
@@ -62,21 +78,25 @@ const networkDiagram = () =>  {
   );
 
   return (
-    <div style={{ width: '100%', height: '100%'}}>
-      
+    <div style={{ width: '100%', height: '80%', padding: "20px", gap: "20px", flexDirection: "column", display: "flex" }}>
+      <div style={{ gap: "20px", display: "flex" }}>
+        {/* <Button sx={{ color: "#fff", border: "1px solid #fff", width: "50%" }}>test</Button>
+        <Button sx={{ color: "#fff", border: "1px solid #fff" }}>test</Button> */}
+      </div>
       <ReactFlow
-      
-        onNodeClick={(e)=>{console.log(e.currentTarget.getAttribute('data-id'));}}
+        style={{ border: "1px solid #333", borderRadius: "4px", backgroundColor: "#111" }}
+        
+        onNodeClick={(e) => { handleSelectedNode(e) }}
+        onNodeMouseEnter={(e) => { }}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-
         onConnect={onConnect}
+        nodeTypes={nodeTypes}
       />
 
     </div>
   );
 }
-
 export default networkDiagram;

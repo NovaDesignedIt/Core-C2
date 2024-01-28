@@ -26,6 +26,7 @@ import WebStoriesIcon from '@mui/icons-material/WebStories';
 import { useAppSelector,useAppDispatch } from '../store/store';
 import { SetInstanceTargets, SetSelectedContent,SetSelectedInstance } from '../store/features/CoreSlice';
 import { PiShareNetwork } from "react-icons/pi";
+import { Typography } from '@material-ui/core';
 {/*sx={{color:"#21fd0a"}}*/ }
 const data = [
   // { icon: <People />, index: 1, text: "User" },
@@ -69,11 +70,14 @@ const CustomizedList =  ( ) => {
   };
 
   const HandleInstanceSelection = async (instance: Instance) => {
+
     const data = await getallrecords(core._url, instance, core)
     if (data === '401' || typeof data === "string") {
       return;
     }
     const filteredRows:any[] = data !== undefined ? data : [{}].filter((row: any) => row._isid === instance._instance_id ? instance?._instance_id : new Instance()._instance_id);
+    
+
     dispatch(SetInstanceTargets({ targets:filteredRows}))
     dispatch(SetSelectedInstance({ instance: instance }))
     dispatch(SetSelectedContent({ content: 3 }))
@@ -90,7 +94,18 @@ const CustomizedList =  ( ) => {
   };
 
   return (
-    <>
+    <>    
+    <Typography
+    component={'span'}
+    variant={'body1'}
+    style={{
+      fontFamily: '"Ubuntu Mono", monospace',
+      justifyContent: 'center',
+      display: "flex",
+      color: '#fff',
+      fontSize: '15px',
+    }}>
+      
       <Box sx={{ display: 'flex',width:"100%" }}>
         <ThemeProvider
           theme={createTheme({
@@ -121,7 +136,7 @@ const CustomizedList =  ( ) => {
                   onClick={() => handleItemClick(-1)}
                   primaryTypographyProps={{
                     fontSize: 20,
-                    fontWeight: 'medium',
+                  
                     letterSpacing: 0,
                     width:"100%"
                   }}
@@ -140,12 +155,10 @@ const CustomizedList =  ( ) => {
                     secondaryTypographyProps={{
                       color: 'gray',
                       fontSize:10,
-                      fontWeight: 'small',
                       variant: 'body2',
                     }}
                     primaryTypographyProps={{
                       color: 'primary',
-                      fontWeight: 'medium',
                       variant: 'body2',
                     }}
                   />
@@ -211,9 +224,7 @@ const CustomizedList =  ( ) => {
                     primary="Interface"
                     primaryTypographyProps={{
                       fontSize: 15,
-                      fontWeight: 'medium',
-                      lineHeight: '20px',
-                      mb: '2px',
+                    
                     }}
                     secondary="login to view your core instance"
                     secondaryTypographyProps={{
@@ -237,7 +248,7 @@ const CustomizedList =  ( ) => {
                   data.map((item) => (
                     <>
                       {
-                        item.text === 'Instances' ?
+                        item.index === 3 ?
                           (
                             <>
                               <ListItemButton
@@ -250,7 +261,7 @@ const CustomizedList =  ( ) => {
                                 </ListItemIcon>
                                 <ListItemText
                                   primary={item.text}
-                                  primaryTypographyProps={{ fontSize: 14, fontWeight: 'medium' }}
+                                  primaryTypographyProps={{ fontSize: 14 }}
                                 />
                               </ListItemButton>
                               <Collapse in={sublistOpen} timeout="auto" unmountOnExit>
@@ -269,7 +280,7 @@ const CustomizedList =  ( ) => {
                                           {/* Sublist item content */}
                                           <ListItemText
                                             primary={ item_instance["_instance_name"]}
-                                            primaryTypographyProps={{ fontSize: 12, fontWeight: 'small' }}
+                                            primaryTypographyProps={{ fontSize: 12, }}
                                           />
                                    
                                         </ListItemButton>
@@ -280,7 +291,8 @@ const CustomizedList =  ( ) => {
                               </Collapse>
                             </>
                           )
-                          : (<ListItemButton
+                          : 
+                          (<ListItemButton
                             key={item.index}
                             onClick={() => handleItemClick(item.index)}
                             sx={{ py: 0, minHeight: 32, color: 'rgba(255,255,255,.8)' }}
@@ -290,7 +302,7 @@ const CustomizedList =  ( ) => {
                             </ListItemIcon>
                             <ListItemText
                               primary={item.text}
-                              primaryTypographyProps={{ fontSize: 14, fontWeight: 'medium' }}
+                              primaryTypographyProps={{ fontSize: 14, }}
                             />
                           </ListItemButton>
                           )}
@@ -302,6 +314,7 @@ const CustomizedList =  ( ) => {
           </Paper>
         </ThemeProvider>
       </Box>
+      </Typography>
     </>
   );
 }

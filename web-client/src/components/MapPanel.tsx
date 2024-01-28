@@ -159,7 +159,8 @@ const map_basic = () => {
         <APIProvider apiKey={import.meta.env.VITE_MAPS_KEY !== undefined ?  import.meta.env.VITE_MAPS_KEY : ''}>
             <div style={{ height: "100%", width: "100%",backgroundColor:"#628565" }}>
              <div style={{  height: "100%", width: "100%",backgroundColor:"#628565" }}>
-                <Map zoom={8} center={position}><Marker 
+                <Map zoom={8} center={position}>
+                    <Marker 
             position={{ lat:53.537, lng:10.143,   }}
           />  <Marker 
           position={{ lat:53.537, lng:13.143,   }}
