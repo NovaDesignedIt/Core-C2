@@ -88,7 +88,7 @@ export const CoreSlice = createSlice({
         state.coreObject = action.payload.coreObject;
       },
     SetInstance:
-      (state, action: PayloadAction<{ instance: Instance[] }>) => {
+      (state, action: PayloadAction<{ instance: any[] }>) => {
         state.instanceObjects = action.payload.instance;
       },
     SetConfiguration:

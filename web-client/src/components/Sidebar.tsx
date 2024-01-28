@@ -25,13 +25,14 @@ import { FaDatabase } from "react-icons/fa6";
 import WebStoriesIcon from '@mui/icons-material/WebStories';
 import { useAppSelector,useAppDispatch } from '../store/store';
 import { SetInstanceTargets, SetSelectedContent,SetSelectedInstance } from '../store/features/CoreSlice';
-
+import { PiShareNetwork } from "react-icons/pi";
 {/*sx={{color:"#21fd0a"}}*/ }
 const data = [
   // { icon: <People />, index: 1, text: "User" },
-  { icon: <FolderIcon />, index: 2, text: "store" },
-  { icon: <StorageIcon />, index: 3, text: "Instances" },
-  { icon: <Public />, index: 4, text: "Map" },
+  { icon: <FolderIcon />, index: 2, text: "File view" },
+  { icon: <StorageIcon />, index: 3, text: "Instances view" },
+  { icon: <Public />, index: 4, text: "Map view" },
+  { icon: <PiShareNetwork />, index: 7, text: "Graph View" },
 ];
 
 const FireNav = styled(List)<{ component?: React.ElementType }>({
@@ -72,12 +73,13 @@ const CustomizedList =  ( ) => {
     if (data === '401' || typeof data === "string") {
       return;
     }
-    const filteredRows = data !== undefined ? data : [{}].filter((row: any) => row._isid === instance._instance_id ? instance?._instance_id : new Instance()._instance_id);
-    dispatch(SetInstanceTargets({ instance:filteredRows}))
+    const filteredRows:any[] = data !== undefined ? data : [{}].filter((row: any) => row._isid === instance._instance_id ? instance?._instance_id : new Instance()._instance_id);
+    dispatch(SetInstanceTargets({ targets:filteredRows}))
     dispatch(SetSelectedInstance({ instance: instance }))
     dispatch(SetSelectedContent({ content: 3 }))
     setinstance(instance);
   }
+
 
   const handleDropDownMenu = () =>{
      core._core_id !== "" ? setOpen(!open) : setOpen(false);

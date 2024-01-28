@@ -14,7 +14,7 @@ import { useAppDispatch,useAppSelector } from '../store/store';
 import { adjustSizes } from '../Utilities/Utilities'
 
 import {BuildStateManagement} from  '../store/features/CoreSlice';
-
+import  NetworkDiagram from './TopologyPanel/NetworkDiagram'
 
 
 
@@ -109,6 +109,7 @@ const Frame = () => {
             {content === 3 && <InstanceContainer/>}
             {content === 4 && <MapPanel/>}
             {content === 5 && <CustomPanelConfiguration />}
+            {content === 7 && <NetworkDiagram />}
           </Stack>
         </Splitter>
       </Stack>
