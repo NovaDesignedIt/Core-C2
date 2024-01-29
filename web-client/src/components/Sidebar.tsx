@@ -33,7 +33,7 @@ const data = [
   { icon: <FolderIcon />, index: 2, text: "File view" },
   { icon: <StorageIcon />, index: 3, text: "Instances view" },
   { icon: <Public />, index: 4, text: "Map view" },
-  { icon: <PiShareNetwork />, index: 7, text: "Graph View" },
+  { icon: <PiShareNetwork />, index: 7, text: "Topology View" },
 ];
 
 const FireNav = styled(List)<{ component?: React.ElementType }>({
@@ -64,7 +64,7 @@ const CustomizedList =  ( ) => {
   const inst = useAppSelector(state => state.core.instanceObjects)
   const instances  = inst ?? []
 
-  console.log(core._core_id)
+  //console.log(core._core_id)
   const handleSublistToggle = () => {
     setSublistOpen(!sublistOpen);
   };
@@ -102,6 +102,7 @@ const CustomizedList =  ( ) => {
       fontFamily: '"Ubuntu Mono", monospace',
       justifyContent: 'center',
       display: "flex",
+
       color: '#fff',
       fontSize: '15px',
     }}>
@@ -202,7 +203,7 @@ const CustomizedList =  ( ) => {
               </ListItem>
               <Divider  key={888} />
               <Box
-                key={10}
+                key={873}
                 sx={{
                   bgcolor: open ? 'rgba(32,44,34)' : null,
                   pb: open ? 2 : 0,

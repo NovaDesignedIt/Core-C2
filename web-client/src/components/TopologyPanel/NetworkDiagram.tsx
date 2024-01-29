@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import ReactFlow, { Position, useNodesState, useEdgesState, addEdge, Connection, Edge, OnConnect, OnEdgesChange, OnNodesChange, applyEdgeChanges, applyNodeChanges, Node, NodeTypes } from 'reactflow';
 import 'reactflow/dist/style.css';
 import  CustomNode from './customNodes';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 
 const nodeDefaults = {
   sourcePosition: Position.Right,
@@ -80,6 +80,20 @@ const networkDiagram = () => {
   return (
     <div style={{ width: '100%', height: '80%', padding: "20px", gap: "20px", flexDirection: "column", display: "flex" }}>
       <div style={{ gap: "20px", display: "flex" }}>
+      <Typography
+                component={'span'}
+                variant={'body1'}
+                style={{
+                    fontFamily: '"Ubuntu Mono", monospace',
+                    justifyContent: 'center',
+                    display: "flex",
+                    color: '#fff',
+                    fontSize: '15px',
+                    margin:"auto"
+                }}> 
+                <h5>Topology View</h5>
+                </Typography>
+                
         {/* <Button sx={{ color: "#fff", border: "1px solid #fff", width: "50%" }}>test</Button>
         <Button sx={{ color: "#fff", border: "1px solid #fff" }}>test</Button> */}
       </div>

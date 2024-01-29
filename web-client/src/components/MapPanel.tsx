@@ -1,4 +1,4 @@
-"use client";
+
 
 import React, { useState } from "react";
 import {
@@ -11,7 +11,7 @@ import {
 } from '@vis.gl/react-google-maps';
 import { ThemeProvider } from "@mui/material";
 import { Circle, Polyline } from "react-google-maps";
-import { Core } from "../api/apiclient";
+
 
 const exampleMapStyles = [
     {

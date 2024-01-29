@@ -107,20 +107,34 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                         }}
                     >
 
+
                         <Stack sx={{ background: "#222" }}
                             onMouseLeave={() => { handleClose() }}>
-                                <div style={{ padding:"10px",border: "1px dotted #444",height:"250px",width:"250px"}}>
-                                <p style={{ color: "#fff", fontSize: "12px" }}>  Type: {data['type']} name :{data['id']}</p>
-                            </div>
+                            <Typography
+                                component={'span'}
+                                variant={'body1'}
+                                style={{
+                                    fontFamily: '"Ubuntu Mono", monospace',
+                                    justifyContent: 'center',
+                                    display: "flex",
+                                    color: '#fff',
+                                    fontSize: '15px',
+                                    margin: "auto"
+                                }}>
+
+                                <div style={{ padding: "10px", border: "1px solid #333", height: "250px", width: "250px" }}>
+                                    <p style={{ color: "#fff", fontSize: "12px" }}>  Type: {data['type']} name :{data['id']}</p>
+                                </div>
+                            </Typography>
                         </Stack>
-                     
+
                         </Popover>
                     {data["type"] === 'proxy' && <RiServerFill fontSize={45} style={{ color: "#fff" }} />}
                     {data["type"] === 'target' && <PiComputerTower fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
                     {data["type"] === 'mother' && <GrDatabase fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
                     <div>
-                        <p style={{ color: "#fff", fontSize: "12px",backgroundColor:"#111" }}>target:192.168.2.196</p>
-                        <p style={{ color: "#fff", fontSize: "8px",backgroundColor:"#111"}}>last ping:10s</p>
+                        <p style={{ color: "#fff",width:"70px", fontSize: "12px",backgroundColor:"#111" }}>target:{data['id']}</p>
+                        <p style={{ width:"70px",color: "#fff", fontSize: "8px",backgroundColor:"#111"}}>last ping:10s</p>
                     </div>
                 </div>
                 {/* 7ff685 */}
