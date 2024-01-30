@@ -5,6 +5,7 @@ import { Handle, Position, Node } from 'reactflow';
 import { RiServerFill } from "react-icons/ri";
 import { PiComputerTower } from "react-icons/pi";
 import { GrDatabase } from "react-icons/gr";
+import { LuBox } from "react-icons/lu";
 interface NodeProps {
     data: any, isConnectable: boolean
 }
@@ -49,40 +50,53 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                     color: '#fff',
                     fontSize: '15px',
                 }}>
-                
 
-                 {   data['type'] === 'mother' &&
-                    
-                    
-                        <Handle type="source" position={Position.Right} isConnectable={isConnectable} />
-                        
-                    
-                
-                } 
-                      
-                 {  
-                     data['type'] === 'proxy' && 
-                     
-                     <>
-                     <Handle type="source" position={Position.Right} isConnectable={isConnectable} />
-                     <Handle
-                         type="target"
-                         position={Position.Left}
-                         isConnectable={isConnectable}
-                     />
-                 </> 
+
+                {data['type'] === 'mother' &&
+
+
+                    <Handle type="source" position={Position.Right} isConnectable={isConnectable} />
+
+
+
                 }
-                   
-                            
-                 {  
-                     data['type'] === 'target' && 
+
+                {
+                    data['type'] === 'proxy' &&
+
+                    <>
+                        <Handle type="source" position={Position.Right} isConnectable={isConnectable} />
                         <Handle
                             type="target"
                             position={Position.Left}
                             isConnectable={isConnectable}
                         />
-                }  
-             
+                    </>
+                }
+
+                {
+                    data['type'] === 'instance' &&
+
+                    <>
+                        <Handle type="source" position={Position.Right} isConnectable={isConnectable} />
+                        <Handle
+                            type="target"
+                            position={Position.Left}
+                            isConnectable={isConnectable}
+                        />
+                    </>
+                }
+
+
+                {
+                    data['type'] === 'target' &&
+                    <Handle
+                        type="target"
+                        position={Position.Left}
+                        isConnectable={isConnectable}
+                    />
+                }
+
                 <div
                     onClick={handleClick}
                     onMouseEnter={(e) => { handleSelectedNode(true) }}
@@ -123,18 +137,26 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                                 }}>
 
                                 <div style={{ padding: "10px", border: "1px solid #333", height: "250px", width: "250px" }}>
-                                    <p style={{ color: "#fff", fontSize: "12px" }}>  Type: {data['type']} name :{data['id']}</p>
+                                    <p style={{ color: "#fff", fontSize: "12px" }}>
+
+                                        {data["type"] === 'instance' &&
+                                            data['value']._instance_name
+                                        }
+                                    </p>
                                 </div>
                             </Typography>
                         </Stack>
 
-                        </Popover>
+                    </Popover>
+
+
                     {data["type"] === 'proxy' && <RiServerFill fontSize={45} style={{ color: "#fff" }} />}
                     {data["type"] === 'target' && <PiComputerTower fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
                     {data["type"] === 'mother' && <GrDatabase fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
+                    {data["type"] === 'instance' && <LuBox fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
+
                     <div>
-                        <p style={{ color: "#fff",width:"70px", fontSize: "12px",backgroundColor:"#111" }}>target:{data['id']}</p>
-                        <p style={{ width:"70px",color: "#fff", fontSize: "8px",backgroundColor:"#111"}}>last ping:10s</p>
+                        {data["type"] === 'instance' && <p style={{ width: "70px", color: "#fff", fontSize: "8px", backgroundColor: "#111" }}>  {data['value']._instance_name}</p>}
                     </div>
                 </div>
                 {/* 7ff685 */}

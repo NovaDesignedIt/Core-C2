@@ -103,6 +103,7 @@ export const CoreSlice = createSlice({
     (state,action:PayloadAction<{users:User[]}>) =>{
       state.Users  = action.payload.users
     }
+ 
   }
 
 });

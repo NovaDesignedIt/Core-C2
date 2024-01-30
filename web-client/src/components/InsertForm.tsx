@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Checkbox, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import { Core, Instance, Target, insertrecord } from '../api/apiclient';
+import { Core, Instance, Listeners, Target, insertrecord } from '../api/apiclient';
 import CloseIcon from '@mui/icons-material/Close';
 import { useAppSelector,useAppDispatch } from '../store/store';
 
@@ -38,6 +38,7 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
 
   const instance = useAppSelector(state => state.core.SelectedInstances)
   const core = useAppSelector(state => state.core.coreObject)
+  const listeners:Listeners[] = useAppSelector(state => state.core.listenerObjects)
 
   const handleClose = () => {
     closePanel()
@@ -80,9 +81,11 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
 
   const HandleAddRecord = async () => {
     const interval: number = _it !== '' ? parseInt(`${_it}`) : 1;
+    
+    const targetlisteners = listeners.find(x=> x._id === instance._proxy )?._ipaddress
     const record: Target = new Target(
       //_ip
-      instance?._instance_ip,
+      targetlisteners,
       //_state
       ofp ? 3
         : sleep && interval !== undefined && interval > 1 ? 2

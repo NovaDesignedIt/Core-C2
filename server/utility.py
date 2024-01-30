@@ -129,7 +129,7 @@ class Instance(db.Entity):
     _id = orm.PrimaryKey(int, auto=True)
     _instance_id = orm.Optional(str,unique=True)
     _instance_name = orm.Optional(str)
-    _instance_ip = orm.Optional(str)
+    _proxy = orm.Optional(int)
     _instance_url = orm.Optional(str)
     _Instance_count = orm.Optional(int)
     _core_id = orm.Optional(str)
@@ -137,7 +137,7 @@ class Instance(db.Entity):
     def insert_instance(
                                 _instance_id,
                                 _instance_name ,
-                                _instance_ip ,
+                                _proxy ,
                                 _instance_url ,
                                 _Instance_count, 
                                 _core_id ):
@@ -145,7 +145,7 @@ class Instance(db.Entity):
 
         _instance_id  =     _instance_id ,
         _instance_name  =     _instance_name ,
-        _instance_ip  =     _instance_ip ,
+        _proxy  =     _proxy ,
         _instance_url  =     _instance_url ,
         _Instance_count  =     _Instance_count ,
         _core_id  =     _core_id )
@@ -285,7 +285,7 @@ class Log(db.Entity):
         try:
             #print()
             #print(f'{instance_id, target_name, action, log_time,result,_msg}******************************DEBUG ')
-            #serverPrinter(instance_id, target_name, action, log_time,result,_msg)
+            serverPrinter(instance_id, target_name, action, log_time,result,_msg)
             Log(_instance_id=instance_id, _target_name=target_name, _action=action, _time=log_time,_result=result,_msg=_msg,_core_id=_core_id)
         except Exception as e:
             print(f'Exception: {e}')
@@ -789,7 +789,7 @@ def return_core(core_id):
                                 {"_id":i._id,
                                 "_instance_id":i._instance_id,
                                 "_instance_name":i._instance_name,
-                                "_instance_ip":i._instance_ip,
+                                "_proxy":i._proxy,
                                 "_instance_url":i._instance_url,
                                 "_Instance_count":i._Instance_count,
                                 "_core_id":i._core_id,

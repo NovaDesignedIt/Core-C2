@@ -96,7 +96,7 @@ export class Instance {
   _id: number;
   _instance_id: string;
   _instance_name: string;
-  _instance_ip: string;
+  _proxy: number;
   _instance_url: string;
   _Instance_count: number;
   _core_id: string;
@@ -105,14 +105,14 @@ export class Instance {
     _id = 0,
     _instance_id = '',
     _instance_name = '',
-    _instance_ip = '',
+    _proxy = 0,
     _instance_url = '',
     _Instance_count = 0,
     _core_id = '',) {
     this._id = _id
     this._instance_id = _instance_id
     this._instance_name = _instance_name
-    this._instance_ip = _instance_ip
+    this._proxy = _proxy
     this._instance_url = _instance_url
     this._Instance_count = _Instance_count
     this._core_id = _core_id;

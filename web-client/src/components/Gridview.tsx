@@ -35,7 +35,7 @@ const columns = [
   { field: '_in', headerName: 'in', width: 120, },
   { field: '_out', headerName: 'Results', width: 200, },
   { field: '_lp', headerName: 'Last Ping', width: 200, },
-  { field: '_ip', headerName: 'Source IP', width: 180, },
+  { field: '_ip', headerName: 'proxy', width: 180, },
 ];
 
 

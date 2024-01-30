@@ -73,7 +73,7 @@ def getinstancebyfield(_core_id,field, value):
                 records_data = [{
                 "_instance_id": records._instance_id,
                 "_instance_name": records._instance_name,
-                "_instance_ip": records._instance_ip,
+                "_proxy": records._proxy,
                 "_instance_url": records._instance_url,
                 "_Instance_count": records._Instance_count,
                 "_core_id": records._core_id
@@ -126,14 +126,14 @@ def insertinstance(_core_id):
         # Extract data from JSON
         instance_id = Utility.generate_random_string(10)
         instance_name = data.get('_instance_name')
-        instance_ip = data.get('_instance_ip')
+        _proxy = data.get('_proxy')
         instance_url = data.get('_instance_url')
         instance_count = data.get('_Instance_count')
         core_id = data.get('_core_id')
         # Create a new Instance object and insert it into the database
         instance = Utility.Instance(_instance_id=instance_id,
                                 _instance_name=instance_name,
-                                _instance_ip=instance_ip,
+                                _proxy=_proxy,
                                 _instance_url=instance_url,
                                 _Instance_count=instance_count,
                                 _core_id=core_id)
@@ -164,8 +164,8 @@ def insertinstance(_core_id):
                                action.INSERT.value,
                                str(datetime.now()),
                                action.FAILED.value,
-                               "{\"msg\":\"def insertinstance(_core_id): 400"+"\"}",_core_id) #LOGGER
-        return str(e), 400  # Return error message and status code 400 (Bad Request) in case of errors
+                               "{\"msg\":\"def insertinstance(_core_id): 500"+f"{e}"+"\"}",_core_id) #LOGGER
+        return str(e), 500  # Return error message and status code 400 (Bad Request) in case of errors
 
 @app.route('/<_core_id>/i/<int:record_id>', methods=['GET'])
 @orm.db_session
@@ -191,7 +191,7 @@ def getinstancebyid(_core_id,record_id):
                 target = {
                 "_instance_id": target_record._instance_id,
                 "_instance_name": target_record._instance_name,
-                "_instance_ip": target_record._instance_ip,
+                "_proxy": target_record._proxy,
                 "_instance_url": target_record._instance_url,
                 "_Instance_count": target_record._Instance_count,
                 "_core_id": target_record._core_id
@@ -248,7 +248,7 @@ def getallinstance(_core_id):
             "_id": record._id,
             "_instance_id": record._instance_id,
             "_instance_name": record._instance_name,
-            "_instance_ip": record._instance_ip,
+            "_proxy": record._proxy,
             "_instance_url": record._instance_url,
             "_Instance_count": record._Instance_count,
             "_core_id": record._core_id
@@ -2403,4 +2403,4 @@ if '__main__' == __name__:
     # receive_ping()
 
     #socketio.run(app,host=host, port=port,debug=True)
-    socketio.run(app,host=host, port=port)
+    socketio.run(app,host=host, port=port,debug=True)

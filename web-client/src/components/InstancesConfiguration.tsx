@@ -10,7 +10,7 @@ import { AlertColor, Button, TextField } from '@mui/material';
 import { Core, Instance, Target, deleteinstancebyid, getallinstance, insertinstance } from '../api/apiclient';
 import { AnyLayer } from 'react-map-gl';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { SetInstance,InsertInstance } from '../store/features/CoreSlice';
+import { SetInstance, InsertInstance } from '../store/features/CoreSlice';
 import { DynamicAlert } from './AlertFeedbackComponent';
 
 const themeText = {
@@ -37,13 +37,14 @@ const themeText = {
 }
 
 const instanceConfiguration = () => {
-    const dispatch:any = useAppDispatch();
+    const dispatch: any = useAppDispatch();
 
-    const CoreC = useAppSelector(state => state.core.coreObject) 
-    const config = useAppSelector(state => state.core.configObject) 
+    const CoreC = useAppSelector(state => state.core.coreObject)
+    const config = useAppSelector(state => state.core.configObject)
     const inst = useAppSelector(state => state.core.instanceObjects)
-    const instances  = inst ?? []
-  
+    const listeners = useAppSelector(state => state.core.listenerObjects)
+    const instances = inst ?? []
+
     const [Instances, setInstances] = React.useState<Instance[]>(instances)
     const [selectedRowId, setSelectedRowId] = React.useState(-1);
     const [insertRow, TogglePanel] = React.useState(false);
@@ -52,13 +53,36 @@ const instanceConfiguration = () => {
     const [alertType, SetAlertType] = React.useState<AlertColor>('success');
     const [message, setmessage] = React.useState('');
     const [open, SetOpen] = React.useState(false);
-  
-    function ToggleAlertComponent(type:AlertColor,msg:string,open:boolean){
-      SetAlertType(type);
-      setmessage(msg)
-      SetOpen(open);
+    
+    const [proxy, setproxy] = React.useState(0);
+    const [proxyIndex,setIndex] = React.useState(0); 
+    const [proxyName, SetProxyName] = React.useState('');
+    const [url, seturl] = React.useState('');
+
+
+
+
+
+
+
+
+    const handleScroll = () => {
+        // Your scroll handling logic here
+
+        // Calculate the next index based on the current scroll position
+        const nextIndex = (proxy + 1) % listeners.length;
+        console.log(proxy)
+        setproxy(prev => prev + 1)
+        SetProxyName(listeners[nextIndex]._listener_name)
+        setIndex(nextIndex);
+    };
+
+    function ToggleAlertComponent(type: AlertColor, msg: string, open: boolean) {
+        SetAlertType(type);
+        setmessage(msg)
+        SetOpen(open);
     }
-   
+
 
     const handleInstanceNameChange = (event: any) => {
         SetInstanceName(event.target.value)
@@ -80,9 +104,9 @@ const instanceConfiguration = () => {
                 if (allinstances !== undefined) {
                     dispatch(SetInstance({ instance: allinstances }))
                     setInstances(allinstances);
-                    ToggleAlertComponent('success','Instance Deleted',true);
-                }else {
-                    ToggleAlertComponent('error','session over',true);
+                    ToggleAlertComponent('success', 'Instance Deleted', true);
+                } else {
+                    ToggleAlertComponent('error', 'session over', true);
                 }
             }
         }
@@ -90,12 +114,13 @@ const instanceConfiguration = () => {
 
     const HandleAdd = async (open: boolean) => {
         if (insertRow) {
+           
             const data = new Instance(
-                0, 
-                '', 
+                0,
+                '',
                 InstanceName,
-                CoreC?._url,
-                config?._ip_address,
+                listeners[proxyIndex]._id,
+                url,
                 0,
                 CoreC?._core_id,
             );
@@ -107,9 +132,9 @@ const instanceConfiguration = () => {
                 if (allinstances !== undefined && response !== 401) {
                     dispatch(SetInstance({ instance: allinstances }))
                     setInstances(allinstances);
-                    ToggleAlertComponent('success','Instance Inserted',true);
-                }else {
-                    ToggleAlertComponent('error','session over',true);
+                    ToggleAlertComponent('success', 'Instance Inserted', true);
+                } else {
+                    ToggleAlertComponent('error', 'session over', true);
                 }
             }
             TogglePanel(false);
@@ -120,8 +145,8 @@ const instanceConfiguration = () => {
 
     return (
         <>
-            <div style={{ width: "100%", height: "35%", minHeight: "250px", backgroundColor: "#000",padding:"10px" }}>
-                <div onClick={()=>{setSelectedRowId(-1)}} style={{   padding: "1%", backgroundColor: "#000", border: "1px #222 solid" ,borderRadius:"4px" }}>
+            <div style={{ width: "100%", height: "35%", minHeight: "250px", backgroundColor: "#000", padding: "10px" }}>
+                <div onClick={() => { setSelectedRowId(-1) }} style={{ padding: "1%", backgroundColor: "#000", border: "1px #222 solid", borderRadius: "4px" }}>
                     <Button
                         onClick={() => { HandleAdd(true) }}
                         sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}>{insertRow ? "Save" : "Insert"}  </Button>
@@ -129,12 +154,12 @@ const instanceConfiguration = () => {
                         onClick={() => { HandleDelete(selectedRowId) }}
                         sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}> Delete </Button>
                 </div>
-                <div style={{ border: "1px solid #222", borderRadius: "5px", overflow: "scroll",maxHeight:"100%" }}>
+                <div style={{ border: "1px solid #222", borderRadius: "5px", overflow: "scroll", maxHeight: "100%" }}>
 
-                
+
                     <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "100%", minHeight: "10px", borderRadius: 0, backgroundColor: "#000" }} >
                         <Table size="small" sx={{
-                    
+
                             borderStyle: 'dotted',
                             borderWidth: '1px',
                             borderColor: '#111',
@@ -161,10 +186,12 @@ const instanceConfiguration = () => {
                             }
                         }} aria-label="simple table">
                             <TableHead>
-                                <TableRow onClick={()=>{setSelectedRowId(-1)}}  sx={{ ':Hover': { backgroundColor: "#000" }, cursor: "default" }}>
+                                <TableRow onClick={() => { setSelectedRowId(-1) }} sx={{ ':Hover': { backgroundColor: "#000" }, cursor: "default" }}>
                                     <TableCell align="left"> id</TableCell>
                                     <TableCell align="left">instance name</TableCell>
                                     <TableCell align="left">instance id</TableCell>
+                                    <TableCell align="left">url</TableCell>
+                                    <TableCell align="left">proxy</TableCell>
                                 </TableRow>
                                 {insertRow &&
                                     <TableRow sx={{ ':Hover': { backgroundColor: "#000" }, cursor: "default" }}>
@@ -180,9 +207,35 @@ const instanceConfiguration = () => {
                                                 size='small'
                                                 onChange={(e) => { handleInstanceNameChange(e) }}
                                                 value={InstanceName}
-                                                sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
+                                                sx={{ ...themeText, width: "70%", borderRadius: "5px" }} ></TextField>
                                         </TableCell>
                                         <TableCell align="left">
+
+                                        </TableCell>
+                                        <TableCell align="left">
+                                        
+                                                <TextField
+                                                    fullWidth={true}
+                                                    InputLabelProps={{ sx: { color: "#fff" } }}
+                                                    inputProps={{ sx: { color: "#fff" } }}
+                                                    size='small'
+                                            
+                                                    onChange={(e) => {seturl(e.target.value) }}
+                                                    value={url}
+                                                    sx={{ ...themeText, width: "100%", borderRadius: "5px" }} ></TextField>
+                                       
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <TextField
+                                                fullWidth={true}
+                                                InputLabelProps={{ sx: { color: "#fff" } }}
+                                                inputProps={{ sx: { color: "#fff" } }}
+                                                size='small'
+                                                onWheel={handleScroll}
+                                                onChange={(e) => { handleInstanceNameChange(e) }}
+                                                value={proxyName}
+                                                sx={{ ...themeText, width: "100%", borderRadius: "5px" }} ></TextField>
+                                       
                                         </TableCell>
                                     </TableRow>
                                 }
@@ -193,11 +246,13 @@ const instanceConfiguration = () => {
                                         key={row._id}
                                         selected={row._id === selectedRowId}
                                         onClick={() => { handleRowClick(row._id); TogglePanel(false) }}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: "pointer", border: row._id === selectedRowId ? "2px solid #fff" : undefined}}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: "pointer", border: row._id === selectedRowId ? "2px solid #fff" : undefined }}
                                     >
                                         <TableCell align="left">{row._id}</TableCell>
                                         <TableCell align="left">{row._instance_name}</TableCell>
                                         <TableCell align="left">{row._instance_id}</TableCell>
+                                        <TableCell align="left">{row._instance_url}</TableCell>
+                                        <TableCell align="left">{listeners.find(x => x._id === row._proxy)?._listener_name}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -205,7 +260,7 @@ const instanceConfiguration = () => {
                     </TableContainer>
                 </div>
             </div>
-            <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e)=>{SetOpen(false)}}/>
+            <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e) => { SetOpen(false) }} />
         </>
     );
 }
