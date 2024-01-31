@@ -1302,3 +1302,32 @@ export async function ExportDumpToFile(url:string,instance:Instance,core:CoreC) 
     console.error('Error:', error);
   }
 }
+
+/**
+ * Export to Dump
+ *
+ * @async
+ * @function
+ * @param {string} url - The URL.
+ * @param {coreId} CoreC - The Core object.
+
+ * @returns {status} - json or nothing
+ */
+export async function dumpTargets(url: string, core: CoreC){
+  try {
+    const apiUrl = `http://${url}/${core._core_id}/dmptargs`
+    
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'authtok': core._sessiontoken,
+      }
+    }).then(data => { return  data.json() }).catch(error => console.log(error));
+    return response;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+
+}
+
+

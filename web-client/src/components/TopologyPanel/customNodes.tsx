@@ -6,6 +6,7 @@ import { RiServerFill } from "react-icons/ri";
 import { PiComputerTower } from "react-icons/pi";
 import { GrDatabase } from "react-icons/gr";
 import { LuBox } from "react-icons/lu";
+import { RiComputerLine } from "react-icons/ri";
 interface NodeProps {
     data: any, isConnectable: boolean
 }
@@ -15,7 +16,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
     const [selected, SetIsSelected] = React.useState(false)
 
     const onChange = useCallback((evt: { target: { value: any; }; }) => {
-        console.log(evt.target.value);
+        // console.log(evt.target.value);
     }, []);
 
     const handleSelectedNode = (id: React.SetStateAction<boolean>) => {
@@ -137,12 +138,28 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                                 }}>
 
                                 <div style={{ padding: "10px", border: "1px solid #333", height: "250px", width: "250px" }}>
-                                    <p style={{ color: "#fff", fontSize: "12px" }}>
+                                    
+                                    {
+                                        data["type"] === 'instance' &&
+                                        data['value']._instance_name
+                                    }
 
-                                        {data["type"] === 'instance' &&
-                                            data['value']._instance_name
-                                        }
-                                    </p>
+                                    {
+                                        data["type"] === 'mother' &&
+                                        <>
+                                            <p style={{ fontSize: "10px", color: "#777" }}> {data['value']['core']._core_id} </p>
+                                            hosted @ : {data['value']['config']._ip_address}
+                                        </>
+                                    }
+
+                                    {
+                                        data["type"] === 'target' &&
+                                        <>
+                                            <p style={{ fontSize: "10px", color: "#777" }}>  hosted @ : {  data['value']._n } </p>
+                                        </>
+                                    }
+
+
                                 </div>
                             </Typography>
                         </Stack>
@@ -151,12 +168,17 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
 
                     {data["type"] === 'proxy' && <RiServerFill fontSize={45} style={{ color: "#fff" }} />}
-                    {data["type"] === 'target' && <PiComputerTower fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
+                    {data["type"] === 'target' && <RiComputerLine fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
                     {data["type"] === 'mother' && <GrDatabase fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
                     {data["type"] === 'instance' && <LuBox fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
 
                     <div>
                         {data["type"] === 'instance' && <p style={{ width: "70px", color: "#fff", fontSize: "8px", backgroundColor: "#111" }}>  {data['value']._instance_name}</p>}
+
+                        {data["type"] === 'mother' &&
+
+                            <p style={{ width: "70px", color: "#fff", fontSize: "8px", backgroundColor: "#111" }}>  {data['value']['config']._host_name}</p>
+                        }
                     </div>
                 </div>
                 {/* 7ff685 */}

@@ -82,10 +82,10 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
   const HandleAddRecord = async () => {
     const interval: number = _it !== '' ? parseInt(`${_it}`) : 1;
     
-    const targetlisteners = listeners.find(x=> x._id === instance._proxy )?._ipaddress
+    const targetlisteners = listeners.find(x=> x._id === instance._proxy )?._id ?? ''
     const record: Target = new Target(
       //_ip
-      targetlisteners,
+      `${targetlisteners}`,
       //_state
       ofp ? 3
         : sleep && interval !== undefined && interval > 1 ? 2

@@ -993,6 +993,36 @@ def fetchInstance(message):
     socketio.emit('rtgrid/'+data['isid'], records_data)
 
 
+@app.route('/<_core_id>/dmptargs', methods=['GET'])
+@orm.db_session
+def dumpTargets(_core_id):
+    if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
+        Utility.Log.insert_log(f"{request}",
+                                    'invalid session',
+                                    action.DELETE.value,
+                                    str(datetime.now()),
+                                    action.FAILED.value,
+                                    "{\"msg\":\"deletemultirecords(_core_id): 401"+"\"}",_core_id) #LOGGER
+        return '200', 200
+    target = []
+    instance = orm.select(i for i in Utility.Instance if i._core_id == _core_id )
+    if instance :
+        for j in instance:
+            record = orm.select(i for i in Utility.Target if i._isid == j._instance_id )
+            if record :
+                target += record
+        records_data = [record.to_dict() for record in target]
+        
+        return jsonify(records_data), 200
+    else :
+        Utility.Log.insert_log(f"{request}",
+                        f'coreid:{_core_id}',
+                        action.DELETE.value,
+                        str(datetime.now()),
+                        action.ERROR.value,
+                        "{\"msg\":\"deletemultirecords(_core_id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
+        return '',500
+
 
 @app.route('/<_core_id>/d/t/', methods=['POST'])
 @orm.db_session
