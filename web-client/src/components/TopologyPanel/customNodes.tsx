@@ -40,7 +40,9 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
     return (
         <div
+
         >
+
             <Typography
                 component={'span'}
                 variant={'body1'}
@@ -116,10 +118,12 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                         anchorEl={anchorEl}
                         onClose={handleClose}
                         hideBackdrop={false}
+                        
                         anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'left',
                         }}
+                        
                     >
 
 
@@ -179,6 +183,17 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
                             <p style={{ width: "70px", color: "#fff", fontSize: "8px", backgroundColor: "#111" }}>  {data['value']['config']._host_name}</p>
                         }
+
+                        {data["type"] === 'target' &&
+
+                            <p style={{ width: "70px", color: "#fff", fontSize: "8px", backgroundColor: "#111" }}>  {data['value']._n}</p>
+                        }
+
+                        {data["type"] === 'proxy' &&
+
+                            <p style={{ width: "70px", color: "#fff", fontSize: "8px", backgroundColor: "#111" }}>  {data['value']._listener_name}</p>
+                        }
+
                     </div>
                 </div>
                 {/* 7ff685 */}

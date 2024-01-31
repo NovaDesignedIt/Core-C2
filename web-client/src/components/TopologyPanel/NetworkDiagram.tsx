@@ -1,5 +1,5 @@
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import ReactFlow, { Position, useNodesState, useEdgesState, addEdge, Connection, Edge, OnConnect, OnEdgesChange, OnNodesChange, applyEdgeChanges, applyNodeChanges, Node, NodeTypes } from 'reactflow';
 import 'reactflow/dist/style.css';
 import  CustomNode from './customNodes';
@@ -23,7 +23,12 @@ const nodeStyle = {
 
 }
 
+interface coordinates {
 
+x:number;
+y:number;
+
+}
 
 
 const nodeTypes:NodeTypes = { 
@@ -33,6 +38,10 @@ const nodeTypes:NodeTypes = {
  };
 
 const networkDiagram = () => {
+
+  const componentRef = useRef<HTMLDivElement>(null); // Create a ref for the component
+  console.log(componentRef)
+
 
   const [SelectedNode, setSelectedNode] = useState(-1);
   const [targets, setTargets] = useState<Node[]>([]);
@@ -47,14 +56,14 @@ const networkDiagram = () => {
 
   const fullheight:number = window.screen.availHeight / 2
   
-  const mothernode:Node  = { id: '0', type: 'custom', position: { x: 30, y: fullheight/2 }, data: { id: '0',  value:{core :core, config:config}, type: "mother" } }
+  const mothernode:Node  = { id: '0', type: 'custom', position: { x: 30, y: 300 }, data: { id: '0',  value:{core :core, config:config}, type: "mother" } }
 
   const proxyNodes: Node[] = listener.map((item: Listeners, index: number) => (
      { id: `${index+1}`, type: 'custom', position: { x:300 , y: 200 * index }, data: { id: index, value: item, type: "proxy" }}
   ));
 
   const instancenodes: Node[] = instances.map((item: Instance, index: number) => (
-  {id: `${ proxyNodes.length + index + 1 }`, type: 'custom', position: { x: 100, y: index * 200 }, data: { id: index, value: item, type: "instance" }}
+  {id: `${ proxyNodes.length + index + 1 }`, type: 'custom', position: { x: 100, y: 200 + index * 300 }, data: { id: index, value: item, type: "instance" }}
   ));
 
  
@@ -64,7 +73,7 @@ const networkDiagram = () => {
 
 
   const EgdesInstancesToMotherShip: Edge[] = instancenodes.map((item:Node, index: number) => (
-          { id: `e0-${item.id}`, type: "step", source: '0', target: item.id }
+          { id: `e0-${item.id}`, type: "straight", source: '0', target: item.id }
   ));
 
 
@@ -106,10 +115,10 @@ const initialEdges: Edge[] = [
 ];
   const initialNodes: Node[] = [
     mothernode,   
-    ...targets
+   
   ];
 
-  console.log(targets)
+  //console.log(targets)
   const  allnodes:Node[] = [...initialNodes, ...proxyNodes, ...instancenodes]
 
   const [nodes, setNodes] = useState<Node[]>(allnodes);
@@ -131,47 +140,30 @@ const initialEdges: Edge[] = [
 
 
 
-  // const socks: Socket = io(`http://${core._url}`);
 
-  // if (socks !== undefined) {
-    
-  //   socks.on(
-  //     'rttopology/' + core._core_id,
-  //     (data: any) => {
-  //       const payload = data !== undefined ? data : '';
-
-  //       const t:Node[] = payload.map((item: any, index: number) => (
-  //         { id: `${proxyNodes.length + instancenodes.length + index + 1}`, type: 'custom', position: { x: 200, y: index * 200 }, data: { id: index, value: item, type: "target" } }
-  //       ));
-  //       setNodes(self => [...self,...t])
-        
-
-  //     });
-  // }
-
-  
-  // socks.disconnect()
 
   const fetchData = async () => {
     try {
       const payload = await dumpTargets(core._url, core); // Call dumpTargets function with core._url and core
-      console.log('Payload:', payload);
+      //console.log('Payload:', payload);
 
       const newNodes: Node[] = payload.map((item: any, index: number) => ({
         id: `${proxyNodes.length + instancenodes.length + index + 1}`,
         type: 'custom',
-        position: { x: 500, y: index/2 * 200 },
+        position: {x: 500+index *100 , y: index < 5 ? 500-index*100 :  300+-(index % 5)*100 } ,
         data: { id: index, value: item, type: 'target' }
       }));
-        setNodes(self => [...self,...newNodes])
 
+      
+        setNodes(current => [...current,...newNodes])
+        //plotcircle(index,payload.length,{x:300,y:300})
 
 
       const EdgesTargetsToProxy:Edge[] = newNodes.reduce((result:any[], node: Node) => {
         const targetproxyid = node.data.value._ip
         const proxy = proxyNodes.find(x => `${x.data.value._id}` === targetproxyid)
 
-        console.log(proxyNodes,targetproxyid)
+        //console.log(proxyNodes,targetproxyid)
         if (proxy && targetproxyid ){
           result.push({ id: `e${proxy.id} - ${node.id}`, type:"straight", source: proxy.id, target: node.id })
         }
@@ -194,9 +186,16 @@ const initialEdges: Edge[] = [
 
 
 
+
     // Call fetchData when the component mounts
     React.useEffect(() => {
       fetchData();
+
+      if (componentRef.current) {
+        const height = componentRef.current.clientHeight;
+        console.log('Component height:', height);
+      }
+
     }, []); // Empty dependency array ensures this effect runs only once
   
 
@@ -232,6 +231,7 @@ const initialEdges: Edge[] = [
         <Button sx={{ color: "#fff", border: "1px solid #fff" }}>test</Button> */}
       </div>
       <ReactFlow
+        ref={componentRef}
         style={{ border: "1px solid #333", borderRadius: "4px", backgroundColor: "#111" }}
         
         onNodeClick={(e) => { handleSelectedNode(e) }}
