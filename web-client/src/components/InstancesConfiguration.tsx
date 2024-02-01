@@ -64,8 +64,6 @@ const instanceConfiguration = () => {
 
 
 
-
-
     const handleScroll = () => {
         // Your scroll handling logic here
 
@@ -231,8 +229,7 @@ const instanceConfiguration = () => {
                                                 InputLabelProps={{ sx: { color: "#fff" } }}
                                                 inputProps={{ sx: { color: "#fff" } }}
                                                 size='small'
-                                                onWheel={handleScroll}
-                                                onChange={(e) => { handleInstanceNameChange(e) }}
+                                                onWheel={handleScroll}                                                
                                                 value={proxyName}
                                                 sx={{ ...themeText, width: "100%", borderRadius: "5px" }} ></TextField>
                                        

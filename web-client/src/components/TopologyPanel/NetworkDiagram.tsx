@@ -52,22 +52,41 @@ const networkDiagram = () => {
   const config:Config = useAppSelector(state => state.core.configObject);
   const listener:Listeners[] = useAppSelector(state => state.core.listenerObjects);
   
+  let Count:number  = 0
 
 
   const fullheight:number = window.screen.availHeight / 2
   
-  const mothernode:Node  = { id: '0', type: 'custom', position: { x: 30, y: 300 }, data: { id: '0',  value:{core :core, config:config}, type: "mother" } }
+  const mothernode:Node  = { id: `${Count}`, type: 'custom', position: { x: 30, y: 300 }, data: { id: '0',  value:{core :core, config:config}, type: "mother" } }
+  
+  Count = Count + 1
 
   const proxyNodes: Node[] = listener.map((item: Listeners, index: number) => (
-     { id: `${index+1}`, type: 'custom', position: { x:300 , y: 200 * index }, data: { id: index, value: item, type: "proxy" }}
+     { id: `${Count+index}`, type: 'custom', position: { x:1000 , y: 100 +700 * index }, data: { id: index, value: item, type: "proxy" }}
   ));
 
+
+
+  Count = Count + proxyNodes.length
+
+  function returnpi (i:number,length:number){
+    return (2 * Math.PI * 2*i) / length;
+  }
+  
+  function return_coor(centerX: number, centerY: number, radius: number, angle: number) {
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
+    return { x, y }
+  }
+
+
   const instancenodes: Node[] = instances.map((item: Instance, index: number) => (
-  {id: `${ proxyNodes.length + index + 1 }`, type: 'custom', position: { x: 100, y: 200 + index * 300 }, data: { id: index, value: item, type: "instance" }}
+  {id: `${Count + index }`, type: 'custom', position: { x: 200, y: 200 + index * 100 }, data: { id: index, value: item, type: "instance" }}
+  
   ));
 
  
-  
+  Count = Count + instancenodes.length
   
 
 
@@ -146,18 +165,36 @@ const initialEdges: Edge[] = [
     try {
       const payload = await dumpTargets(core._url, core); // Call dumpTargets function with core._url and core
       //console.log('Payload:', payload);
+      
 
-      const newNodes: Node[] = payload.map((item: any, index: number) => ({
-        id: `${proxyNodes.length + instancenodes.length + index + 1}`,
-        type: 'custom',
-        position: {x: 500+index *100 , y: index < 5 ? 500-index*100 :  300+-(index % 5)*100 } ,
-        data: { id: index, value: item, type: 'target' }
-      }));
+      const groupedPayload: any[] = payload.reduce((groups:any[], item:any) => {
+        const isid = item._isid;
+        if (!groups[isid]) {
+          groups[isid] = [];
+        }
+        groups[isid].push(item);
+        return groups;
+      }, {});
 
       
+
+      Object.values(groupedPayload).forEach((group: any[], i: number) => {
+      
+      console.log(group.length)
+  
+        const newNodes: Node[] = group.map((targ: any, index: number) => (
+          {
+            id: `${Count + index}`,
+            type: 'custom',
+            //position: {x: 500+index *100 , y: index < 5 ? 500-index*100 :  300+-(index % 5)*100 } ,
+            position: return_coor(proxyNodes[i].position.x, proxyNodes[i].position.y, 250, returnpi(index , payload.length)),
+            data: { id: index * i, value: targ, type: 'target' }
+          }));
+  
         setNodes(current => [...current,...newNodes])
         //plotcircle(index,payload.length,{x:300,y:300})
-
+       
+        Count =  Count + newNodes.length
 
       const EdgesTargetsToProxy:Edge[] = newNodes.reduce((result:any[], node: Node) => {
         const targetproxyid = node.data.value._ip
@@ -173,7 +210,10 @@ const initialEdges: Edge[] = [
       },[]);
 
       setEdges(self => [...self,...EdgesTargetsToProxy])
-
+    
+    
+    });
+      
 
     } catch (error) {
       console.error('Error fetching targets:', error);
