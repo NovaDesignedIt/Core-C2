@@ -7,9 +7,22 @@ import { PiComputerTower } from "react-icons/pi";
 import { GrDatabase } from "react-icons/gr";
 import { LuBox } from "react-icons/lu";
 import { RiComputerLine } from "react-icons/ri";
+
+
+
+
+
+
+
+
+
+
+
+
 interface NodeProps {
     data: any, isConnectable: boolean
 }
+
 
 const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
@@ -38,6 +51,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
     const id = open ? 'simple-popover' : undefined;
 
 
+    
     return (
         <div
 
@@ -150,10 +164,19 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
                                     {
                                         data["type"] === 'mother' &&
-                                        <>
+                                        <div style={{flexDirection:"column",display:"flex",padding:"5px",gap:"20px"}}>
                                             <p style={{ fontSize: "10px", color: "#777" }}> {data['value']['core']._core_id} </p>
+                                            
                                             hosted @ : {data['value']['config']._ip_address}
-                                        </>
+
+                                            <Button
+                                                onClick={() => { alert('sleeping all') }}
+                                                sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}> sleep</Button>
+                                            <Button
+                                                onClick={() => { alert('purge all') }}
+                                                sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}> purge </Button>
+
+                                        </div>
                                     }
 
                                     {
@@ -190,8 +213,10 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                         }
 
                         {data["type"] === 'proxy' &&
-
+                      
                             <p style={{ width: "70px", color: "#fff", fontSize: "8px", backgroundColor: "#111" }}>  {data['value']._listener_name}</p>
+
+                        
                         }
 
                     </div>
