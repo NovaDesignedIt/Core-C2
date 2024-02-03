@@ -9,7 +9,7 @@ import react from 'react';
 import LoginHome from './LoginHome';
 import FileStorage from './FileStorage';
 import CustomPanelConfiguration from './CustomPanelConfiguration';
-import { Config, Core, CoreC, File as Files, Instance, Listeners, User } from '../api/apiclient';
+import { Config, Core, CoreC, File as Files, Instance, Listeners, User, dumpTargets } from '../api/apiclient';
 import { useAppDispatch,useAppSelector } from '../store/store';
 import { adjustSizes } from '../Utilities/Utilities'
 
@@ -48,28 +48,28 @@ const Frame = () => {
     setOpen(false);
   };
 
-  const handleContentSelection = async (index: react.SetStateAction<number>) => {
-    //is logged in?
-    const result = await fetch(`http://${core !== undefined ? core?._url : ''}/ss/${core !== undefined ? core?._core_id : ''}`, {
-      method: 'GET',
-      headers: {
-        'authtok': core !== undefined ?  core?._sessiontoken : ''
-      },
-    });
+  // const handleContentSelection = async (index: react.SetStateAction<number>) => {
+  //   //is logged in?
+  //   const result = await fetch(`http://${core !== undefined ? core?._url : ''}/ss/${core !== undefined ? core?._core_id : ''}`, {
+  //     method: 'GET',
+  //     headers: {
+  //       'authtok': core !== undefined ?  core?._sessiontoken : ''
+  //     },
+  //   });
 
-     if (result.status === 401) {
-        setSelectedCore(undefined)
-        setOpen(true);
-        setSelectedContent(-1);
-     }else {
-      index = core === undefined && (index === 6 || index === 5) ? -1 : index
-      setSelectedContent(index);
-     }    
-  };
+  //    if (result.status === 401) {
+  //       setSelectedCore(undefined)
+  //       setOpen(true);
+  //       setSelectedContent(-1);
+  //    }else {
+  //     index = core === undefined && (index === 6 || index === 5) ? -1 : index
+  //     setSelectedContent(index);
+  //    }    
+  // };
 
 
 
-  const HandleLogin = (CORE: Core) => {
+  const HandleLogin = async (CORE: Core) => {
     //This is where the magic happens\
     const co: CoreC = CORE?._core_c ?? new CoreC();
     const con: Config = CORE?._config ?? new Config();
@@ -78,6 +78,9 @@ const Frame = () => {
     const listener: Listeners[] = CORE?._listeners ?? [];
     const usrs: User[] = CORE?._users ?? [];
     if (CORE !== undefined) {
+      const payload = await dumpTargets(co?._url, co); // Call dumpTargets function with core._url and core
+
+      
       dispatch(BuildStateManagement({core:co,config:con,instances:ins,fstore:fst,listeners:listener,users:usrs}));
       setSelectedCore(CORE);
     }

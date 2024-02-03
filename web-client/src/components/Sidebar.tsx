@@ -20,7 +20,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import ViewInArIcon from '@mui/icons-material/ViewInAr';
 import Collapse from '@mui/material/Collapse';
 import { GiPlanetCore } from "react-icons/gi";
-import { Instance, Core,getallrecords } from '../api/apiclient';
+import { Instance, Core,getallrecords,dumpTargets } from '../api/apiclient';
 import { FaDatabase } from "react-icons/fa6";
 import WebStoriesIcon from '@mui/icons-material/WebStories';
 import { useAppSelector,useAppDispatch } from '../store/store';
@@ -89,7 +89,14 @@ const CustomizedList =  ( ) => {
      core._core_id !== "" ? setOpen(!open) : setOpen(false);
   }
 
-  const handleItemClick = (index: number) => {
+  const handleItemClick = async (index: number) => {
+
+    if (index == 7 ){
+
+      const payload = await dumpTargets(core._url, core); // Call dumpTargets function with core._url and core
+      dispatch(SetInstanceTargets({targets :payload}))
+    } 
+
     dispatch(SetSelectedContent({content:index}))
   };
 

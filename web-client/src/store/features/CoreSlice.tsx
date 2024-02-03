@@ -22,7 +22,7 @@ interface CoreState {
   targetObjects: Target[]
   listenerObjects: Listeners[]
   SelectedContent:number
-  Users:User[]
+  Users:User[] 
 }
 
 const initialState: CoreState = {
