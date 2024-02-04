@@ -1625,7 +1625,7 @@ def ClearLogs(_core_id):
                                     str(datetime.now()),
                                     action.FAILED.value,
                                     "{\"msg\":\"def ClearLogs(_core_id): 401"+"\"}",_core_id) #LOGGER
-            return '200', 200 
+            return '401', 401 
         numberofrecords = orm.count(entry for entry in Utility.Log if entry._core_id == _core_id)
         orm.delete(entry for entry in Utility.Log if entry._core_id == _core_id)
         Utility.Log.insert_log(f"{request}",

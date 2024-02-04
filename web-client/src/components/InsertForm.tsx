@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Checkbox, TextField, Typography } from '@mui/material';
+import { Checkbox, TextField, Typography,List,ListItem,ListItemText } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Core, Instance, Listeners, Target, insertrecord } from '../api/apiclient';
 import CloseIcon from '@mui/icons-material/Close';
@@ -34,8 +34,11 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
   const [targetData, setTargetData] = React.useState<Target[]>();
   const [ofp, setOfp] = React.useState(false);
   const [sleep, setSleep] = React.useState(false);
+  const [proxy, setproxy] = React.useState(0);
+  const [proxyIndex,setIndex] = React.useState(0); 
+  const [proxyName, SetProxyName] = React.useState('');
 
-
+  
   const instance = useAppSelector(state => state.core.SelectedInstances)
   const core = useAppSelector(state => state.core.coreObject)
   const listeners:Listeners[] = useAppSelector(state => state.core.listenerObjects)
@@ -43,6 +46,8 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
   const handleClose = () => {
     closePanel()
   }
+
+
 
   const HandleOFPChange = () => {
     setOfp(!ofp);
@@ -79,10 +84,24 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
     }
   }
 
+
+
+
+  const handleScroll = () => {
+    // Calculate the next index based on the current scroll position
+    const nextIndex = (proxy + 1) % listeners.length;
+    console.log(proxy)
+    setproxy(prev => prev + 1)
+    SetProxyName(listeners[nextIndex]._listener_name)
+    setIndex(nextIndex);
+};
+
+
+
   const HandleAddRecord = async () => {
     const interval: number = _it !== '' ? parseInt(`${_it}`) : 1;
     
-    const targetlisteners = listeners.find(x=> x._id === instance._proxy )?._id ?? ''
+    const targetlisteners = proxyName !== '' ? listeners[proxyIndex]._id : listeners.find(x=> x._id === instance._proxy )?._id 
     const record: Target = new Target(
       //_ip
       `${targetlisteners}`,
@@ -172,7 +191,10 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
 
   return (
 
-    <Typography
+      <div style={{ gap: '0px', flexDirection: 'column', display: "flex", width: '100%', height: "100%", backgroundColor: "#000", rowGap: "2%" }}>
+
+
+<Typography
       component={'span'}
       variant={'body1'}
       style={{
@@ -182,8 +204,7 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
         color: '#fff',
         fontSize: '15px',
       }}>
-      <div style={{ gap: '0px', flexDirection: 'column', display: "flex", width: '100%', height: "100%", backgroundColor: "#000", rowGap: "2%" }}>
-
+   <div style={{ gap: '0px', flexDirection: 'column', display: "flex", width: '100%', height: "100%", backgroundColor: "#000", rowGap: "2%" }}>
 
 
 
@@ -194,7 +215,7 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
         </div>
 
 
-        <div style={{ flexDirection: "row", display: "flex", gap: "1%" }}>
+        <div style={{ flexDirection: "row", display: "flex", gap: "10px" }}>
 
 
           <div style={{
@@ -202,11 +223,12 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
             borderRadius: "4px",
             display: 'flex',
             width: "50%",
-            padding: "10px",
+            padding: "5px",
             flexDirection: 'column',
             backgroundColor: "#111",
+            gap:"1px"
           }}>
-            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px", height: '50%' }}>Name</p>
+            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px" }}>Name</p>
             <TextField
               fullWidth={true}
               id="Name filled-required"
@@ -218,8 +240,35 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
               value={_n}
               onChange={HandleNameChange}
               sx={{ ...themeText, width: "90%", borderRadius: "5px" }} ></TextField>
-            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px", height: '50%' }}>interval / sleep</p>
-            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px", height: '50%', fontSize: "11px", opacity: "0.5" }}>if you set the sleep flag on set this interval in seconds</p>
+     
+            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px" }}>listener</p>
+            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px", fontSize: "11px", opacity: "0.5" }}>scroll to set your listener </p>
+
+            <TextField
+              fullWidth={true}
+              InputLabelProps={{ sx: { color: "#fff" } }}
+              inputProps={{ sx: { color: "#fff" } }}
+              size='small'
+              onWheel={handleScroll}
+              value={proxyName}
+              sx={{ ...themeText, width: "50%", borderRadius: "5px" }} ></TextField>
+
+          </div>
+
+          <div style={{
+            border: "1px solid #222",
+            borderRadius: "4px",
+            display: 'flex',
+            width: "50%",
+            height:"80%",
+            padding: "10px",
+            flexDirection: 'column',
+            backgroundColor: "#111",
+            cursor: "default"
+          }}>
+
+<p style={{ verticalAlign: 'start', color: "#fff", width: "400px", }}>interval / sleep</p>
+            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px", fontSize: "11px", opacity: "0.5" }}>if you set the sleep flag on set this interval in seconds</p>
             <TextField
               fullWidth={true}
               type='number'
@@ -231,50 +280,37 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
               size='small'
               value={_it}
               onChange={HandleNameItChange}
-              sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
-          </div>
-
-          <div style={{
-            border: "1px solid #222",
-            borderRadius: "4px",
-            display: 'flex',
-            width: "50%",
-            height:"50%",
-            padding: "10px",
-            flexDirection: 'column',
-            backgroundColor: "#111",
-            cursor: "default"
-          }}>
+              sx={{ ...themeText, width: "50%", borderRadius: "5px" }} ></TextField>
             <div style={{ display: "flex", justifyContent: 'space-between' }}>
               <p style={{ verticalAlign: 'center', color: "#fff", width: "400px", height: '100%' }}>Sleep</p>
               <Checkbox checked={sleep} onChange={() => { HandleSleepCheck() }} sx={{ "& .MuiSvgIcon-root": { color: "#7ff685" } }} />
             </div>
 
 
-            <div style={{ display: "flex", justifyContent: 'space-between' }}>
-              <p style={{ verticalAlign: 'center', color: "#fff", width: "400px", height: '100%' }}>spawn process <strong>O</strong>n <strong>F</strong>irst <strong>P</strong>ing </p>
-              <Checkbox checked={ofp} onChange={() => { HandleOFPChange() }} sx={{ "& .MuiSvgIcon-root": { color: "#7ff685" } }} />
-            </div>
+          
           </div>
 
-        </div>
-        <p style={{ verticalAlign: 'start', color: "#fff", width: "400px" }}>process</p>
-        <div style={{
+          <div style={{
           border: "1px solid #222",
           borderRadius: "4px",
           display: 'flex',
           height: "300px",
-          width: "100%",
-          paddingRight: "1%",
+          width: "50%",
+          paddingLeft: "1%",
           flexDirection: 'column',
           backgroundColor: "#111",
+          padding:'5px'
         }}>
-          
+           <p style={{ verticalAlign: 'start', color: "#fff", width: "400px" }}>process</p>
+           <div style={{ display: "flex", justifyContent: 'space-between' }}>
+              <p style={{ verticalAlign: 'center', color: "#fff", width: "400px", height: '100%' }}>spawn process <strong>O</strong>n <strong>F</strong>irst <strong>P</strong>ing </p>
+              <Checkbox checked={ofp} onChange={() => { HandleOFPChange() }} sx={{ "& .MuiSvgIcon-root": { color: "#7ff685" } }} />
+            </div>
           <TextField
             value={CommandText}
             onChange={HandleCommandChange}
             required
-            fullWidth={true}
+            
             maxRows={5}
             multiline={true}
             size='small'
@@ -285,30 +321,62 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
             placeholder="cmd>"
             InputLabelProps={{ sx: { color: "#7ff685", fontSize: '5px' } }}
             inputProps={{ sx: { color: "#7ff685", fontFamily: 'Ubuntu Mono, monospace' } }}
-            sx={themeTextBlack}
+            sx={{...themeTextBlack,maxWidth:"98%"}}
           >
           </TextField>
 
         </div>
 
+       
+
+        </div>
+
+   
+     
 
         <div style={{
           border: "1px solid #222",
           borderRadius: "4px",
           display: 'flex',
-          width: "100%",
-          padding: "10px",
-          flexDirection: 'row',
-          gap: "10px",
-          backgroundColor: "#111",
-        }}>
-          <Button
-            onClick={HandleAddRecord}
-            style={{ backgroundColor: "#333", color: "#7ff685", width: "5%", height: "80%" }}> + </Button>
+            width: "100%",
+            padding: "10px",
+            flexDirection: 'row',
+            gap: "10px",
+            backgroundColor: "#111",
+          }}>
+            <Button
+              onClick={HandleAddRecord}
+              style={{ backgroundColor: "#333", color: "#7ff685", width: "5%", height: "80%" }}> + </Button>
 
-          <p style={{ color: "#fff", width: "10%", cursor: "default" }}> Count {targetData !== undefined ? targetData.length : 0}</p>
+            <p style={{ color: "#fff", width: "10%", cursor: "default" }}> Count {targetData !== undefined ? targetData.length : 0}</p>
+           
+            <List sx={{ overflow:"auto",border:"1px solid #333",borderRadius:"5px",backgroundColor: "#000", width: "80%", flexDirection: 'row', display: "flex",padding:"5px",gap:"3px"}}>
+            
+              {(targetData !== undefined ? targetData : []).map((item: Target, index: number) => (
 
-          <Button
+                <ListItem onClick={()=>alert(item._n)} sx={{ ":hover": { opacity: "0.9" }, cursor: "pointer", border: "1px solid #333", borderRadius: "5px", width: "10%", minWidth: "100px", height: "100%", backgroundColor: "#111", flexDirection: 'row', display: "flex", gap: "3px", overflow: "hidden" }}>
+                  <div style ={{flexDirection: 'column', display: "flex",gap:"10px",width:"100%"}}>
+                  <div style ={{flexDirection: 'row', display: "flex"}}>
+                  <p style={{ color: "#fff", width: "100%", fontSize: "10px", }}>
+                    {item._n}
+                  </p>
+                  <p style={{ color: "#fff", width: "100%", fontSize: "8px" }}>
+                    {listeners.find(x => x._id.toString() === item._ip)?._listener_name}
+                  </p>
+                  </div>
+                  <p style={{ color: "#fff", width: "100%", fontSize: "8px" }}>
+                    {item._st}
+                  </p>
+                  </div>
+                </ListItem>
+
+              ))}
+            </List>
+
+          </div>
+
+
+        <Button
             onClick={HandleInsertRecords}
             style={{ marginLeft: "auto",  backgroundColor: "transparent",border:"1px solid #7ff685",  color: "#7ff685", width: "20%", height: "80%" }}> Insert
           </Button>
@@ -316,12 +384,10 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
 
         </div>
 
-
-
-
+        </Typography>
 
       </div>
-    </Typography>
+    
   );
 
 }

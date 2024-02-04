@@ -420,6 +420,7 @@ class Sessions(db.Entity):
         c = orm.select(i for i in Configuration if i._core_id == _core_id).first()
         if c :
             time_minutes = c._session_len
+            #print(100*'LOGINLOGIN')
         else : time_minutes = 30
         token = generate_random_string(25)
         timtefromnow = datetime.datetime.now() + datetime.timedelta(minutes=time_minutes)

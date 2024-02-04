@@ -170,7 +170,7 @@ const networkDiagram = () => {
         id: `${Count + index}`,
         type: 'custom',
         //position: {x: 500+index *100 , y: index < 5 ? 500-index*100 :  300+-(index % 5)*100 } ,
-        position: return_coor(xrelative, yrelative, index % 3 === 0 ? 250 : 350, returnpi(index * 300, alltargets.length)),
+        position: return_coor(xrelative, yrelative, index % 3 === 0 ? 250 : 350, returnpi( index * 100, alltargets.length)),
         data: { id: Count + index, value: targ, type: 'target' }
       }));
 

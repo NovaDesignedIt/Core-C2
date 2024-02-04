@@ -30,8 +30,9 @@ import { Typography } from '@material-ui/core';
 {/*sx={{color:"#21fd0a"}}*/ }
 const data = [
   // { icon: <People />, index: 1, text: "User" },
-  { icon: <FolderIcon />, index: 2, text: "File view" },
+  
   { icon: <StorageIcon />, index: 3, text: "Instances view" },
+  { icon: <FolderIcon />, index: 2, text: "File view" },
   { icon: <Public />, index: 4, text: "Map view" },
   { icon: <PiShareNetwork />, index: 7, text: "Topology View" },
 ];
