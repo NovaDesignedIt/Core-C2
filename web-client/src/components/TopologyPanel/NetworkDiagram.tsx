@@ -235,8 +235,11 @@ const networkDiagram = () => {
       margin: "auto"
     }}>
         <div style={{ display: "flex", width: "100%", flexDirection: "row" }}>
-          <p>Topology View  </p>
-          <p style={{marginLeft:"auto"}}>tap h for help</p>
+          <p style={{margin:"0",color:"#fff"}}>Topology View  </p>
+          <p style={{margin:"0",marginLeft:"auto",color:"#fff"}}>tap h for help</p>
+  
+          <p style={{margin:"0",marginLeft:"auto",color:"#fff"}}>tap h for help</p>
+          <p style={{margin:"0",marginLeft:"auto",color:"#fff"}}>Topology View  </p>
         </div>
     
         </Typography>

@@ -154,7 +154,7 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
 
       </div>
     
-      <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "100%", borderRadius: 0, backgroundColor: "#202c22", }} >
+      <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "50%", borderRadius: 0, backgroundColor: "#202c22", }} >
         <Table size="small" sx={{
           borderStyle: 'dotted',
           borderWidth: '1px',
@@ -163,6 +163,7 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
           minWidth: 650, backgroundColor: "#202c22",
           "& .MuiTableCell-root": {
             color: "#fff",
+    
           },
           "& .MuiTableHead-root": {
             backgroundColor: "#000",
@@ -172,8 +173,9 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
           },
           "& .MuiTableRow-root": {
             ":Hover,focus": {
-              backgroundColor: "#000",
+              opacity: "0.9",
             },
+         
           },
           "& .MuiTableRow-root.Mui-selected": {
             backgroundColor: "#4D6A52",
@@ -203,7 +205,7 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
                 key={index}
                 selected={index === selectedFile}
                 onClick={() => { setSelectedFile(index); OnSetFile(f); }}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer', width: "100%" }}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer', width: "100%", height:"10px",margin:"0" }}
               >
                 <TableCell
                   align="left" sx={{ width: "1%" }}>
@@ -212,14 +214,14 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
                     sx={{
                       color: "#fff",
                       "& .MuiCheckbox-root .MuiSvgIcon-root": { color: "#fff" },
-                      "& .MuiCheckbox-root": { color: "#fff" }
+                      "& .MuiCheckbox-root": { color: "#fff" },
+                      height:"10px"
                     }}
                     control={<Checkbox onChange={(e) => { handleCheckboxChange(e, f) }} />}
                   /></TableCell>
-                <TableCell align="left" sx={{ width: "30px" }}>{f._name}</TableCell>
-                <TableCell align="left" sx={{ width: "10px" }}>{f._extension}</TableCell>
-                <TableCell align="left">{f._size}</TableCell>
-
+                <TableCell align="left" sx={{ width: "30px",margin:"0",height:"10px" }}>{f._name}</TableCell>
+                <TableCell align="left" sx={{ width: "10px",margin:"0",height:"10px" }}>{f._extension}</TableCell>
+                <TableCell align="left" sx={{margin:"0",height:"10px"}}>{f._size}</TableCell>
               </TableRow>
             ))}
           </TableBody>
