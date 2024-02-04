@@ -37,6 +37,7 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
   const [proxy, setproxy] = React.useState(0);
   const [proxyIndex,setIndex] = React.useState(0); 
   const [proxyName, SetProxyName] = React.useState('');
+  const  [targetselected, Settargeselected] = React.useState(-1);
 
   
   const instance = useAppSelector(state => state.core.SelectedInstances)
@@ -47,7 +48,32 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
     closePanel()
   }
 
+  const handletargetSelected = (index: number) => {
+    if (targetData !== undefined) {
+      
+      setname(targetData[index]._n);
+      setInterval(targetData[index]._zzz.toString())
+      SetCommandText(targetData[index]._in)
+      const prox:Listeners | void = listeners.find(x => x._id.toString() === targetData[index]._ip)
+      
+      if(targetData[index]._st === 3){
+        setOfp(true)     
+        setSleep(false)
+      }else if(targetData[index]._st === 2){
+        setSleep(true)
+        setOfp(false)
+      }
 
+      if (prox !== undefined) {
+        const i = listeners.indexOf(prox)
+        setIndex(i)
+        SetProxyName(prox._listener_name)
+      }
+
+    }
+
+    Settargeselected(index);
+}
 
   const HandleOFPChange = () => {
     setOfp(!ofp);
@@ -95,12 +121,45 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
     SetProxyName(listeners[nextIndex]._listener_name)
     setIndex(nextIndex);
 };
+ 
 
+const HandleModifictionChanges =  (targindex: number) =>  {
 
+  const arraytarg:Target[] | void = targetData?.filter((item:any,i:number) => i !== targindex );
+  if (arraytarg !== undefined) {
+    const interval: number = _it !== '' ? parseInt(`${_it}`) : 1;
+    const targetlisteners = proxyName !== '' ? listeners[proxyIndex]._id : listeners.find(x=> x._id === instance._proxy )?._id 
+    setTargetData([...arraytarg,new Target(
+      //_ip
+      `${targetlisteners}`,
+      //_state
+      ofp ? 3
+        : sleep && interval !== undefined && interval > 1 ? 2
+          : -1,
+      //_dump
+      '.',
+      //_in
+      ofp ? `${CommandText}`
+        : ' ',
+      //_out
+      '.',
+      //_lastping
+      '.',
+      //_id???
+      -1,
+      //_instanceID
+      instance?._instance_id,
+      //_interva;
+      interval,
+      //_name
+      `${_n}`
+    )])
+    Settargeselected(-1)
+  }
+}
 
   const HandleAddRecord = async () => {
     const interval: number = _it !== '' ? parseInt(`${_it}`) : 1;
-    
     const targetlisteners = proxyName !== '' ? listeners[proxyIndex]._id : listeners.find(x=> x._id === instance._proxy )?._id 
     const record: Target = new Target(
       //_ip
@@ -188,6 +247,30 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
     },
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.7)'
   }
+
+  function returnStateColor(state: number) {
+    let col: string = ''; // Use let instead of const
+  
+    switch (state) {
+      case 0:
+        col = "lightyellow";
+        break; // Add break statement
+      case 1:
+        col = "cyan";
+        break; // Add break statement
+      case 2:
+        col = "#888";
+        break; // Add break statement
+      case 3:
+        col = "green";
+        break; // Add break statement
+      default:
+        col = "#333";
+    }
+  
+    return col;
+  }
+  
 
   return (
 
@@ -346,26 +429,39 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
           }}>
             <Button
               onClick={HandleAddRecord}
-              style={{ backgroundColor: "#333", color: "#7ff685", width: "5%", height: "80%" }}> + </Button>
+              style={{ backgroundColor: "#333", color: "#7ff685", width: "5%", maxHeight: "20px" }}> + </Button>
 
             <p style={{ color: "#fff", width: "10%", cursor: "default" }}> Count {targetData !== undefined ? targetData.length : 0}</p>
            
-            <List sx={{ overflow:"auto",border:"1px solid #333",borderRadius:"5px",backgroundColor: "#000", width: "80%", flexDirection: 'row', display: "flex",padding:"5px",gap:"3px"}}>
+            <List sx={{ overflow:"auto",border:"1px solid #333",borderRadius:"5px",backgroundColor: "#000", width: "80%", flexDirection: 'row', display: "flex",padding:"5px",gap:"5px"}}>
             
               {(targetData !== undefined ? targetData : []).map((item: Target, index: number) => (
 
-                <ListItem onClick={()=>alert(item._n)} sx={{ ":hover": { opacity: "0.9" }, cursor: "pointer", border: "1px solid #333", borderRadius: "5px", width: "10%", minWidth: "100px", height: "100%", backgroundColor: "#111", flexDirection: 'row', display: "flex", gap: "3px", overflow: "hidden" }}>
+                <ListItem  onClick={()=>handletargetSelected(index)} sx={{ ":hover": { opacity: "0.6" }, cursor: "pointer", borderRadius: "5px", width: "10%", minWidth: "100px", height: "100%", backgroundColor: targetselected !== index ? "#111" :  "#333",border : targetselected !== index ? "1px solid #333": "1px solid #fff" , flexDirection: 'row', display: "flex", gap: "3px", overflow: "hidden" }}>
                   <div style ={{flexDirection: 'column', display: "flex",gap:"10px",width:"100%"}}>
+                  <p style={{ color: "#fff", width: "100%", fontSize: "15px", }}>
+                    Target:{index}
+                  </p>
                   <div style ={{flexDirection: 'row', display: "flex"}}>
-                  <p style={{ color: "#fff", width: "100%", fontSize: "10px", }}>
+                  <p style={{ color: "#fff", width: "100%", fontSize: "15px", }}>
                     {item._n}
                   </p>
                   <p style={{ color: "#fff", width: "100%", fontSize: "8px" }}>
                     {listeners.find(x => x._id.toString() === item._ip)?._listener_name}
                   </p>
                   </div>
-                  <p style={{ color: "#fff", width: "100%", fontSize: "8px" }}>
-                    {item._st}
+                  <p style={{ color: "#fff",backgroundColor:returnStateColor(item._st), width: "80%", fontSize: "8px", borderRadius:"6px" }}>
+                      {
+                        item._st === 0 &&
+                        "Task" ||
+                        item._st === 1 &&
+                        "Sleep" ||
+                        item._st === 2 &&
+                        "dropped" ||
+                        item._st === 3 &&
+                        "Listen" ||
+                        "awaiting"
+                      }
                   </p>
                   </div>
                 </ListItem>
@@ -374,13 +470,19 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
             </List>
 
           </div>
+          <div style ={{flexDirection: 'row', display: "flex"}}>
+
+          <Button
+            onClick={()=>HandleModifictionChanges(targetselected)}
+            style={{   backgroundColor: "transparent",border:"1px solid #7ff685",  color: "#7ff685", width: "20%", height: "80%" }}> Save modifications
+          </Button>
 
 
         <Button
             onClick={HandleInsertRecords}
-            style={{ marginLeft: "auto",  backgroundColor: "transparent",border:"1px solid #7ff685",  color: "#7ff685", width: "20%", height: "80%" }}> Insert
+            style={{ marginLeft: "auto",  backgroundColor: "transparent",border:"1px solid #7ff685",  color: "#7ff685", width: "20%", height: "80%" }}> Save Changes
           </Button>
-
+          </div>
 
         </div>
 
