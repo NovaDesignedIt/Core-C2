@@ -62,6 +62,9 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
       }else if(targetData[index]._st === 2){
         setSleep(true)
         setOfp(false)
+      }else {
+        setOfp(false)
+        setSleep(false)
       }
 
       if (prox !== undefined) {
