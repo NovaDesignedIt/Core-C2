@@ -123,10 +123,20 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
     setproxy(prev => prev + 1)
     SetProxyName(listeners[nextIndex]._listener_name)
     setIndex(nextIndex);
-};
- 
+  };
 
-const HandleModifictionChanges =  (targindex: number) =>  {
+  const HandleRemoveRecord = (targindex: number) => {
+    if (targindex !== -1) {
+      const arraytarg: Target[] | void = targetData?.filter((item: any, i: number) => i !== targindex);
+      if (arraytarg !== undefined) {        
+        setTargetData(arraytarg)
+      }
+    } else {
+      alert('select a target first to remove')
+    }
+  }
+
+  const HandleModifictionChanges =  (targindex: number) =>  {
 
   const arraytarg:Target[] | void = targetData?.filter((item:any,i:number) => i !== targindex );
   if (arraytarg !== undefined) {
@@ -160,6 +170,10 @@ const HandleModifictionChanges =  (targindex: number) =>  {
     Settargeselected(-1)
   }
 }
+
+
+
+
 
   const HandleAddRecord = async () => {
     const interval: number = _it !== '' ? parseInt(`${_it}`) : 1;
@@ -290,7 +304,7 @@ const HandleModifictionChanges =  (targindex: number) =>  {
         color: '#fff',
         fontSize: '15px',
       }}>
-   <div style={{ gap: '0px', flexDirection: 'column', display: "flex", width: '100%', height: "100%", backgroundColor: "#000", rowGap: "2%" }}>
+   <div style={{ gap: 'px', flexDirection: 'column', display: "flex", width: '100%', height: "100%", backgroundColor: "#000", rowGap: "2%" }}>
 
 
 
@@ -314,7 +328,7 @@ const HandleModifictionChanges =  (targindex: number) =>  {
             backgroundColor: "#111",
             gap:"1px"
           }}>
-            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px" }}>Name</p>
+            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px",margin:"0" }}>Name</p>
             <TextField
               fullWidth={true}
               id="Name filled-required"
@@ -327,8 +341,8 @@ const HandleModifictionChanges =  (targindex: number) =>  {
               onChange={HandleNameChange}
               sx={{ ...themeText, width: "90%", borderRadius: "5px" }} ></TextField>
      
-            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px" }}>listener</p>
-            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px", fontSize: "11px", opacity: "0.5" }}>scroll to set your listener </p>
+            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px",margin: "0" }}>listener</p>
+            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px", fontSize: "11px", opacity: "0.5",margin: "0" }}>scroll to set your listener </p>
 
             <TextField
               fullWidth={true}
@@ -339,22 +353,14 @@ const HandleModifictionChanges =  (targindex: number) =>  {
               value={proxyName}
               sx={{ ...themeText, width: "50%", borderRadius: "5px" }} ></TextField>
 
-          </div>
 
-          <div style={{
-            border: "1px solid #222",
-            borderRadius: "4px",
-            display: 'flex',
-            width: "50%",
-            height:"80%",
-            padding: "10px",
-            flexDirection: 'column',
-            backgroundColor: "#111",
-            cursor: "default"
-          }}>
 
-<p style={{ verticalAlign: 'start', color: "#fff", width: "400px", }}>interval / sleep</p>
-            <p style={{ verticalAlign: 'start', color: "#fff", width: "400px", fontSize: "11px", opacity: "0.5" }}>if you set the sleep flag on set this interval in seconds</p>
+<p style={{ verticalAlign: 'start', color: "#fff", width: "400px",margin:"0" }}>interval / sleep</p>
+            <p style={{ verticalAlign: 'start', color: "#fff", width: "100%", fontSize: "11px", opacity: "0.5",margin:"0" }}>if you set the sleep flag on set this interval in seconds {"("+"1 by default"+")"}</p>
+            <div style={{ display: "flex",margin:"0" }}>
+              <p style={{ color: "#fff", width: "10%",paddingTop:"10px",margin:"0" }}>Sleep</p>
+              <Checkbox checked={sleep} onChange={() => { HandleSleepCheck() }} sx={{ "& .MuiSvgIcon-root": { color: "#7ff685" } }} />
+            </div>
             <TextField
               fullWidth={true}
               type='number'
@@ -367,31 +373,18 @@ const HandleModifictionChanges =  (targindex: number) =>  {
               value={_it}
               onChange={HandleNameItChange}
               sx={{ ...themeText, width: "50%", borderRadius: "5px" }} ></TextField>
-            <div style={{ display: "flex", justifyContent: 'space-between' }}>
-              <p style={{ verticalAlign: 'center', color: "#fff", width: "400px", height: '100%' }}>Sleep</p>
-              <Checkbox checked={sleep} onChange={() => { HandleSleepCheck() }} sx={{ "& .MuiSvgIcon-root": { color: "#7ff685" } }} />
-            </div>
+            
+            <h6 style={{ verticalAlign: 'start', color: "#fff", margin:"0"  }}>process</h6>
+           
+           <hr style={{width:"80%",margin:"5px"}}/>
 
-
-          
+           <div style={{ display: "flex",margin:"0"  }}>
+              <p style={{ verticalAlign: 'center', color: "#fff", width: "40%", height: '100%',margin:"0" }}>spawn process <strong>O</strong>n <strong>F</strong>irst <strong>P</strong>ing </p>
+              <Checkbox checked={ofp} onChange={() => { HandleOFPChange() }} sx={{ "& .MuiSvgIcon-root": { color: "#7ff685" } }} />
           </div>
 
-          <div style={{
-          border: "1px solid #222",
-          borderRadius: "4px",
-          display: 'flex',
-          height: "300px",
-          width: "50%",
-          paddingLeft: "1%",
-          flexDirection: 'column',
-          backgroundColor: "#111",
-          padding:'5px'
-        }}>
-           <p style={{ verticalAlign: 'start', color: "#fff", width: "400px" }}>process</p>
-           <div style={{ display: "flex", justifyContent: 'space-between' }}>
-              <p style={{ verticalAlign: 'center', color: "#fff", width: "400px", height: '100%' }}>spawn process <strong>O</strong>n <strong>F</strong>irst <strong>P</strong>ing </p>
-              <Checkbox checked={ofp} onChange={() => { HandleOFPChange() }} sx={{ "& .MuiSvgIcon-root": { color: "#7ff685" } }} />
-            </div>
+{
+        ofp &&
           <TextField
             value={CommandText}
             onChange={HandleCommandChange}
@@ -410,50 +403,59 @@ const HandleModifictionChanges =  (targindex: number) =>  {
             sx={{...themeTextBlack,maxWidth:"98%"}}
           >
           </TextField>
+}
+          
+          </div>
 
-        </div>
-
-       
-
-        </div>
-
-   
-     
-
-        <div style={{
+          <div style={{
           border: "1px solid #222",
           borderRadius: "4px",
           display: 'flex',
-            width: "100%",
+          height: "300px",
+          width: "50%",
+          paddingLeft: "1%",
+          flexDirection: 'column',
+          backgroundColor: "#111",
+          padding:'5px'
+        }}>
+          <h5 style={{ color: "#fff", width: "100%", cursor: "default",margin: "0"}}>Insert target</h5>
+            <div style={{     display: 'flex',
+            width: "10%",
             padding: "10px",
             flexDirection: 'row',
-            gap: "10px",
-            backgroundColor: "#111",
-          }}>
-            <Button
-              onClick={HandleAddRecord}
-              style={{ backgroundColor: "#333", color: "#7ff685", width: "5%", maxHeight: "20px" }}> + </Button>
+            gap: "5px",}}>
 
-            <p style={{ color: "#fff", width: "10%", cursor: "default" }}> Count {targetData !== undefined ? targetData.length : 0}</p>
-           
-            <List sx={{ overflow:"auto",border:"1px solid #333",borderRadius:"5px",backgroundColor: "#000", width: "80%", flexDirection: 'row', display: "flex",padding:"5px",gap:"5px"}}>
+            
+            
+
+                <Button
+                  onClick={HandleAddRecord}
+                  style={{ backgroundColor: "#333", color: "#7ff685", width: "100%" }}>+</Button>
+
+                <Button
+                  onClick={()=>HandleRemoveRecord(targetselected)}
+                  style={{ backgroundColor: "#333", color: "#7ff685", width: "100%" }}>-</Button>
+
+          </div>
+
+            <List sx={{ overflow:"auto",border:"1px solid #333",borderRadius:"5px",backgroundColor: "#000",minHeight:"50%",width: "100%", flexDirection: 'column', display: "flex",padding:"5px",gap:"5px"}}>
             
               {(targetData !== undefined ? targetData : []).map((item: Target, index: number) => (
 
-                <ListItem  onClick={()=>handletargetSelected(index)} sx={{ ":hover": { opacity: "0.6" }, cursor: "pointer", borderRadius: "5px", width: "10%", minWidth: "100px", height: "100%", backgroundColor: targetselected !== index ? "#111" :  "#333",border : targetselected !== index ? "1px solid #333": "1px solid #fff" , flexDirection: 'row', display: "flex", gap: "3px", overflow: "hidden" }}>
-                  <div style ={{flexDirection: 'column', display: "flex",gap:"10px",width:"100%"}}>
-                  <p style={{ color: "#fff", width: "100%", fontSize: "15px", }}>
+                <ListItem  onClick={()=>handletargetSelected(index)} sx={{ ":hover": { opacity: "0.6" }, cursor: "pointer", borderRadius: "5px", width: "100%", minHeight: "35px", backgroundColor: targetselected !== index ? "#111" :  "#333",border : targetselected !== index ? "1px solid #333": "1px solid #fff" , flexDirection: 'row', display: "flex", gap: "3px", overflow: "hidden" }}>
+                  <div style ={{flexDirection: 'row', display: "flex",gap:"10px",width:"100%"}}>
+                  <p style={{ color: "#fff", width: "100%", fontSize: "15px",margin:"0" }}>
                     Target:{index}
                   </p>
-                  <div style ={{flexDirection: 'row', display: "flex"}}>
-                  <p style={{ color: "#fff", width: "100%", fontSize: "15px", }}>
-                    {item._n}
+                 
+                  <p style={{ color: "#fff", width: "100%", fontSize: "15px",margin:"0" }}>
+                   name:{item._n}
                   </p>
-                  <p style={{ color: "#fff", width: "100%", fontSize: "8px" }}>
-                    {listeners.find(x => x._id.toString() === item._ip)?._listener_name}
+                  <p style={{ color: "#fff", width: "100%", fontSize: "15px",margin:"0" }}>
+                   listener:{listeners.find(x => x._id.toString() === item._ip)?._listener_name}
                   </p>
-                  </div>
-                  <p style={{ color: "#fff",backgroundColor:returnStateColor(item._st), width: "80%", fontSize: "8px", borderRadius:"6px" }}>
+           
+                  <p style={{ padding:"5px",color: "#fff",backgroundColor:returnStateColor(item._st), width: "50%", fontSize: "8px", borderRadius:"6px",margin:"0" }}>
                       {
                         item._st === 0 &&
                         "Task" ||
@@ -471,20 +473,28 @@ const HandleModifictionChanges =  (targindex: number) =>  {
 
               ))}
             </List>
-
-          </div>
-          <div style ={{flexDirection: 'row', display: "flex"}}>
-
-          <Button
+            <p style={{ color: "#fff", width: "100%", cursor: "default",  margin: "0"}}> Count:{targetData !== undefined ? targetData.length : 0}</p>
+         <div style={{flexDirection:"row",display:"flex",gap:"50%"}}>
+            <Button
             onClick={()=>HandleModifictionChanges(targetselected)}
-            style={{   backgroundColor: "transparent",border:"1px solid #7ff685",  color: "#7ff685", width: "20%", height: "80%" }}> Save modifications
+            style={{   backgroundColor: "transparent",border:"1px solid #7ff685",  color: "#7ff685", width: "100%", height: "100%" }}> Save 
           </Button>
-
 
         <Button
             onClick={HandleInsertRecords}
-            style={{ marginLeft: "auto",  backgroundColor: "transparent",border:"1px solid #7ff685",  color: "#7ff685", width: "20%", height: "80%" }}> Save Changes
-          </Button>
+            style={{ marginLeft: "auto",  backgroundColor: "transparent",border:"1px solid #7ff685",  color: "#7ff685", width: "100%", height: "100%" }}> Insert 
+        </Button>
+        </div>
+        </div>
+
+       
+
+        </div>
+
+ 
+          <div style ={{flexDirection: 'row', display: "flex"}}>
+
+
           </div>
 
         </div>

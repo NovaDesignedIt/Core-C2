@@ -15,7 +15,7 @@ const ObjectView = () => {
     const currentTargs  = targets ?? [];
     //console.log(targets)
     return (
-        <Box sx={{ color: '#fff', height: "100%", overflow: 'auto' }}>
+        <Box sx={{ color: '#fff', height: "100%" }}>
             <Box
                 sx={{
                     backgroundColor: '#111',
@@ -31,7 +31,7 @@ const ObjectView = () => {
                 <p >Object View</p>
             </Box>
 
-            <List sx={{ gap: '10px', }} >
+            <List sx={{ gap: '10px',height:"100%" }} >
                 {
 
                 currentTargs.map((item: any) =>

@@ -165,15 +165,15 @@ const BoxMenu = () => {
   }
 
   return (
-    <>
+    <div style={{height:"100%"}}>
       <Splitter direction={SplitDirection.Vertical}
         onResizeFinished={handleResize}
         initialSizes={sizes}>
 
-        <div style={{overflow:"auto", height:"100%"  }}>
+        <div style={{height:"100%"  }}>
           <LiveView />
         </div>
-        <div style={{overflow:"auto", height:"100%"  }}>
+        {/* <div style={{overflow:"auto", height:"100%"  }}>
           <Box sx={{ color: 'blue' }}>
 
             <Box sx={{
@@ -228,13 +228,13 @@ const BoxMenu = () => {
 
 
           </Box>
-        </div>
-        <div style={{overflow:"auto", height:"100%",backgroundColor:"#111"  }}>
+        </div> */}
+        <div style={{height:"100%",backgroundColor:"#111"  }}>
           <ObjectView />
 
         </div>
       </Splitter>
-    </>
+    </div>
 
   );
 
