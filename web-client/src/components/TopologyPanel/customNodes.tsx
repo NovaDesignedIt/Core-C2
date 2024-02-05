@@ -1,4 +1,4 @@
-import { Button, Popover, Stack, Typography } from '@mui/material';
+import { Button, Popover, Stack, Typography,TextField } from '@mui/material';
 import React, { useCallback } from 'react';
 import { GiConsoleController } from 'react-icons/gi';
 import { Handle, Position, Node } from 'reactflow';
@@ -7,8 +7,10 @@ import { PiComputerTower } from "react-icons/pi";
 import { GrDatabase } from "react-icons/gr";
 import { LuBox } from "react-icons/lu";
 import { RiComputerLine } from "react-icons/ri";
+import  {themeTextBlack,getStateLabel,returnStateColor}  from '../../Utilities/Utilities'
+import RemoveIcon from '@mui/icons-material/Remove';
 
-
+import BedtimeIcon from '@mui/icons-material/Bedtime';
 
 
 
@@ -115,12 +117,13 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                 }
 
                 <div
-                    onClick={handleClick}
+                    onClick={(e)=>{handleClick(e)}}
+                    
                     onMouseEnter={(e) => { handleSelectedNode(true) }}
                     onMouseLeave={() => { handleSelectedNode(false) }}
                     style={{
-                        height: "50px",
-                        width: "50px",
+                        height: "100%",
+                        width: "100%",
                         border: "1px solid transparent",
                         borderRadius: "5px",
                         background: selected ? "#111" : '#111',
@@ -131,18 +134,18 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                         open={open}
                         anchorEl={anchorEl}
                         onClose={handleClose}
-                        hideBackdrop={false}
+                        
                         
                         anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'left',
                         }}
-                        
+                       
                     >
 
 
                         <Stack sx={{ background: "#222" }}
-                            onMouseLeave={() => { handleClose() }}>
+                          >
                             <Typography
                                 component={'span'}
                                 variant={'body1'}
@@ -155,7 +158,8 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                                     margin: "auto"
                                 }}>
 
-                                <div style={{ padding: "10px", border: "1px solid #333", height: "250px", width: "250px" }}>
+                                <div 
+                                onMouseLeave={()=>{handleClose()}} style={{ padding: "10px", border: "1px solid #333", height: "250px", width: "250px" }}>
                                     
                                     {
                                         data["type"] === 'instance' &&
@@ -164,7 +168,9 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
                                     {
                                         data["type"] === 'mother' &&
-                                        <div style={{flexDirection:"column",display:"flex",padding:"5px",gap:"20px"}}>
+                                        <div 
+                                        onMouseLeave={()=>{handleClose()}}
+                                         style={{flexDirection:"column",display:"flex",padding:"5px",gap:"20px"}}>
                                             <p style={{ fontSize: "10px", color: "#777" }}> {data['value']['core']._core_id} </p>
                                             
                                             hosted @ : {data['value']['config']._ip_address}
@@ -181,9 +187,52 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
                                     {
                                         data["type"] === 'target' &&
-                                        <>
-                                            <p style={{ fontSize: "10px", color: "#777" }}>  hosted @ : {  data['value']._n } </p>
-                                        </>
+                                        <div onMouseLeave={()=>{handleClose()}}  style={{flexDirection:"column",display:"flex",height:"100%"}}>
+                                            <h6 style={{ color: "#fff" }} >  target Name : {data['value']._n} </h6>
+                                            
+
+                                            <div style={{flexDirection:"row",display:"flex",padding:"5px"}}>
+                                            <p style={{ borderRadius:"5px",color: "#fff", backgroundColor:returnStateColor(data['value']._st),padding:"3px",width:"50%",marginRight:"auto"}} > {getStateLabel(data['value']._st)} </p>
+<BedtimeIcon onClick={() => { alert(`sleeping: ${data['value']._n}`) }}
+sx={{
+marginRight: "auto",
+cursor: "pointer",
+"&:hover": {
+    color: "#7ff685"
+}
+}}/>
+    <RemoveIcon
+
+        onClick={() => { alert(`deleting: ${data['value']._n}`) }}
+        sx={{
+            marginLeft: "auto",
+            cursor: "pointer",
+            "&:hover": {
+                color: "#7ff685"
+            }
+        }} />
+       
+</div>
+
+                                            <TextField
+                                                // value={CommandText}
+                                                // onChange={HandleCommandChange}
+                                                required
+                                                maxRows={5}
+                                                multiline={true}
+                                                size='small'
+                                                spellCheck={false}  // Disable spell checking
+                                                autoComplete='off'
+                                                autoCorrect='off'
+                                                autoCapitalize='off'
+                                                placeholder="cmd>"
+                                                InputLabelProps={{ sx: { color: "#7ff685", fontSize: '5px' } }}
+                                                inputProps={{ sx: { color: "#7ff685", fontFamily: 'Ubuntu Mono, monospace' } }}
+                                                sx={{ ...themeTextBlack, maxWidth: "100%", height: "50%", borderRadius: "5px",overflow:"hidden"}}
+                                            >
+                                            </TextField>
+                                            
+                                        </div>
                                     }
 
 

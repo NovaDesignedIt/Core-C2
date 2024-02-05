@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import { Core, Instance, Listeners, Target, insertrecord } from '../api/apiclient';
 import CloseIcon from '@mui/icons-material/Close';
 import { useAppSelector,useAppDispatch } from '../store/store';
+import { returnStateColor }  from '../Utilities/Utilities'
 
 declare module '@mui/material/styles' {
   interface PaletteColor {
@@ -265,28 +266,6 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.7)'
   }
 
-  function returnStateColor(state: number) {
-    let col: string = ''; // Use let instead of const
-  
-    switch (state) {
-      case 0:
-        col = "lightyellow";
-        break; // Add break statement
-      case 1:
-        col = "cyan";
-        break; // Add break statement
-      case 2:
-        col = "#888";
-        break; // Add break statement
-      case 3:
-        col = "green";
-        break; // Add break statement
-      default:
-        col = "#333";
-    }
-  
-    return col;
-  }
   
 
   return (

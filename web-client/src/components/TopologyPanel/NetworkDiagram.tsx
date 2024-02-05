@@ -3,12 +3,14 @@ import React, { useCallback, useRef, useState } from 'react';
 import ReactFlow, { Position, useNodesState, useEdgesState, addEdge, Connection, Edge, OnConnect, OnEdgesChange, OnNodesChange, applyEdgeChanges, applyNodeChanges, Node, NodeTypes } from 'reactflow';
 import 'reactflow/dist/style.css';
 import CustomNode from './customNodes';
-import { Button, Typography } from '@mui/material';
+
+import { Button, Typography} from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { CoreC, Instance, Listeners, Config, Target, dumpTargets } from '../../api/apiclient';
+
 import { InsertEmoticon } from '@mui/icons-material';
 import { Socket, io } from 'socket.io-client';
-
+import { createStyles, withStyles, WithStyles } from "@material-ui/core/styles";
 const nodeDefaults = {
   sourcePosition: Position.Right,
   targetPosition: Position.Left,
@@ -23,12 +25,23 @@ const nodeStyle = {
 
 }
 
+const labelStyle = {
+
+    margin: "auto",
+    color: "#fff",
+    cursor: "pointer",
+
+
+}
+
 interface coordinates {
 
   x: number;
   y: number;
 
 }
+
+
 
 
 const nodeTypes: NodeTypes = {
@@ -107,16 +120,6 @@ const networkDiagram = () => {
     return result;
   }, []);
 
-
-
-
-
-
-
-
-  // const TargetNode: Node[] = targets.map((item: Node, index: number) => (
-  //   {id: `${ proxyNodes.length + instancenodes.length + index + 1 }`, type: 'custom', position: { x: 100, y: index * 200 }, data: { id: index, value: item, type: "target" }}
-  //   ));
 
 
   const handleSelectedNode = (e: any) => {
@@ -217,6 +220,9 @@ const networkDiagram = () => {
     }
   }
 
+  
+
+  
   return (
   
     <div 
@@ -234,20 +240,22 @@ const networkDiagram = () => {
       fontSize: '10px',
       margin: "auto"
     }}>
+ 
         <div style={{ display: "flex", width: "100%", flexDirection: "row" }}>
-          <p style={{margin:"0",color:"#fff"}}>Topology View  </p>
-          <p style={{margin:"0",marginLeft:"auto",color:"#fff"}}>tap h for help</p>
-  
-          <p style={{margin:"0",marginLeft:"auto",color:"#fff"}}>tap h for help</p>
-          <p style={{margin:"0",marginLeft:"auto",color:"#fff"}}>Topology View  </p>
+          <h5 style={labelStyle}>Topology View </h5>
+          <h6 style={labelStyle}>core ID: {core._core_id}</h6>
+          <h6 style={labelStyle}>target count: {instances.length}</h6>
+          <h6 style={labelStyle}>proxy/listener count: {listener.length}</h6>
+          <h6 style={labelStyle}>target count: {targetsObjects.length}</h6>
+          <h6 style={labelStyle}>Settings</h6>
+
         </div>
-    
-        </Typography>
+
+      </Typography>
       <ReactFlow
      
         ref={componentRef}
         style={{ border: "1px solid #333", borderRadius: "4px", backgroundColor: "#111" }}
-
         onNodeClick={(e) => { handleSelectedNode(e) }}
         onNodeMouseEnter={(e) => { }}
         nodes={nodes}
