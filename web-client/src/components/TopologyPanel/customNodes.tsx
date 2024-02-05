@@ -56,7 +56,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
     
     return (
         <div
-
+        onClick={()=>handleClose()}
         >
 
             <Typography
@@ -67,6 +67,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                     justifyContent: 'center',
                     display: "flex",
                     color: '#fff',
+                   
                     fontSize: '15px',
                 }}>
 
@@ -117,10 +118,10 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                 }
 
                 <div
-                    onClick={(e)=>{handleClick(e)}}
+                   
                     
-                    onMouseEnter={(e) => { handleSelectedNode(true) }}
-                    onMouseLeave={() => { handleSelectedNode(false) }}
+                    onMouseEnter={(e) => { handleSelectedNode(true);handleClick(e); }}
+                    onMouseLeave={(e) => { handleSelectedNode(false); }}
                     style={{
                         height: "100%",
                         width: "100%",

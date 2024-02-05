@@ -5,6 +5,7 @@ import { Core, Instance, Listeners, Target, insertrecord } from '../api/apiclien
 import CloseIcon from '@mui/icons-material/Close';
 import { useAppSelector,useAppDispatch } from '../store/store';
 import { returnStateColor }  from '../Utilities/Utilities'
+import { motion } from "framer-motion";
 
 declare module '@mui/material/styles' {
   interface PaletteColor {
@@ -421,6 +422,12 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
             
               {(targetData !== undefined ? targetData : []).map((item: Target, index: number) => (
 
+<motion.div
+className="box"
+initial={{ opacity: 0 }}
+animate={{ opacity: 1 }}
+transition={{ delay: 0.15 }}
+>
                 <ListItem  onClick={()=>handletargetSelected(index)} sx={{ ":hover": { opacity: "0.6" }, cursor: "pointer", borderRadius: "5px", width: "100%", minHeight: "35px", backgroundColor: targetselected !== index ? "#111" :  "#333",border : targetselected !== index ? "1px solid #333": "1px solid #fff" , flexDirection: 'row', display: "flex", gap: "3px", overflow: "hidden" }}>
                   <div style ={{flexDirection: 'row', display: "flex",gap:"10px",width:"100%"}}>
                   <p style={{ color: "#fff", width: "100%", fontSize: "15px",margin:"0" }}>
@@ -449,7 +456,7 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
                   </p>
                   </div>
                 </ListItem>
-
+          </motion.div>
               ))}
             </List>
             <p style={{ color: "#fff", width: "100%", cursor: "default",  margin: "0"}}> Count:{targetData !== undefined ? targetData.length : 0}</p>

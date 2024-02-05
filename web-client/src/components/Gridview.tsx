@@ -307,8 +307,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
         });
     }
 
-    socks.emit('rtgrid', { "isid": `${SelectedInstance._instance_id}` });
-
+   
 
     setInterval(() => {
       socks.emit('rtgrid', { "isid": `${SelectedInstance._instance_id}` });

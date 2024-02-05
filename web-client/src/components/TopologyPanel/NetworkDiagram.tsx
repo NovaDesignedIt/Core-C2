@@ -58,6 +58,7 @@ const networkDiagram = () => {
 
   const [SelectedNode, setSelectedNode] = useState(-1);
   const [targets, setTargets] = useState<Node[]>([]);
+  const [SettingsEdit,setSettingsEdit] =  useState(false);
 
   const dispatch: any = useAppDispatch();
   const instances: Instance[] = useAppSelector(state => state.core.instanceObjects);
@@ -65,7 +66,14 @@ const networkDiagram = () => {
   const config: Config = useAppSelector(state => state.core.configObject);
   const listener: Listeners[] = useAppSelector(state => state.core.listenerObjects);
   const targetsObjects: Target[] = useAppSelector(state => state.core.targetObjects);
+  
 
+  const HandleSettingsEditting = (e:any) => {
+    
+    setSettingsEdit(!SettingsEdit)
+
+    
+  }
 
   let Count: number = 0
 
@@ -227,7 +235,7 @@ const networkDiagram = () => {
   
     <div 
   
-    style={{ width: '100%', height: '90%', padding: "5px", backgroundColor:"#111",flexDirection: "column", display: "flex" }}>
+    style={{  backgroundColor:"#000",width: '100%', height: '90%', padding: "5px",flexDirection: "column", display: "flex",gap:"10px" }}>
       <Typography
     component={'span'}
     variant={'body1'}
@@ -247,11 +255,30 @@ const networkDiagram = () => {
           <h6 style={labelStyle}>target count: {instances.length}</h6>
           <h6 style={labelStyle}>proxy/listener count: {listener.length}</h6>
           <h6 style={labelStyle}>target count: {targetsObjects.length}</h6>
-          <h6 style={labelStyle}>Settings</h6>
+          <h6 style={labelStyle}  
+          onClick={(e)=>HandleSettingsEditting(e)}>Settings</h6>
 
         </div>
 
       </Typography>
+
+      {
+SettingsEdit &&
+
+      <div style={{
+              border: "1px solid #333",
+              borderRadius: "4px",
+              display: 'flex-end',
+              width: "100%",
+              height: "30%",
+              paddingLeft: "10px",
+              paddingRight: "10px",
+              flexDirection: 'column',
+              backgroundColor: "#111",
+
+            }}>
+</div>
+}
       <ReactFlow
      
         ref={componentRef}
