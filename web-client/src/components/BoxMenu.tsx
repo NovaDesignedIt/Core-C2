@@ -169,70 +169,10 @@ const BoxMenu = () => {
       <Splitter direction={SplitDirection.Vertical}
         onResizeFinished={handleResize}
         initialSizes={sizes}>
-
-        <div style={{height:"100%"  }}>
           <LiveView />
-        </div>
-        {/* <div style={{overflow:"auto", height:"100%"  }}>
-          <Box sx={{ color: 'blue' }}>
-
-            <Box sx={{
-              height: '40%',
-              width: '100%',
-              flexDirection: 'row',
-              backgroundColor: '#111',
-              padding: '2%',
-              display: 'flex',
-              flexWrap: 'nowrap'
-            }}>
-              <Button style={{ width: '50%', borderRadius: '0px', backgroundColor: 'Transparent', color: '#7ff685' }}><FormatListNumberedOutlinedIcon /></Button>
-              <Button
-                onClick={(e) => { e.preventDefault(); setRunning(!running) }}
-                style={{
-                  width: '50%',
-                  borderRadius: '0px',
-                  backgroundColor: 'Transparent',
-
-                }}>
-                {running ? <StopCircleOutlinedIcon sx={{ ...styles, color: 'red' }} /> : <PlayArrowIcon sx={{ color: ScriptsRunningColor }} />}
-              </Button>
-
-            </Box>
-
-
-            <List sx={{ gap: '10px' }} >
-
-
-              <ListItem sx={{
-                ":Hover": { opacity: '0.8' },
-                borderRadius: '0px', marginBottom: '1%', backgroundColor: '#222', gap: '1px'
-              }}>
-                <ListItemIcon >
-                  <CircleIcon sx={{ fontSize: '10px', color: running ? '#21fd0a' : '#555', width: '10px' }} />
-                </ListItemIcon>
-                <div style={{ flexDirection: 'column', display: 'flex', }}>
-                  <ListItemText style={{ color: '#fff' }}>
-                    <Typography
-                      style={{
-                        color: '#fff',
-                        fontSize: '10px',
-                      }}>
-                      SCRIPT 1 - {running ? 'RUNNING' : 'STOPPED'}
-                    </Typography>
-                  </ListItemText>
-
-                </div>
-              </ListItem>
-
-            </List>
-
-
-          </Box>
-        </div> */}
-        <div style={{height:"100%",backgroundColor:"#111"  }}>
           <ObjectView />
 
-        </div>
+        
       </Splitter>
     </div>
 

@@ -9,17 +9,7 @@ import { LuBox } from "react-icons/lu";
 import { RiComputerLine } from "react-icons/ri";
 import  {themeTextBlack,getStateLabel,returnStateColor}  from '../../Utilities/Utilities'
 import RemoveIcon from '@mui/icons-material/Remove';
-
 import BedtimeIcon from '@mui/icons-material/Bedtime';
-
-
-
-
-
-
-
-
-
 
 interface NodeProps {
     data: any, isConnectable: boolean
@@ -55,8 +45,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
     
     return (
-        <div
-        onClick={()=>handleClose()}
+        <div        
         >
 
             <Typography
@@ -119,8 +108,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
                 <div
                    
-                    
-                    onMouseEnter={(e) => { handleSelectedNode(true);handleClick(e); }}
+                    onClick={(e) => { handleSelectedNode(true);handleClick(e); }}
                     onMouseLeave={(e) => { handleSelectedNode(false); }}
                     style={{
                         height: "100%",
@@ -245,7 +233,7 @@ cursor: "pointer",
 
 
                     {data["type"] === 'proxy' && <RiServerFill fontSize={45} style={{ color: "#fff" }} />}
-                    {data["type"] === 'target' && <RiComputerLine fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
+                    {data["type"] === 'target' && <RiComputerLine fontSize={45} style={{ color: returnStateColor(data['value']._st) }} />}
                     {data["type"] === 'mother' && <GrDatabase fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
                     {data["type"] === 'instance' && <LuBox fontSize={45} style={{ color: selected ? "#DDD" : "#999" }} />}
 
