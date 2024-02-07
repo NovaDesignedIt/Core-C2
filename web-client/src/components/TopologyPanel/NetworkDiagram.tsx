@@ -228,7 +228,27 @@ const networkDiagram = () => {
     }
   }
 
-  
+  const HandleSetConfig = () => {
+
+    const new_edges: Edge[] = edges.map(
+      (item: Edge, index: number) => {
+        switch (item.type) {
+          case "curve":
+              item.type = "straight";
+              break;
+          case "straight":
+              item.type = "step";
+              break;
+          default:
+              item.type = "curve";
+      }
+        return item
+    });
+
+    setEdges(new_edges)
+
+
+  }
 
   
   return (
@@ -270,13 +290,17 @@ SettingsEdit &&
               borderRadius: "4px",
               display: 'flex-end',
               width: "100%",
-              height: "30%",
+              height: "20%",
               paddingLeft: "10px",
               paddingRight: "10px",
               flexDirection: 'column',
               backgroundColor: "#111",
 
             }}>
+<Button onClick={HandleSetConfig} sx={{ width:"10%" ,height:"50%"}}>test</Button>
+
+
+
 </div>
 }
       <ReactFlow
