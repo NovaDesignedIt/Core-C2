@@ -1,4 +1,4 @@
-import { Button, Popover, Stack, Typography,TextField } from '@mui/material';
+import { Button, Popover, Stack, Typography,TextField, ClickAwayListener } from '@mui/material';
 import React, { useCallback } from 'react';
 import { GiConsoleController } from 'react-icons/gi';
 import { Handle, Position, Node } from 'reactflow';
@@ -108,7 +108,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
                 <div
                    
-                    onClick={(e) => { handleSelectedNode(true);handleClick(e); }}
+                    onDoubleClick={(e) => { handleSelectedNode(true);handleClick(e); }}
                     onMouseLeave={(e) => { handleSelectedNode(false); }}
                     style={{
                         height: "100%",
@@ -118,6 +118,8 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                         background: selected ? "#111" : '#111',
 
                     }}>
+                        <ClickAwayListener onClickAway={handleClose}>
+
                     <Popover
                         id={id}
                         open={open}
@@ -133,6 +135,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                     >
 
 
+                                       
                         <Stack sx={{ background: "#222" }}
                           >
                             <Typography
@@ -227,10 +230,15 @@ cursor: "pointer",
 
                                 </div>
                             </Typography>
+                        
+
+                                       
+
+                        
                         </Stack>
-
+                  
                     </Popover>
-
+                    </ClickAwayListener>
 
                     {data["type"] === 'proxy' && <RiServerFill fontSize={45} style={{ color: "#fff" }} />}
                     {data["type"] === 'target' && <RiComputerLine fontSize={45} style={{ color: returnStateColor(data['value']._st) }} />}

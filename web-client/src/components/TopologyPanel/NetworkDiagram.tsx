@@ -4,7 +4,7 @@ import ReactFlow, { Position, useNodesState, useEdgesState, addEdge, Connection,
 import 'reactflow/dist/style.css';
 import CustomNode from './customNodes';
 
-import { Button, Typography} from '@mui/material';
+import { Button, Typography, ButtonGroup, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { CoreC, Instance, Listeners, Config, Target, dumpTargets } from '../../api/apiclient';
 
@@ -27,9 +27,9 @@ const nodeStyle = {
 
 const labelStyle = {
 
-    margin: "auto",
-    color: "#fff",
-    cursor: "pointer",
+  margin: "auto",
+  color: "#fff",
+  cursor: "pointer",
 
 
 }
@@ -41,7 +41,7 @@ interface coordinates {
 
 }
 
-
+const threadTypes: string[] = ["curve", "straight", "step"];
 
 
 const nodeTypes: NodeTypes = {
@@ -58,7 +58,7 @@ const networkDiagram = () => {
 
   const [SelectedNode, setSelectedNode] = useState(-1);
   const [targets, setTargets] = useState<Node[]>([]);
-  const [SettingsEdit,setSettingsEdit] =  useState(false);
+  const [SettingsEdit, setSettingsEdit] = useState(true);
 
   const dispatch: any = useAppDispatch();
   const instances: Instance[] = useAppSelector(state => state.core.instanceObjects);
@@ -66,13 +66,13 @@ const networkDiagram = () => {
   const config: Config = useAppSelector(state => state.core.configObject);
   const listener: Listeners[] = useAppSelector(state => state.core.listenerObjects);
   const targetsObjects: Target[] = useAppSelector(state => state.core.targetObjects);
-  
 
-  const HandleSettingsEditting = (e:any) => {
-    
+
+  const HandleSettingsEditting = (e: any) => {
+
     setSettingsEdit(!SettingsEdit)
 
-    
+
   }
 
   let Count: number = 0
@@ -85,7 +85,7 @@ const networkDiagram = () => {
   Count = Count + 1
 
   const proxyNodes: Node[] = listener.map((item: Listeners, index: number) => (
-    { id: `${Count + index}`, type: 'custom', position: { x: index % 2 === 0 ?  1000 : 2000 , y: 100 + 300 * index }, data: { id: index, value: item, type: "proxy" } }
+    { id: `${Count + index}`, type: 'custom', position: { x: index % 2 === 0 ? 1000 : 2000, y: 100 + 300 * index }, data: { id: index, value: item, type: "proxy" } }
   ));
 
 
@@ -181,7 +181,7 @@ const networkDiagram = () => {
         id: `${Count + index}`,
         type: 'custom',
         //position: {x: 500+index *100 , y: index < 5 ? 500-index*100 :  300+-(index % 5)*100 } ,
-        position: return_coor(xrelative, yrelative, index % 3 === 0 ? 250 : 350, returnpi( index * 100, alltargets.length)),
+        position: return_coor(xrelative, yrelative, index % 3 === 0 ? 250 : 350, returnpi(index * 100, alltargets.length)),
         data: { id: Count + index, value: targ, type: 'target' }
       }));
 
@@ -205,8 +205,9 @@ const networkDiagram = () => {
   const allnodes: Node[] = [...initialNodes, ...proxyNodes, ...instancenodes, ...tempnodes]
 
   const [nodes, setNodes] = useState<Node[]>(allnodes);
-  const [edges, setEdges] = useState<Edge[]>([...initialEdges,...tempedges]);
+  const [edges, setEdges] = useState<Edge[]>([...initialEdges, ...tempedges]);
 
+  const [edgeTypes, setEdgesTypes] = useState('straight')
   //(changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
   const onNodesChange: OnNodesChange = useCallback(
     (changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -221,90 +222,104 @@ const networkDiagram = () => {
     [setEdges],
   );
 
-  const handleKeyDown = (e:any) =>{
-    
-     if (e.key === 'h' ) {
+  const handleKeyDown = (e: any) => {
+
+    if (e.key === 'h') {
       alert('help me :)')
     }
   }
 
+
+  const getNextThreadType = (currentType: string): string => {
+    const currentIndex = threadTypes.indexOf(currentType);
+    const nextIndex = (currentIndex + 1) % threadTypes.length;
+    return threadTypes[nextIndex];
+  };
+
   const HandleSetConfig = () => {
-
-    const new_edges: Edge[] = edges.map(
-      (item: Edge, index: number) => {
-        switch (item.type) {
-          case "curve":
-              item.type = "straight";
-              break;
-          case "straight":
-              item.type = "step";
-              break;
-          default:
-              item.type = "curve";
-      }
-        return item
+    const new_edges: Edge[] = edges.map((item: Edge, index: number) => {
+      item.type = getNextThreadType(item.type !== undefined ? item.type : threadTypes[0]);
+      return item;
     });
+    if (new_edges[0]?.type) {
+      setEdgesTypes(new_edges[0].type);
+    }
+    setEdges(new_edges);
+  };
 
-    setEdges(new_edges)
 
 
-  }
 
-  
+
   return (
-  
-    <div 
-  
-    style={{  backgroundColor:"#000",width: '100%', height: '90%', padding: "5px",flexDirection: "column", display: "flex",gap:"10px" }}>
+
+    <div
+
+      style={{ backgroundColor: "#000", width: '100%', height: '90%', padding: "5px", flexDirection: "column", display: "flex", gap: "10px" }}>
       <Typography
-    component={'span'}
-    variant={'body1'}
-    style={{
-      width:"100%",
-      fontFamily: '"Ubuntu Mono", monospace',
-      justifyContent: 'center',
-      display: "flex",
-      color: '#555',
-      fontSize: '10px',
-      margin: "auto"
-    }}>
- 
+        component={'span'}
+        variant={'body1'}
+        style={{
+          width: "100%",
+          fontFamily: '"Ubuntu Mono", monospace',
+          justifyContent: 'center',
+          display: "flex",
+          color: '#555',
+          fontSize: '10px',
+          margin: "auto"
+        }}>
+
         <div style={{ display: "flex", width: "100%", flexDirection: "row" }}>
           <h5 style={labelStyle}>Topology View </h5>
           <h6 style={labelStyle}>core ID: {core._core_id}</h6>
           <h6 style={labelStyle}>target count: {instances.length}</h6>
           <h6 style={labelStyle}>proxy/listener count: {listener.length}</h6>
           <h6 style={labelStyle}>target count: {targetsObjects.length}</h6>
-          <h6 style={labelStyle}  
-          onClick={(e)=>HandleSettingsEditting(e)}>Settings</h6>
+          <h6 style={labelStyle}
+            onClick={(e) => HandleSettingsEditting(e)}>Settings</h6>
 
         </div>
 
       </Typography>
 
       {
-SettingsEdit &&
+         SettingsEdit &&
+        
 
-      <div style={{
-              border: "1px solid #333",
-              borderRadius: "4px",
-              display: 'flex-end',
-              width: "100%",
-              height: "20%",
-              paddingLeft: "10px",
-              paddingRight: "10px",
-              flexDirection: 'column',
-              backgroundColor: "#111",
+        <div style={{
+          border: "1px solid #333",
+          borderRadius: "4px",
+          display: 'flex-end',
+          width: "100%",
+          height: "20%",
+          padding: "10px",
+          flexDirection: 'column',
+          backgroundColor: "#111",
 
-            }}>
-<Button onClick={HandleSetConfig} sx={{ width:"10%" ,height:"50%"}}>test</Button>
+        }}>
+          <Button onClick={HandleSetConfig}
+            sx={{
+              marginTop: "auto",
+              maxHeight: "30px",
+              minHeight: "30px",
+              maxWidth: "250px",
+              minWidth: "200px",
+              border: "1px solid #7ff685",
+              color: '#fff',
+              fontFamily: '"Ubuntu Mono", monospace',
+              bgcolor: "Transparent",
+              ":hover": {
+                color: '#7ff685'
+              }
+            }}>{edgeTypes}
+          </Button>
 
 
 
-</div>
-}
+        </div>
+      }
       <ReactFlow
-     
+        nodesFocusable={true}
         ref={componentRef}
         style={{ border: "1px solid #333", borderRadius: "4px", backgroundColor: "#111" }}
         onNodeClick={(e) => { handleSelectedNode(e) }}
@@ -318,7 +333,7 @@ SettingsEdit &&
       />
 
     </div>
-    
+
   );
 }
 export default networkDiagram;
