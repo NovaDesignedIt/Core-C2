@@ -1,6 +1,11 @@
 
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import  { Typography } from '@mui/material' ;
+
+
+
+
 import Frame from './components/Frame';
 import SocketsExample from './components/SocketsExample';
 import { createStore } from '@reduxjs/toolkit';
@@ -39,8 +44,19 @@ const styles = () => ({
 function App() {
 
   return (
-
+    <Typography
+    component={'body'}
+    variant={'body1'}
+    style={{
+        fontFamily: '"Ubuntu Mono", monospace',
+        justifyContent: 'center',
+        display: "flex",
+        color: '#fff',
+        fontSize: '15px',
+        margin: "auto"
+    }}>
     <Frame></Frame>
+    </Typography>
   );
 }
 

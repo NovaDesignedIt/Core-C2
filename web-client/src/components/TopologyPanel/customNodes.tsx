@@ -10,8 +10,11 @@ import { RiComputerLine } from "react-icons/ri";
 import { themeTextBlack, getStateLabel, returnStateColor } from '../../Utilities/Utilities'
 import RemoveIcon from '@mui/icons-material/Remove';
 import BedtimeIcon from '@mui/icons-material/Bedtime';
-import { generateRandomNumber } from '../../Utilities/Utilities'
 import { GoArrowSwitch } from "react-icons/go";
+import { useAppSelector } from '../../store/store';
+import { Target } from  '../../api/apiclient';
+
+
 interface NodeProps {
     data: any, isConnectable: boolean
 }
@@ -20,6 +23,8 @@ interface NodeProps {
 const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
     const [selected, SetIsSelected] = React.useState(false)
+
+    const targetsObjects: Target[] = useAppSelector(state => state.core.targetObjects);
 
     const onChange = useCallback((evt: { target: { value: any; }; }) => {
         // console.log(evt.target.value);
@@ -157,12 +162,13 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                                                 <p style={{ margin: "auto" }}> outbound {data['value']._listener_name}</p>
                                                 <p style={{ margin: "auto" }}> outbound: instancesName </p>
                                                 <GoArrowSwitch fontSize={"30px"} />
-                                                <p style={{ margin: "auto" }}> incomming:{data['value']._listener_name}</p>
+                                                <p style={{ margin: "auto" }}> incomming</p>
                                                     <div style={{ paddingTop:"5px",gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "100%", alignItems: "center", backgroundColor: "#000", overflow: "scroll", borderRadius: "3px", padding: "3px" }}>
 
-                                                        {[...Array(10)].map((_, index) => (
+
+                                                        {  targetsObjects.map((item:any, index) => (
                                                             <div style={{ backgroundColor: "#111", width: "98%",minHeight:"30px", padding: "3px" }}>
-                                                                <p> test</p>
+                                                                <p> {item._n}</p>
                                                             </div>
                                                         ))}
                                                     </div>

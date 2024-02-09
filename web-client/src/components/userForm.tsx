@@ -214,6 +214,7 @@ const usersComponent = () => {
                                         handleSelectedUser(i)
                                     }}
                                     sx={{
+                                        gap:"5%",
                                         cursor: "pointer",
                                         height: "90%",
                                         maxHeight: "60px",
