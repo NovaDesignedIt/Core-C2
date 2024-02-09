@@ -4,6 +4,12 @@ export const  adjustSizes = (allSizes:number[], minSize1:number, minSize2:number
  return allSizes;
 }
 
+export const generateRandomNumber = () => {
+  // Generate a random number between 1 and 10
+  const randomNumber = Math.floor(Math.random() * 10) + 1;
+  return randomNumber;
+};
+
 export const themeTextBlack = {
     height: "250px",
     color: "#fff",

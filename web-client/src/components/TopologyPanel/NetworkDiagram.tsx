@@ -7,10 +7,11 @@ import CustomNode from './customNodes';
 import { Button, Typography, ButtonGroup, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { CoreC, Instance, Listeners, Config, Target, dumpTargets } from '../../api/apiclient';
-
+import { generateRandomNumber } from '../../Utilities/Utilities'
 import { InsertEmoticon } from '@mui/icons-material';
 import { Socket, io } from 'socket.io-client';
 import { createStyles, withStyles, WithStyles } from "@material-ui/core/styles";
+import { randomInt } from 'crypto';
 const nodeDefaults = {
   sourcePosition: Position.Right,
   targetPosition: Position.Left,
@@ -170,8 +171,8 @@ const networkDiagram = () => {
 
   Object.values(groupedPayload).forEach((group: any[], i: number) => {
 
-    const x = proxyNodes?.find(x => x.data.value._id === instances.find(x => x._instance_id === group.findLast(x => x)._isid)?._proxy)?.position.x;
-    const y = proxyNodes?.find(x => x.data.value._id === instances.find(x => x._instance_id === group.findLast(x => x)._isid)?._proxy)?.position.y;
+    const x = proxyNodes?.find(x => x.data.value._id === instances.find(x => x._instance_id === group.find(x => x)._isid)?._proxy)?.position.x;
+    const y = proxyNodes?.find(x => x.data.value._id === instances.find(x => x._instance_id === group.find(x => x)._isid)?._proxy)?.position.y;
 
     const xrelative = x !== undefined ? x : 0
     const yrelative = y !== undefined ? y : 0
@@ -181,9 +182,15 @@ const networkDiagram = () => {
         id: `${Count + index}`,
         type: 'custom',
         //position: {x: 500+index *100 , y: index < 5 ? 500-index*100 :  300+-(index % 5)*100 } ,
-        position: return_coor(xrelative, yrelative, index % 3 === 0 ? 250 : 350, returnpi(index * 100, alltargets.length)),
+        position: return_coor(
+         xrelative,
+          yrelative,
+          generateRandomNumber() * 50 ,
+          returnpi(index * 100, alltargets.length)),
         data: { id: Count + index, value: targ, type: 'target' }
       }));
+
+      //* index % 4 === 0 ? 1: -1  generateRandomNumber() * 100 ,
 
     tempnodes.push(...newNodes)
     Count = Count + newNodes.length
@@ -297,6 +304,7 @@ const networkDiagram = () => {
           backgroundColor: "#111",
 
         }}>
+                    {/* //          border: "1px solid #7ff685", */}
           <Button onClick={HandleSetConfig}
             sx={{
               marginTop: "auto",
@@ -304,12 +312,12 @@ const networkDiagram = () => {
               minHeight: "30px",
               maxWidth: "250px",
               minWidth: "200px",
-              border: "1px solid #7ff685",
+              border: "1px solid #fff",
               color: '#fff',
               fontFamily: '"Ubuntu Mono", monospace',
               bgcolor: "Transparent",
               ":hover": {
-                color: '#7ff685'
+                color: '#fff'
               }
             }}>{edgeTypes}
           </Button>
@@ -337,3 +345,5 @@ const networkDiagram = () => {
   );
 }
 export default networkDiagram;
+
+
