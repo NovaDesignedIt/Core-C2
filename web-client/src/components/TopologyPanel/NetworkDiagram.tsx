@@ -97,9 +97,9 @@ const networkDiagram = () => {
     return (2 * Math.PI * 2 * i) / length;
   }
 
-  function return_coor(centerX: number, centerY: number, radius: number, angle: number) {
-    const x = centerX + radius * Math.cos(angle);
-    const y = centerY + radius * Math.sin(angle);
+  function return_coor(centerX: number, centerY: number, radius: number, angle: number,index:number) {
+    const x = centerX + radius * Math.cos(angle)  ;
+    const y  = centerY + radius * Math.sin(angle) ;
     return { x, y }
   }
 
@@ -185,8 +185,9 @@ const networkDiagram = () => {
         position: return_coor(
          xrelative,
           yrelative,
-          generateRandomNumber() * 50 ,
-          returnpi(index * 100, alltargets.length)),
+          100 + generateRandomNumber()  ,
+          returnpi( index, alltargets.length),
+          index),
         data: { id: Count + index, value: targ, type: 'target' }
       }));
 
@@ -197,7 +198,7 @@ const networkDiagram = () => {
 
     const EdgesTargetsToProxy: Edge[] = newNodes.reduce((result: any[], node: Node) => {
       const targetproxyid = node.data.value._ip
-      const proxy = proxyNodes.find(x => `${x.data.value._id}` === targetproxyid)
+      const proxy:any = proxyNodes.find(x => `${x.data.value._id}` === targetproxyid)
 
       //console.log(proxyNodes,targetproxyid)
       if (proxy && targetproxyid) {
@@ -326,6 +327,8 @@ const networkDiagram = () => {
 
         </div>
       }
+
+      {/* topology */}
       <ReactFlow
         nodesFocusable={true}
         ref={componentRef}

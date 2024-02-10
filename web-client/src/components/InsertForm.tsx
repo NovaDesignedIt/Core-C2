@@ -149,7 +149,7 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
       `${targetlisteners}`,
       //_state
       ofp ? 3
-        : sleep && interval !== undefined && interval > 1 ? 2
+        : sleep && interval !== undefined && interval > 1 ? 1
           : -1,
       //_dump
       '.',

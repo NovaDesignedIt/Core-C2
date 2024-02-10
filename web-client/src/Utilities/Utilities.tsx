@@ -4,7 +4,7 @@ export const  adjustSizes = (allSizes:number[], minSize1:number, minSize2:number
  return allSizes;
 }
 
-export const generateRandomNumber = () => {
+export function generateRandomNumber() {
   // Generate a random number between 1 and 10
   const randomNumber = Math.floor(Math.random() * 10) + 1;
   return randomNumber;
@@ -44,7 +44,7 @@ export function getStateLabel(state: number | string) {
 
 export function returnStateColor(state: number | string ) {
   let StatusColor: string = '#333'; // Use let instead of const
-  StatusColor = state === 0 || state === 'Task' ? "lightyellow" : StatusColor
+  StatusColor = state === 0 || state === 'Task' ? "#ff625b" : StatusColor
   StatusColor = state === 1 || state === 'Sleep' ? "cyan" : StatusColor
   StatusColor = state === 2 || state === 'dropped' ? "#888" : StatusColor
   StatusColor = state === 3 || state === 'Listen' ? "green" : StatusColor

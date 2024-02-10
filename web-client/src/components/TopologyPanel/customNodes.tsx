@@ -166,7 +166,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                                                     <div style={{ paddingTop:"5px",gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "100%", alignItems: "center", backgroundColor: "#000", overflow: "scroll", borderRadius: "3px", padding: "3px" }}>
 
 
-                                                        {  targetsObjects.map((item:any, index) => (
+                                                        {  targetsObjects.filter(x => x._ip.toString() === data["value"]._id.toString()).map((item:any, index) => (
                                                             <div style={{ backgroundColor: "#111", width: "98%",minHeight:"30px", padding: "3px" }}>
                                                                 <p> {item._n}</p>
                                                             </div>
