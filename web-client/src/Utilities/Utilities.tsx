@@ -32,21 +32,23 @@ export const themeTextBlack = {
 }
 
 export function getStateLabel(state: number | string) {
-  let statusText = 'awaiting';
+  let statusText = 'error';
   statusText = state === 0 || state === 'Task' ? "Task" : statusText
   statusText = state === 1 || state === 'Sleep' ? "Sleep" : statusText
   statusText = state === 2 || state === 'dropped' ? "dropped" : statusText
   statusText = state === 3 || state === 'Listen' ? "Listen" : statusText
+  statusText = state === -1 || state === 'awaiting' ? "awaiting" : statusText
   return statusText
 
 }
 
 
 export function returnStateColor(state: number | string ) {
-  let StatusColor: string = '#333'; // Use let instead of const
+  let StatusColor: string = '#444'; // Use let instead of const
   StatusColor = state === 0 || state === 'Task' ? "#ff625b" : StatusColor
-  StatusColor = state === 1 || state === 'Sleep' ? "cyan" : StatusColor
-  StatusColor = state === 2 || state === 'dropped' ? "#888" : StatusColor
+  StatusColor = state === 1 || state === 'Sleep' ? "#669996" : StatusColor
+  StatusColor = state === 2 || state === 'dropped' ? "#444" : StatusColor
   StatusColor = state === 3 || state === 'Listen' ? "green" : StatusColor
+  StatusColor = state === -1 || state === 'awaiting' ? "#888" : StatusColor
   return StatusColor;
 }

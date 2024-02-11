@@ -479,7 +479,7 @@ const ConfigGeneralComp = () => {
         maxWidth: "300px",
         padding: "10px",
         height: "100%",
-
+        gap: "20px",
 
       }}>
 
@@ -494,27 +494,44 @@ const ConfigGeneralComp = () => {
 
         </motion.div>
 
-        <Button
-          onClick={() => { HandleSaveCore() }}
-          sx={{
-            marginTop: "auto",
-            maxHeight: "50px",
-            minHeight: "50px",
-            maxWidth: "250px",
-            minWidth: "200px",
-            border: "1px solid #7ff685",
-            color: '#fff',
-            bgcolor: "#000",
-            ":hover": {
-              color: '#7ff685'
-            }
-          }}
-        >
-          save
-          <CloudSyncIcon />
 
-        </Button>
-        
+        {/* CLEARING LOGS */}
+        <div style={{
+          border: "1px solid #222",
+          borderRadius: "4px",
+          display: 'flex-end',
+          width: "100%",
+          height: "50%",
+          padding: "10px",
+          flexDirection: 'column',
+          backgroundColor: "#111",
+
+        }}>
+
+          <p style={{ opacity: "0.5" }}>
+            Push configuration to the server
+          </p>
+          <Button
+            onClick={() => { HandleSaveCore() }}
+            sx={{
+              margin: "auto",
+              maxHeight: "50px",
+              minHeight: "50px",
+              maxWidth: "250px",
+              minWidth: "200px",
+              border: "1px solid #7ff685",
+              color: '#fff',
+              bgcolor: "#000",
+              ":hover": {
+                color: '#7ff685'
+              }
+            }}
+          >
+            save
+            <CloudSyncIcon />
+
+          </Button>
+        </div>
       </div>
 
 

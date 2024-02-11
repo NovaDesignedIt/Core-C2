@@ -86,7 +86,7 @@ const networkDiagram = () => {
   Count = Count + 1
 
   const proxyNodes: Node[] = listener.map((item: Listeners, index: number) => (
-    { id: `${Count + index}`, type: 'custom', position: { x: index % 2 === 0 ? 1000 : 2000, y: 100 + 300 * index }, data: { id: index, value: item, type: "proxy" } }
+    { id: `${Count + index}`, type: 'custom', position: { x: index % 2 === 0 ? 500 : 1000, y: 100 + 300 * index }, data: { id: index, value: item, type: "proxy" } }
   ));
 
 

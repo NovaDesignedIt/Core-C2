@@ -17,6 +17,12 @@ const ObjectView = () => {
     const targets = useAppSelector(state => state.core.targetObjects)
     const currentTargs = targets ?? [];
     const [open, setOpen] = React.useState(false);
+    const [SelectedObject, setSelectedObject] = React.useState<number[]>([-1]);
+
+    const HandleObjectClick = (index: number) => {
+        setSelectedObject(self => self.includes(index) && self.filter(x => x !== index) || [...self, index])
+    }
+
 
     return (
         <Box sx={{ color: '#fff', minHeight: "100%", height: "100%" }}>
@@ -41,7 +47,7 @@ const ObjectView = () => {
 
                     targets.filter((item: Target) => {
                         return selectedTargets.includes(item._id);
-                    }).map((item: Target) =>
+                    }).map((item: Target, index: number) =>
                     (
 
                         <div
@@ -54,20 +60,17 @@ const ObjectView = () => {
                             <div>
                                 <div style={{ flexDirection: "column", display: "flex", height: "100%" }}>
 
-                                    <div style={{ gap:"5px",flexDirection: "row", display: "flex" }}>
+                                    <div style={{ gap: "5px", flexDirection: "row", display: "flex" }}>
 
 
-                                        <p onClick={() => { setOpen(!open) }} style={{ color: "#fff", margin: "0", cursor: "pointer" }} >  {item._n} </p>
-                                        {!open && <p style={{ borderRadius: "5px", color: "#fff", backgroundColor: returnStateColor(item._st), padding: "3px", width: "50%", marginRight: "auto" }} > {getStateLabel(item._st)} </p>}
+                                        <p onClick={() => { HandleObjectClick(index) }} style={{ color: "#fff", margin: "0", cursor: "pointer", width: "100%" }} >  {item._n} </p>
+                                        {!SelectedObject.includes(index) && <p style={{ borderRadius: "5px", color: "#fff", backgroundColor: returnStateColor(item._st), padding: "3px", width: "50%", marginRight: "auto" }} > {getStateLabel(item._st)} </p>}
                                     </div>
-                                    {open && <>
+                                    {SelectedObject.includes(index) && <>
 
 
                                         <div style={{ flexDirection: "row", display: "flex", padding: "5px" }}>
                                             <p style={{ borderRadius: "5px", color: "#fff", backgroundColor: returnStateColor(item._st), padding: "3px", width: "50%", marginRight: "auto" }} > {getStateLabel(item._st)} </p>
-
-
-
 
                                             <BedtimeIcon onClick={() => { alert(`sleeping: ${item._st}`) }}
                                                 sx={{
@@ -90,25 +93,26 @@ const ObjectView = () => {
                                                 }} />
 
                                         </div>
-
-                                        <TextField
-                                            // value={CommandText}
-                                            // onChange={HandleCommandChange}
-                                            required
-                                            maxRows={5}
-                                            multiline={true}
-                                            size='small'
-                                            spellCheck={false}  // Disable spell checking
-                                            autoComplete='off'
-                                            autoCorrect='off'
-                                            autoCapitalize='off'
-                                            placeholder="cmd>"
-                                            InputLabelProps={{ sx: { color: "#7ff685", fontSize: '5px' } }}
-                                            inputProps={{ sx: { color: "#7ff685", fontFamily: 'Ubuntu Mono, monospace' } }}
-                                            sx={{ ...themeTextBlack, maxWidth: "100%", height: "50%", borderRadius: "5px", overflow: "hidden" }}
-                                        >
-                                        </TextField>
-
+                                        {
+                                            //weird behavior.... ._st is supposed to be 0:int not 'Task':string works but why?
+                                            item._st.toString() !== "Task" || "dropped" || "Sleep" &&
+                                            <TextField
+                                                onKeyDown={(e) => { e.key === 'Enter' && typeof e.preventDefault() === "undefined" && alert(item._st) }}
+                                                required
+                                                maxRows={5}
+                                                multiline={true}
+                                                size='small'
+                                                spellCheck={false}  // Disable spell checking
+                                                autoComplete='off'
+                                                autoCorrect='off'
+                                                autoCapitalize='off'
+                                                placeholder="cmd>"
+                                                InputLabelProps={{ sx: { color: "#7ff685", fontSize: '5px' } }}
+                                                inputProps={{ sx: { color: "#7ff685", fontFamily: 'Ubuntu Mono, monospace' } }}
+                                                sx={{ ...themeTextBlack, maxWidth: "100%", height: "50%", borderRadius: "5px", overflow: "hidden" }}
+                                            >
+                                            </TextField>
+                                        }
                                     </>
                                     }
                                 </div>
