@@ -3,7 +3,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import ReactFlow, { Position, useNodesState, useEdgesState, addEdge, Connection, Edge, OnConnect, OnEdgesChange, OnNodesChange, applyEdgeChanges, applyNodeChanges, Node, NodeTypes } from 'reactflow';
 import 'reactflow/dist/style.css';
 import CustomNode from './customNodes';
-
+import Shell from '../Shell';
 import { Button, Typography, ButtonGroup, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { CoreC, Instance, Listeners, Config, Target, dumpTargets } from '../../api/apiclient';
@@ -329,10 +329,11 @@ const networkDiagram = () => {
       }
 
       {/* topology */}
+      <div style={{position:"relative",height:"100%",width:"100%",border: "1px solid #333", borderRadius: "4px", backgroundColor: "#111"}}>
       <ReactFlow
         nodesFocusable={true}
         ref={componentRef}
-        style={{ border: "1px solid #333", borderRadius: "4px", backgroundColor: "#111" }}
+        style={{ zIndex:"0",backgroundColor: "#111" }}
         onNodeClick={(e) => { handleSelectedNode(e) }}
         onNodeMouseEnter={(e) => { }}
         nodes={nodes}
@@ -341,7 +342,20 @@ const networkDiagram = () => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
-      />
+      >
+
+      </ReactFlow>
+
+      <div style={{padding:"10px",paddingBottom:"30px",borderRadius:"10px",position: "absolute", top: 0, right: 0, width: "40%", height: "50%", backgroundColor: "transparent", zIndex: "3" }}>
+
+
+      <Shell/>
+
+
+      </div>
+        
+        
+        </div>
 
     </div>
 

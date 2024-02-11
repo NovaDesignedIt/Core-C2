@@ -269,7 +269,7 @@ const Shell = ()  => {
       <div style={{ backgroundColor: '#070907', height: "20px", width: "100%", padding: '0%', position: 'sticky' }}>
         <TerminalIcon fontSize='small' htmlColor='#7ff685' />
       </div>
-      <Box sx={{ backgroundColor: '#000', height: '100%', width: '100%', overflow: "scroll", padding: '0%' }}>
+      <Box sx={{ padding:"10px",backgroundColor: '#000', height: '100%', width: '100%', overflow: "scroll"}}>
         <TextField
           value={val}
           placeholder="$_"
@@ -281,7 +281,7 @@ const Shell = ()  => {
           autoCorrect='off'
           autoCapitalize='off'
           autoFocus={true}
-          sx={themeText}>
+          sx={{...themeText,padding:"10px"}}>
         </TextField>
         <List style={{ width: "100%", padding: "0%" }}>
           <ListItemText style={{ flexWrap: 'wrap', margin: '6px' }}>
