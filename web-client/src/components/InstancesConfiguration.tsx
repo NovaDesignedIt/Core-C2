@@ -142,8 +142,8 @@ const instanceConfiguration = () => {
     }
 
     return (
-        <>
-            <div style={{ width: "100%", height: "35%", minHeight: "250px", backgroundColor: "#000"}}>
+    
+            <div style={{ width: "100%", height: "100%", minHeight: "250px", backgroundColor: "#000"}}>
                 <div onClick={() => { setSelectedRowId(-1) }} style={{ padding: "1%", backgroundColor: "#000", border: "1px #222 solid", borderRadius: "4px" }}>
                     <Button
                         onClick={() => { HandleAdd(true) }}
@@ -256,9 +256,10 @@ const instanceConfiguration = () => {
                         </Table>
                     </TableContainer>
                 </div>
+                <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e) => { SetOpen(false) }} />
             </div>
-            <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e) => { SetOpen(false) }} />
-        </>
+           
+      
     );
 }
 export default instanceConfiguration;

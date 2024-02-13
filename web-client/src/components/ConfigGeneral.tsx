@@ -11,6 +11,11 @@ import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import { DynamicAlert } from './AlertFeedbackComponent';
 import { motion } from "framer-motion";
 
+import Radio, { RadioProps } from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
 const ConfigGeneralComp = () => {
 
@@ -92,7 +97,61 @@ const ConfigGeneralComp = () => {
       "_inactivitytimeout": chktimeout ? 1 : 0
     }
 
-
+    const BpIcon = styled('span')(({ theme }) => ({
+      borderRadius: '50%',
+      width: 16,
+      height: 16,
+      boxShadow:
+        theme.palette.mode === 'dark'
+          ? '0 0 0 1px rgb(16 22 26 / 40%)'
+          : 'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
+      backgroundColor: theme.palette.mode === 'dark' ? '#394b59' : '#f5f8fa',
+      backgroundImage:
+        theme.palette.mode === 'dark'
+          ? 'linear-gradient(180deg,hsla(0,0%,100%,.05),hsla(0,0%,100%,0))'
+          : 'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
+      '.Mui-focusVisible &': {
+        outline: '2px auto rgba(19,124,189,.6)',
+        outlineOffset: 2,
+      },
+      'input:hover ~ &': {
+        backgroundColor: theme.palette.mode === 'dark' ? '#30404d' : '#ebf1f5',
+      },
+      'input:disabled ~ &': {
+        boxShadow: 'none',
+        background:
+          theme.palette.mode === 'dark' ? 'rgba(57,75,89,.5)' : 'rgba(206,217,224,.5)',
+      },
+    }));
+    
+    const BpCheckedIcon = styled(BpIcon)({
+      backgroundColor: '#137cbd',
+      backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
+      '&::before': {
+        display: 'block',
+        width: 16,
+        height: 16,
+        backgroundImage: 'radial-gradient(#fff,#fff 28%,transparent 32%)',
+        content: '""',
+      },
+      'input:hover ~ &': {
+        backgroundColor: '#106ba3',
+      },
+    });
+    
+    // Inspired by blueprintjs
+    function BpRadio(props: RadioProps) {
+      return (
+        <Radio
+          disableRipple
+          color="default"
+          checkedIcon={<BpCheckedIcon />}
+          icon={<BpIcon />}
+          {...props}
+        />
+      );
+    }
+    
 
     const result = await setconfigurations(core._url, core, settings)
     if (result !== undefined) {
@@ -195,135 +254,314 @@ const ConfigGeneralComp = () => {
     <Stack sx={{ borderStyle: 'none', padding: "1px", display: 'flex', backgroundColor: "#000", flexDirection: 'row', width: "100%", height: "100%", overflow: "scroll" }}>
 
 
-      <Stack spacing={'5px'} sx={{ width: "30%", height: "100%", padding: "10px", overflow: 'scroll' }}  >
+      <Stack padding={2} spacing={'5px'} sx={{ flexDirection: "column", width: "20%", height: "100%", overflow: 'scroll' }}  >
         <h5 style={{ color: "#fff", cursor: "default" }}>Listener Configuration</h5>
-       
-       
-       
-       
-       
-       
+
+
+
+
+
+
+
+        <div style={{
+          border: "1px solid #222",
+          borderRadius: "4px",
+          display: 'flex-end',
+          width: "100%",
+          padding: "10px",
+          flexDirection: 'column',
+          backgroundColor: "#111",
+        }}>
+          <div style={{ display: "flex", justifyContent: 'space-between' }}>
+            send to dump
+            <Checkbox sx={{
+              color: "#fff",
+              '&.Mui-checked': {
+                color: '#fff',
+              }
+            }} checked={chckdmp} onChange={(e) => { HandlesetChkdmp(e) }} />
+          </div>
+          <div style={{ display: "flex", justifyContent: 'space-between' }}>
+            create on ping
+            <Checkbox sx={{
+              color: "#fff",
+              '&.Mui-checked': {
+                color: '#fff',
+              }
+            }} checked={chkping} onChange={(e) => { HandlesetChkping(e) }} />
+          </div>
+          <div style={{ display: "flex", justifyContent: 'space-between' }}>
+            use http
+            <Checkbox sx={{
+              color: "#fff",
+              '&.Mui-checked': {
+                color: '#fff',
+              }
+            }} checked={chkhttp} onChange={(e) => { HandlesetChkhttp(e) }} />
+          </div>
+        </div>
+
+
+
+
+        <h5 style={{ cursor: "default" }}>Targets</h5>
+
+
+
+
+
+
+
+
+        <div>
 
           <div style={{
             border: "1px solid #222",
             borderRadius: "4px",
             display: 'flex-end',
             width: "100%",
-            padding: "10px",
+            height: "100%",
+            paddingLeft: "10px",
+            paddingRight: "10px",
             flexDirection: 'column',
             backgroundColor: "#111",
+
           }}>
+            <p style={{ opacity: "0.5", margin: "0" }}> Log target Creations,Deletion,commands or last known ping </p>
             <div style={{ display: "flex", justifyContent: 'space-between' }}>
-              send to dump
+              create
               <Checkbox sx={{
+                margin: "0",
                 color: "#fff",
                 '&.Mui-checked': {
                   color: '#fff',
                 }
-              }} checked={chckdmp} onChange={(e) => { HandlesetChkdmp(e) }} />
+              }} checked={chkcreate} onChange={(e) => { HandlessetCheckcreate(e) }} />
             </div>
             <div style={{ display: "flex", justifyContent: 'space-between' }}>
-              create on ping
+              delete
               <Checkbox sx={{
+                margin: "0",
                 color: "#fff",
                 '&.Mui-checked': {
                   color: '#fff',
                 }
-              }} checked={chkping} onChange={(e) => { HandlesetChkping(e) }} />
+              }} checked={chkdelete} onChange={(e) => { HandlesetChkdelete(e) }} />
+            </div>
+
+            <div style={{ display: "flex", justifyContent: 'space-between' }}>
+              Commands
+              <Checkbox sx={{
+                margin: "0",
+                color: "#fff",
+                '&.Mui-checked': {
+                  color: '#fff',
+                }
+              }} checked={chkcmd} onChange={(e) => { HandlesetChkcmd(e) }} />
             </div>
             <div style={{ display: "flex", justifyContent: 'space-between' }}>
-              use http
+              last ping
               <Checkbox sx={{
                 color: "#fff",
                 '&.Mui-checked': {
                   color: '#fff',
                 }
-              }} checked={chkhttp} onChange={(e) => { HandlesetChkhttp(e) }} />
+              }} checked={chklp} onChange={(e) => { HandlesetChklp(e) }} />
             </div>
           </div>
+        </div>
 
 
-      
 
-        <h5 style={{ cursor: "default" }}>Targets</h5>
 
-       
-       
-       
-       
-       
-       
+        <h5 style={{ color: "#fff", cursor: "default" }}>Clear data</h5>
 
-          <div>
 
+
+
+
+
+
+        {/* CLEARING LOGS */}
+        <div style={{
+          border: "1px solid #222",
+          borderRadius: "4px",
+          display: 'flex-end',
+          width: "100%",
+          height: "100%",
+          padding: "10px",
+          flexDirection: 'column',
+          backgroundColor: "#111",
+
+        }}>
+          <p style={{ opacity: "0.5" }}>
+            Deleting Logs will not delete your dumps or Target info.
+          </p>
+          <TextField
+            fullWidth={true}
+            InputLabelProps={{ sx: { color: "#fff" } }}
+            inputProps={{ sx: { color: "#fff" } }}
+            label={'days'}
+            size='small'
+            type={'number'}
+            value={daysretLog}
+            onKeyDown={(e: any) => { HandleDaysretChanged_KeyDown(e) }}
+            onChange={(e) => { HandleDaysretChanged(e) }}
+            sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
+
+          <div style={{ padding: "10px" }} >
+            <p style={{ color: "#fff", margin: "0" }}>
+              files: 3 files
+            </p>
+            <p style={{ color: "#fff", margin: "0" }}>
+              total space: 250mb
+            </p>
+            <p style={{ color: "#fff", margin: "0" }}>
+              Log records: 22453 rows
+            </p>
+          </div>
+          <Button
+            onClick={() => { HandleClearLogs() }}
+            sx={{
+
+              border: "1px solid #FF3635",
+              color: '#fff',
+              ":hover": {
+                bgcolor: "#ff7776",
+              }
+            }}
+            style={{ width: '100%', height: '15%', }} >
+            Clear Logs
+          </Button>
+
+        </div>
+
+
+
+
+
+      </Stack>
+
+
+
+      <Stack padding={2} spacing={"5px"} sx={{ flexDirection: "column", width: "60%", height: "100%", overflow: 'scroll' }}>
+
+        <h5 style={{ color: "#fff", cursor: "default" }}>Instances</h5>
+
+
+
+
+
+
+
+
+        <div style={{ maxHeight: "400px" }} >
+
+          <InstanceConfiguration />
+
+        </div>
+
+
+
+
+
+
+        <Stack direction={'row'} spacing={3} >
+
+
+          <Stack spacing={1} width={'100%'} height={'100%'}>
+            <h5 style={{ color: "#fff", cursor: "default" }}>Session</h5>
             <div style={{
               border: "1px solid #222",
               borderRadius: "4px",
               display: 'flex-end',
               width: "100%",
-              height: "100%",
-              paddingLeft: "10px",
-              paddingRight: "10px",
+
+              padding: "15px",
               flexDirection: 'column',
               backgroundColor: "#111",
-
             }}>
-              <p style={{ opacity: "0.5",margin:"0" }}> Log target Creations,Deletion,commands or last known ping </p>
-              <div style={{ display: "flex", justifyContent: 'space-between'  }}>
-                create
-                <Checkbox sx={{
-                   margin:"0",
-                  color: "#fff",
-                  '&.Mui-checked': {
-                    color: '#fff',
-                  }
-                }} checked={chkcreate} onChange={(e) => { HandlessetCheckcreate(e) }} />
+              <p style={{ opacity: "0.5" }}>
+                Stay logged in?
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: "20px" }}>
+                <h6 style={{ color: "#fff", cursor: "default" }}>Inactivity Timeout?</h6>
+                <SwitchTheme defaultChecked checked={chktimeout} onChange={(e) => { HandleTimeOut(e) }} />
               </div>
-              <div style={{ display: "flex", justifyContent: 'space-between' }}>
-                delete
-                <Checkbox sx={{
-                   margin:"0",
-                  color: "#fff",
-                  '&.Mui-checked': {
-                    color: '#fff',
-                  }
-                }} checked={chkdelete} onChange={(e) => { HandlesetChkdelete(e) }} />
-              </div>
-
-              <div style={{ display: "flex", justifyContent: 'space-between' }}>
-                Commands
-                <Checkbox sx={{
-                  margin:"0",
-                  color: "#fff",
-                  '&.Mui-checked': {
-                    color: '#fff',
-                  }
-                }} checked={chkcmd} onChange={(e) => { HandlesetChkcmd(e) }} />
-              </div>
-              <div style={{ display: "flex", justifyContent: 'space-between' }}>
-                last ping
-                <Checkbox sx={{
-                  color: "#fff",
-                  '&.Mui-checked': {
-                    color: '#fff',
-                  }
-                }} checked={chklp} onChange={(e) => { HandlesetChklp(e) }} />
-              </div>
+              <p style={{ opacity: "0.5" }}>
+                set Session length
+              </p>
+              <TextField
+                fullWidth={true}
+                type={'number'}
+                InputLabelProps={{ sx: { color: "#fff" } }}
+                inputProps={{ sx: { color: "#fff" } }}
+                label={'minutes'}
+                size='small'
+                value={sessionlen}
+                onChange={(e) => { HandleSessionLength(e) }}
+                sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
             </div>
-          </div>
 
-      
+          </Stack>
+
+          <Stack spacing={1} width={'100%'} height={'100%'}  >
+
+            <h5 style={{ color: "#fff", cursor: "default" }}>Listeners</h5>
 
 
-        <h5 style={{ color: "#fff", cursor: "default" }}>Clear data</h5>
 
-       
-       
-       
-       
-       
-       
-          {/* CLEARING LOGS */}
+
+
+
+
+
+            <ListenerComponent />
+
+          </Stack>
+        </Stack>
+
+      </Stack>
+
+
+      <Stack padding={2} spacing={"10px"} sx={{ flexDirection: "column", width: "20%", height: "100%", overflow: 'scroll' }}>
+
+        <div style={{
+          flexDirection: "column",
+          display: "flex",
+          marginLeft: "auto",
+          cursor: "default",
+          width: "100%",
+          height: "50%",
+          overflow: "hidden"
+        }}>
+
+
+
+
+
+
+
+          <h5 style={{ color: "#fff", cursor: "default" }}>Users</h5>
+          <Users></Users>
+        </div>
+
+
+
+        <div style={{
+          flexDirection: "column",
+          display: "flex",
+          marginLeft: "auto",
+          cursor: "default",
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
+          margin:"auto"
+        }}>
+
+
+
+          <h5 style={{ color: "#fff", cursor: "default" }}>Save - Export</h5>
           <div style={{
             border: "1px solid #222",
             borderRadius: "4px",
@@ -333,243 +571,101 @@ const ConfigGeneralComp = () => {
             padding: "10px",
             flexDirection: 'column',
             backgroundColor: "#111",
+            margin: "auto"
 
           }}>
-            <p style={{ opacity: "0.5" }}>
-              Deleting Logs will not delete your dumps or Target info.
-            </p>
-            <TextField
-              fullWidth={true}
-              InputLabelProps={{ sx: { color: "#fff" } }}
-              inputProps={{ sx: { color: "#fff" } }}
-              label={'days'}
-              size='small'
-              type={'number'}
-              value={daysretLog}
-              onKeyDown={(e: any) => { HandleDaysretChanged_KeyDown(e) }}
-              onChange={(e) => { HandleDaysretChanged(e) }}
-              sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
 
-            <div style={{ padding: "10px" }} >
-              <p style={{ color: "#fff" }}>
-                files: 3 files
+              <p style={{ opacity: "0.5", margin: 0 }}>
+                Export Core as:
               </p>
-              <p style={{ color: "#fff" }}>
-                total space: 250mb
+
+              <p style={{ opacity: "0.5", margin: 0 }}> Json, XML, yaml, Pkl
               </p>
-              <p style={{ color: "#fff" }}>
-                Log records: 22453 rows
+
+
+
+
+
+
+
+{/* here */}
+
+
+<FormControl>
+      
+      <RadioGroup
+        defaultValue="female"
+        aria-labelledby="demo-customized-radios"
+        name="customized-radios"
+      >
+        <FormControlLabel value="json" control={<Radio sx={{
+        }}/>} label="json" />
+        <FormControlLabel value="xml" control={<Radio />} label="xml" />
+        <FormControlLabel value="yaml" control={<Radio />} label="yaml" />
+    
+      </RadioGroup>
+    </FormControl>
+
+
+
+
+
+
+
+
+
+              <Button
+                onClick={() => { alert('Exporting') }}
+                sx={{
+
+                  maxHeight: "50px",
+                  minHeight: "50px",
+                  maxWidth: "250px",
+                  minWidth: "200px",
+                  border: "1px solid #fff",
+                  color: '#fff',
+                  backgroundColor: "#111",
+                  ":hover": {
+                    backgroundColor: '#333'
+                  }
+                }}
+              >
+                Export
+              </Button>
+
+              <p style={{ opacity: "0.5", margin: 0 }}>
+                Push all settings and changes
               </p>
+              <Button
+                onClick={() => { HandleSaveCore() }}
+                sx={{
+
+                  maxHeight: "50px",
+                  minHeight: "50px",
+                  maxWidth: "250px",
+                  minWidth: "200px",
+                  border: "1px solid #7ff685",
+                  color: '#fff',
+                  backgroundColor: "#111",
+                  ":hover": {
+                    backgroundColor: '#32f13b'
+                  }
+                }}
+              >
+                save
+                <CloudSyncIcon />
+
+
+              </Button>
+
             </div>
-            <Button
-              onClick={() => { HandleClearLogs() }}
-              sx={{
 
-                border: "1px solid #FF3635",
-                color: '#fff',
-                ":hover": {
-                  bgcolor: "#ff7776",
-                }
-              }}
-              style={{ width: '100%', height: '15%', }} >
-              Clear Logs
-            </Button>
-
-          </div>
-
-      
-
-
-
-      </Stack>
-
-
-
-      <Stack spacing={"1%"} sx={{ flexDirection: "column", width: "100%", height: "100%", padding: "3px", overflow: 'scroll' }}>
-
-        <h5 style={{ color: "#fff", cursor: "default",margin:"0" }}>Instances</h5>
-
-       
-       
-       
-       
-       
-       
-
-          <div style={{ maxHeight: "400px" }} >
-
-            <InstanceConfiguration />
-
-          </div>
-
-
-      
 
 
 
-        <Stack direction={'row'} spacing={5} >
-
-
-          <Stack spacing={3} width={'100%'}>
-            <h5 style={{ color: "#fff", cursor: "default" }}>Session</h5>
-
-
-           
-           
-           
-           
-           
-           
-
-              <div style={{
-                border: "1px solid #222",
-                borderRadius: "4px",
-                display: 'flex-end',
-                width: "100%",
-
-                padding: "15px",
-                flexDirection: 'column',
-                backgroundColor: "#111",
-              }}>
-                <p style={{ opacity: "0.5" }}>
-                  Stay logged in?
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: "20px" }}>
-                  <h6 style={{ color: "#fff", cursor: "default" }}>Inactivity Timeout?</h6>
-                  <SwitchTheme defaultChecked checked={chktimeout} onChange={(e) => { HandleTimeOut(e) }} />
-                </div>
-                <p style={{ opacity: "0.5" }}>
-                  set Session length
-                </p>
-                <TextField
-                  fullWidth={true}
-                  type={'number'}
-                  InputLabelProps={{ sx: { color: "#fff" } }}
-                  inputProps={{ sx: { color: "#fff" } }}
-                  label={'minutes'}
-                  size='small'
-                  value={sessionlen}
-                  onChange={(e) => { HandleSessionLength(e) }}
-                  sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
-              </div>
-          
-          </Stack>
-
-          <Stack spacing={2} width={'100%'} height={'100%'}  >
-
-            <h5 style={{ color: "#fff", cursor: "default" }}>Listeners</h5>
-
-
-           
-           
-           
-           
-           
-           
-              <ListenerComponent />
-          
-          </Stack>
-        </Stack>
-
-      </Stack>
-
-
-      <Stack spacing={"2%"} sx={{ flexDirection: "column", width: "30%", height: "90%",  overflow: 'scroll' }}>
-
-      <div style={{
-        flexDirection: "column",
-        display: "flex",
-        marginLeft: "auto",
-        cursor: "default",
-        width: "100%",
-        height: "50%",
-        overflow:"hidden"
-      }}>
-
-       
-       
-       
-       
-       
-       
-          <h5 style={{ color: "#fff", cursor: "default" }}>Users</h5>
-          <Users></Users>
           </div>
-      
-
-
-          <h5 style={{ color: "#fff", cursor: "default" }}>Save - Export</h5>
-        <div style={{
-          border: "1px solid #222",
-          borderRadius: "4px",
-          display: 'flex-end',
-          width: "100%",
-          height: "45%",
-          padding: "10px",
-          flexDirection: 'column',
-          backgroundColor: "#111",
-          margin:"auto"
-          
-        }}>
-          <div style={{display:"flex",flexDirection:"column",gap:"5px"}}>
-          
-          <p style={{ opacity: "0.5",margin:0 }}>
-             Export Core as: 
-            </p>
-
-          <p style={{ opacity: "0.5" }}> Json, XML, yaml, Pkl 
-            </p>
-            <Button
-              onClick={() => { alert('Exporting') }}
-              sx={{
-                
-                maxHeight: "50px",
-                minHeight: "50px",
-                maxWidth: "250px",
-                minWidth: "200px",
-                border: "1px solid #fff",
-                color: '#fff',
-                backgroundColor: "#111",
-                ":hover": {
-                  backgroundColor: '#333'
-                }
-              }}
-            >
-              Export
-             </Button>
-          
-            <p style={{ opacity: "0.5" }}>
-              Push all settings and changes
-            </p>
-            <Button
-              onClick={() => { HandleSaveCore() }}
-              sx={{
-                
-                maxHeight: "50px",
-                minHeight: "50px",
-                maxWidth: "250px",
-                minWidth: "200px",
-                border: "1px solid #7ff685",
-                color: '#fff',
-                backgroundColor: "#111",
-                ":hover": {
-                  backgroundColor: '#32f13b'
-                }
-              }}
-            >
-              save
-              <CloudSyncIcon />
-
-
-            </Button>
-
-           
-
-          
-
-
         </div>
-      </div>
 
       </Stack>
 

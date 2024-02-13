@@ -122,7 +122,7 @@ const ListenersComponent = () => {
             border: "1px solid #222",
             borderRadius: "4px",
             display: 'flex',
-            width: "90%",
+            width: "100%",
             height: "100%",
             maxHeight: "80%",
             minHeight: "250px",
