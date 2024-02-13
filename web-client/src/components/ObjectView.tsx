@@ -93,9 +93,10 @@ const ObjectView = () => {
                                                 }} />
 
                                         </div>
+
                                         {
                                             //weird behavior.... ._st is supposed to be 0:int not 'Task':string works but why?
-                                            item._st.toString() !== "Task" || "dropped" || "Sleep" &&
+                                            item._st.toString() !== "Task" && item._st.toString() !== "dropped" && item._st.toString() !== "Sleep" &&
                                             <TextField
                                                 onKeyDown={(e) => { e.key === 'Enter' && typeof e.preventDefault() === "undefined" && alert(item._st) }}
                                                 required
@@ -113,6 +114,31 @@ const ObjectView = () => {
                                             >
                                             </TextField>
                                         }
+
+                                        {
+                                            //weird behavior.... ._st is supposed to be 0:int not 'Task':string works but why?
+                                            item._st.toString() === "Task" && item._st.toString() !== "Listen" &&
+                                            <TextField
+                                                onKeyDown={(e) => { e.key === 'Enter' && typeof e.preventDefault() === "undefined" && alert(item._st) }}
+                                                required
+                                                value={item._in}
+                                                maxRows={5}
+                                                multiline={true}
+                                                size='small'
+                                                spellCheck={false}  // Disable spell checking
+                                                autoComplete='off'
+                                                autoCorrect='off'
+                                                autoCapitalize='off'
+                                                placeholder="cmd>"
+                                                InputLabelProps={{ sx: { color: "#7ff685", fontSize: '5px' } }}
+                                                inputProps={{ sx: { color: "#7ff685", fontFamily: 'Ubuntu Mono, monospace' } }}
+                                                sx={{ ...themeTextBlack, maxWidth: "100%", height: "50%", borderRadius: "5px", overflow: "hidden" }}
+                                            >
+                                            </TextField>
+                                        }
+
+
+
                                     </>
                                     }
                                 </div>

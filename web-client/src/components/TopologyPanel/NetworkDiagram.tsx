@@ -59,7 +59,7 @@ const networkDiagram = () => {
 
   const [SelectedNode, setSelectedNode] = useState(-1);
   const [targets, setTargets] = useState<Node[]>([]);
-  const [SettingsEdit, setSettingsEdit] = useState(true);
+  const [SettingsEdit, setSettingsEdit] = useState(false);
 
   const dispatch: any = useAppDispatch();
   const instances: Instance[] = useAppSelector(state => state.core.instanceObjects);
@@ -278,14 +278,13 @@ const networkDiagram = () => {
         }}>
 
         <div style={{ display: "flex", width: "100%", flexDirection: "row" }}>
-          <h5 style={labelStyle}>Topology View </h5>
+          <h6 style={labelStyle}>Topology View </h6>
           <h6 style={labelStyle}>core ID: {core._core_id}</h6>
-          <h6 style={labelStyle}>target count: {instances.length}</h6>
+          <h6 style={labelStyle}>instance count: {instances.length}</h6>
           <h6 style={labelStyle}>proxy/listener count: {listener.length}</h6>
           <h6 style={labelStyle}>target count: {targetsObjects.length}</h6>
-          <h6 style={labelStyle}
+          <h6 style={{...labelStyle, color : SettingsEdit ?  "#7ff685":  "#fff"}}
             onClick={(e) => HandleSettingsEditting(e)}>Settings</h6>
-
         </div>
 
       </Typography>
@@ -299,37 +298,46 @@ const networkDiagram = () => {
           borderRadius: "4px",
           display: 'flex-end',
           width: "100%",
-          height: "20%",
+          height: "50%",
           padding: "10px",
           flexDirection: 'column',
           backgroundColor: "#111",
 
         }}>
-                    {/* //          border: "1px solid #7ff685", */}
-          <Button onClick={HandleSetConfig}
-            sx={{
-              marginTop: "auto",
-              maxHeight: "30px",
-              minHeight: "30px",
-              maxWidth: "250px",
-              minWidth: "200px",
-              border: "1px solid #fff",
-              color: '#fff',
-              fontFamily: '"Ubuntu Mono", monospace',
-              bgcolor: "Transparent",
-              ":hover": {
-                color: '#fff'
-              }
-            }}>{edgeTypes}
-          </Button>
+          <div style={{ flexDirection: "row", display: "flex", borderRadius: "10px", width: "100%", height: "100%", backgroundColor: "transparent" }}>
+
+            {/* //          border: "1px solid #7ff685", */}
+            <div style={{ width: "100%", margin: "auto" }}>
+              <Button onClick={HandleSetConfig}
+                sx={{
+                  marginTop: "auto",
+                  maxHeight: "30px",
+                  minHeight: "30px",
+
+                  border: "1px solid #fff",
+                  color: '#fff',
+                  fontFamily: '"Ubuntu Mono", monospace',
+                  bgcolor: "Transparent",
+                  ":hover": {
+                    color: '#fff'
+                  }
+                }}>{edgeTypes}
+              </Button>
+
+
+            </div>
+
+            <div style={{ width: "80%" }}>
+              <Shell />
+            </div>
 
 
 
+          </div>
         </div>
       }
 
       {/* topology */}
-      <div style={{position:"relative",height:"100%",width:"100%",border: "1px solid #333", borderRadius: "4px", backgroundColor: "#111"}}>
       <ReactFlow
         nodesFocusable={true}
         ref={componentRef}
@@ -346,16 +354,8 @@ const networkDiagram = () => {
 
       </ReactFlow>
 
-      <div style={{padding:"10px",paddingBottom:"30px",borderRadius:"10px",position: "absolute", top: 0, right: 0, width: "40%", height: "50%", backgroundColor: "transparent", zIndex: "3" }}>
-
-
-      <Shell/>
-
-
-      </div>
+      
         
-        
-        </div>
 
     </div>
 

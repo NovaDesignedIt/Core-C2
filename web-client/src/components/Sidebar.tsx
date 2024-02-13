@@ -33,7 +33,7 @@ const data = [
   
   { icon: <StorageIcon />, index: 3, text: "Instances view" },
   { icon: <FolderIcon />, index: 2, text: "File view" },
-  { icon: <Public />, index: 4, text: "Map view" },
+  // { icon: <Public />, index: 4, text: "Map view" },
   { icon: <PiShareNetwork />, index: 7, text: "Topology View" },
 ];
 

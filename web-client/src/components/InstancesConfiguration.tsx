@@ -143,7 +143,7 @@ const instanceConfiguration = () => {
 
     return (
         <>
-            <div style={{ width: "100%", height: "35%", minHeight: "250px", backgroundColor: "#000", padding: "10px" }}>
+            <div style={{ width: "100%", height: "35%", minHeight: "250px", backgroundColor: "#000"}}>
                 <div onClick={() => { setSelectedRowId(-1) }} style={{ padding: "1%", backgroundColor: "#000", border: "1px #222 solid", borderRadius: "4px" }}>
                     <Button
                         onClick={() => { HandleAdd(true) }}

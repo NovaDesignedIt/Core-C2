@@ -197,12 +197,12 @@ const ConfigGeneralComp = () => {
 
       <Stack spacing={'5px'} sx={{ width: "30%", height: "100%", padding: "10px", overflow: 'scroll' }}  >
         <h5 style={{ color: "#fff", cursor: "default" }}>Listener Configuration</h5>
-        <motion.div
-          className="box"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-        >
+       
+       
+       
+       
+       
+       
 
           <div style={{
             border: "1px solid #222",
@@ -243,16 +243,16 @@ const ConfigGeneralComp = () => {
           </div>
 
 
-        </motion.div>
+      
 
         <h5 style={{ cursor: "default" }}>Targets</h5>
 
-        <motion.div
-          className="box"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.15 }}
-        >
+       
+       
+       
+       
+       
+       
 
           <div>
 
@@ -261,17 +261,18 @@ const ConfigGeneralComp = () => {
               borderRadius: "4px",
               display: 'flex-end',
               width: "100%",
-              height: "87%",
+              height: "100%",
               paddingLeft: "10px",
               paddingRight: "10px",
               flexDirection: 'column',
               backgroundColor: "#111",
 
             }}>
-              <p style={{ opacity: "0.5" }}> Log target Creations,Deletion,commands or last known ping </p>
-              <div style={{ display: "flex", justifyContent: 'space-between' }}>
+              <p style={{ opacity: "0.5",margin:"0" }}> Log target Creations,Deletion,commands or last known ping </p>
+              <div style={{ display: "flex", justifyContent: 'space-between'  }}>
                 create
                 <Checkbox sx={{
+                   margin:"0",
                   color: "#fff",
                   '&.Mui-checked': {
                     color: '#fff',
@@ -281,6 +282,7 @@ const ConfigGeneralComp = () => {
               <div style={{ display: "flex", justifyContent: 'space-between' }}>
                 delete
                 <Checkbox sx={{
+                   margin:"0",
                   color: "#fff",
                   '&.Mui-checked': {
                     color: '#fff',
@@ -291,6 +293,7 @@ const ConfigGeneralComp = () => {
               <div style={{ display: "flex", justifyContent: 'space-between' }}>
                 Commands
                 <Checkbox sx={{
+                  margin:"0",
                   color: "#fff",
                   '&.Mui-checked': {
                     color: '#fff',
@@ -309,17 +312,17 @@ const ConfigGeneralComp = () => {
             </div>
           </div>
 
-        </motion.div>
+      
 
 
         <h5 style={{ color: "#fff", cursor: "default" }}>Clear data</h5>
 
-        <motion.div
-          className="box"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
+       
+       
+       
+       
+       
+       
           {/* CLEARING LOGS */}
           <div style={{
             border: "1px solid #222",
@@ -374,7 +377,7 @@ const ConfigGeneralComp = () => {
 
           </div>
 
-        </motion.div>
+      
 
 
 
@@ -382,16 +385,16 @@ const ConfigGeneralComp = () => {
 
 
 
-      <Stack spacing={"2%"} sx={{ flexDirection: "column", width: "100%", height: "100%", padding: "10px", overflow: 'scroll' }}>
+      <Stack spacing={"1%"} sx={{ flexDirection: "column", width: "100%", height: "100%", padding: "3px", overflow: 'scroll' }}>
 
-        <h5 style={{ color: "#fff", cursor: "default" }}>Instances</h5>
+        <h5 style={{ color: "#fff", cursor: "default",margin:"0" }}>Instances</h5>
 
-        <motion.div
-          className="box"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.25 }}
-        >
+       
+       
+       
+       
+       
+       
 
           <div style={{ maxHeight: "400px" }} >
 
@@ -400,7 +403,7 @@ const ConfigGeneralComp = () => {
           </div>
 
 
-        </motion.div>
+      
 
 
 
@@ -411,12 +414,12 @@ const ConfigGeneralComp = () => {
             <h5 style={{ color: "#fff", cursor: "default" }}>Session</h5>
 
 
-            <motion.div
-              className="box"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
+           
+           
+           
+           
+           
+           
 
               <div style={{
                 border: "1px solid #222",
@@ -449,7 +452,7 @@ const ConfigGeneralComp = () => {
                   onChange={(e) => { HandleSessionLength(e) }}
                   sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
               </div>
-            </motion.div>
+          
           </Stack>
 
           <Stack spacing={2} width={'100%'} height={'100%'}  >
@@ -457,83 +460,118 @@ const ConfigGeneralComp = () => {
             <h5 style={{ color: "#fff", cursor: "default" }}>Listeners</h5>
 
 
-            <motion.div
-              className="box"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.35 }}
-            >
+           
+           
+           
+           
+           
+           
               <ListenerComponent />
-            </motion.div>
+          
           </Stack>
         </Stack>
 
       </Stack>
+
+
+      <Stack spacing={"2%"} sx={{ flexDirection: "column", width: "30%", height: "90%",  overflow: 'scroll' }}>
 
       <div style={{
         flexDirection: "column",
         display: "flex",
         marginLeft: "auto",
         cursor: "default",
-        width: "20%",
-        maxWidth: "300px",
-        padding: "10px",
-        height: "100%",
-        gap: "20px",
-
+        width: "100%",
+        height: "50%",
+        overflow:"hidden"
       }}>
 
-        <motion.div
-          className="box"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
+       
+       
+       
+       
+       
+       
           <h5 style={{ color: "#fff", cursor: "default" }}>Users</h5>
           <Users></Users>
+          </div>
+      
 
-        </motion.div>
 
-
-        {/* CLEARING LOGS */}
+          <h5 style={{ color: "#fff", cursor: "default" }}>Save - Export</h5>
         <div style={{
           border: "1px solid #222",
           borderRadius: "4px",
           display: 'flex-end',
           width: "100%",
-          height: "50%",
+          height: "45%",
           padding: "10px",
           flexDirection: 'column',
           backgroundColor: "#111",
-
+          margin:"auto"
+          
         }}>
+          <div style={{display:"flex",flexDirection:"column",gap:"5px"}}>
+          
+          <p style={{ opacity: "0.5",margin:0 }}>
+             Export Core as: 
+            </p>
 
-          <p style={{ opacity: "0.5" }}>
-            Push configuration to the server
-          </p>
-          <Button
-            onClick={() => { HandleSaveCore() }}
-            sx={{
-              margin: "auto",
-              maxHeight: "50px",
-              minHeight: "50px",
-              maxWidth: "250px",
-              minWidth: "200px",
-              border: "1px solid #7ff685",
-              color: '#fff',
-              bgcolor: "#000",
-              ":hover": {
-                color: '#7ff685'
-              }
-            }}
-          >
-            save
-            <CloudSyncIcon />
+          <p style={{ opacity: "0.5" }}> Json, XML, yaml, Pkl 
+            </p>
+            <Button
+              onClick={() => { alert('Exporting') }}
+              sx={{
+                
+                maxHeight: "50px",
+                minHeight: "50px",
+                maxWidth: "250px",
+                minWidth: "200px",
+                border: "1px solid #fff",
+                color: '#fff',
+                backgroundColor: "#111",
+                ":hover": {
+                  backgroundColor: '#333'
+                }
+              }}
+            >
+              Export
+             </Button>
+          
+            <p style={{ opacity: "0.5" }}>
+              Push all settings and changes
+            </p>
+            <Button
+              onClick={() => { HandleSaveCore() }}
+              sx={{
+                
+                maxHeight: "50px",
+                minHeight: "50px",
+                maxWidth: "250px",
+                minWidth: "200px",
+                border: "1px solid #7ff685",
+                color: '#fff',
+                backgroundColor: "#111",
+                ":hover": {
+                  backgroundColor: '#32f13b'
+                }
+              }}
+            >
+              save
+              <CloudSyncIcon />
 
-          </Button>
+
+            </Button>
+
+           
+
+          
+
+
         </div>
       </div>
 
+      </Stack>
 
       <DynamicAlert open={open} msg={message} type={alertType} closeParent={(e) => { SetOpen(false) }} />
     </Stack>
