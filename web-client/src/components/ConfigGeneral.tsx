@@ -47,7 +47,7 @@ const ConfigGeneralComp = () => {
   const [chkdelete, setChkdelete] = React.useState(configLogDelete);
   const [chklp, setChklp] = React.useState(configchkping);
   const [chktimeout, setchktimeout] = React.useState(configInactivityTimeout);
-  //alert
+  const [Format,SetFormat] = React.useState('');
   const [alertType, SetAlertType] = React.useState<AlertColor>('success');
   const [message, setmessage] = React.useState('');
   const [open, SetOpen] = React.useState(false);
@@ -97,7 +97,7 @@ const ConfigGeneralComp = () => {
       "_inactivitytimeout": chktimeout ? 1 : 0
     }
 
-    const BpIcon = styled('span')(({ theme }) => ({
+    const BpIcon ={
       borderRadius: '50%',
       width: 16,
       height: 16,
@@ -122,9 +122,11 @@ const ConfigGeneralComp = () => {
         background:
           theme.palette.mode === 'dark' ? 'rgba(57,75,89,.5)' : 'rgba(206,217,224,.5)',
       },
-    }));
     
-    const BpCheckedIcon = styled(BpIcon)({
+    };
+
+
+    const BpCheckedIcon = {
       backgroundColor: '#137cbd',
       backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.1),hsla(0,0%,100%,0))',
       '&::before': {
@@ -137,21 +139,9 @@ const ConfigGeneralComp = () => {
       'input:hover ~ &': {
         backgroundColor: '#106ba3',
       },
-    });
-    
-    // Inspired by blueprintjs
-    function BpRadio(props: RadioProps) {
-      return (
-        <Radio
-          disableRipple
-          color="default"
-          checkedIcon={<BpCheckedIcon />}
-          icon={<BpIcon />}
-          {...props}
-        />
-      );
     }
     
+
 
     const result = await setconfigurations(core._url, core, settings)
     if (result !== undefined) {
@@ -248,6 +238,13 @@ const ConfigGeneralComp = () => {
     },
   });
 
+
+      // Inspired by blueprintjs
+const HandleExportButton = () =>{
+  //hit here to download.
+  alert(`http://${core._url}/${corid}/cex/${Format}`);
+}
+    
 
   return (
 
@@ -580,9 +577,9 @@ const ConfigGeneralComp = () => {
                 Export Core as:
               </p>
 
-              <p style={{ opacity: "0.5", margin: 0 }}> Json, XML, yaml, Pkl
+              <p style={{ opacity: "0.5", margin: 0 }}> Json, XML, yaml, 
               </p>
-
+              {/* Pkl soon...?*/}
 
 
 
@@ -592,20 +589,35 @@ const ConfigGeneralComp = () => {
 {/* here */}
 
 
-<FormControl>
-      
-      <RadioGroup
-        defaultValue="female"
-        aria-labelledby="demo-customized-radios"
-        name="customized-radios"
-      >
-        <FormControlLabel value="json" control={<Radio sx={{
-        }}/>} label="json" />
-        <FormControlLabel value="xml" control={<Radio />} label="xml" />
-        <FormControlLabel value="yaml" control={<Radio />} label="yaml" />
-    
-      </RadioGroup>
-    </FormControl>
+              <FormControl>
+
+                <RadioGroup
+                  onChange={(e)=>{SetFormat(e.currentTarget.value)}}
+                  defaultValue="female"
+                  aria-labelledby="demo-customized-radios"
+                  name="customized-radios"
+                >
+                  <FormControlLabel value="json" control={<Radio sx={{
+                    color: "#fff",
+                    '&.Mui-checked': {
+                      color: "#fff",
+                    },
+                  }} />} label="json" />
+                  <FormControlLabel value="xml" control={<Radio sx={{
+                    color: "#fff",
+                    '&.Mui-checked': {
+                      color: "#fff",
+                    },
+                  }} />} label="xml" />
+                  <FormControlLabel value="yaml" control={<Radio sx={{
+                    color: "#fff",
+                    '&.Mui-checked': {
+                      color: "#fff",
+                    },
+                  }} />} label="yaml" />
+
+                </RadioGroup>
+              </FormControl>
 
 
 
@@ -616,7 +628,7 @@ const ConfigGeneralComp = () => {
 
 
               <Button
-                onClick={() => { alert('Exporting') }}
+                onClick={HandleExportButton}
                 sx={{
 
                   maxHeight: "50px",
