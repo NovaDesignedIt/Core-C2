@@ -52,7 +52,7 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
 
   const handletargetSelected = (index: number) => {
     if (targetData !== undefined) {
-      
+
       setname(targetData[index]._n);
       setInterval(targetData[index]._zzz.toString())
       SetCommandText(targetData[index]._in)
@@ -141,7 +141,7 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
   const HandleModifictionChanges =  (targindex: number) =>  {
 
   const arraytarg:Target[] | void = targetData?.filter((item:any,i:number) => i !== targindex );
-  if (arraytarg !== undefined) {
+  if (arraytarg !== undefined && targindex !== -1 ) {
     const interval: number = _it !== '' ? parseInt(`${_it}`) : 1;
     const targetlisteners = proxyName !== '' ? listeners[proxyIndex]._id : listeners.find(x=> x._id === instance._proxy )?._id 
     setTargetData([...arraytarg,new Target(
