@@ -72,6 +72,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
   const [crud, setCrud] = useState(0);
   const [rowSelected, setSelectedRows] = useState<number[]>();
   const [filteredCols, SetFilteredColumns] = useState<any>([{}]);
+  const [on,setOn] = useState(true);
   const [formData, setFormData] = useState({
     _ip: '',
     _st: '',
@@ -109,8 +110,8 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
     if (rowSelected !== undefined) {
       await deleterecordbyid(core._url, rowSelected, core);
     }
-    //  fetchData();
     setSelectedRows([]);
+    dispatch(SetSelectedTargets({ target_ids: [] }))
   };
 
   const SwitchTheme = styled(Switch)(({ theme }) => ({
@@ -173,7 +174,6 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
         </button>
 
         <button style={buttonstyle} onClick={(e) => {
-          e.preventDefault();
           handleExportDump()
         }}>
           <span style={{ marginRight: '5px' }}>
@@ -185,29 +185,38 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
 
 
 
-        <GridToolbarColumnsButton onClick={() => { }} />
+        <GridToolbarColumnsButton  />
 
-        <GridToolbarFilterButton enterDelay={0} onClick={() => { }} />
+        <GridToolbarFilterButton />
 
         <GridToolbarDensitySelector
-          onMouseEnter={() => { setRefresh(false); }}
-          onClick={() => { }}
+        
         />
         <GridToolbarExport
-          onMouseEnter={() => { setRefresh(false); }}
-          onClick={() => { }}
+        
         />
 
 
 
-        <button style={buttonstyle} onClick={(e) => {
-          e.preventDefault();
+        <button  style={buttonstyle} onClick={(e) => {
+         
           alert('demo only')
         }}>
           <span style={{ marginRight: '5px' }}>
             <SatelliteAltIcon style={{ fontSize: "15px" }} />
           </span>
           DOWNLOAD AGENT
+        </button>
+
+
+        <button style={buttonstyle} onClick={(e) => {
+   
+          setOn(!on)
+        }}>
+          <span style={{ marginRight: '5px' }}>
+
+          </span>
+          {on ? "REFRESH ON" : "REFRESH OFF"}
         </button>
 
 
@@ -299,10 +308,11 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
         });
     }
     setInterval(() => {
-      socks.emit('rtgrid', { "isid": `${SelectedInstance._instance_id}` });
-    }, 300);
+      
+      on ? socks.emit('rtgrid', { "isid": `${SelectedInstance._instance_id}` }) : undefined;
+    }, 100);
      return () => {socks.disconnect()};
-  }, [SelectedInstance]);
+  }, [SelectedInstance,on]);
 
 
   //console.log(rowsWithIds);
@@ -336,13 +346,13 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
       '& .super-app-theme--header': {
         backgroundColor: 'rgba(0,0,0,0.5)',
       },
-      padding: 0,
-      backgroundColor: '#000000'
+      backgroundColor: '#000000',
 
     }}
     >
 
       <DataGrid onMenuClose={() => { setRefresh(true) }} rows={rows} columns={filteredCols} rowHeight={30} columnHeaderHeight={30} checkboxSelection
+        
         style={{ borderRadius: 0, overflow: "hidden" }}
         onRowSelectionModelChange={(details) => { selectedRows(details.toString()) }}
         slots={{
@@ -353,8 +363,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
           boxShadow: 0,
           color: 'rgb(255,255,255)',
           backgroundColor: '#080808',
-          border: 2,
-          padding: 0,
+      
           '&. MuiTablePagination-root': {
             color: 'white',
             backgroundColor: 'white'
@@ -376,18 +385,25 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
             }
 
           },
-
+  
           '& .MuiDataGrid-columnHeaders': {
-            backgroundColor: '#333'
+            backgroundColor: '#333',
+            outline:"none"
           },
           '& .MuiDataGrid-columnHeader': { color: '#ffffff', backgroundColor: '#333' },
+          
           '& .MuiDataGrid-check:checked': { color: '#21fd0a', backgroundColor: '#00000' },
-          '& .MuiDataGrid-row:focus': { color: '#777' },
-          '& .MuiDataGrid-cell:hover': { color: '#ffffff', }, //limegreen
-          '& .MuiDataGrid-row:hover': { color: '#ffffff', }, //limegreen
-
-          '& .Mui-row-selected': {
+          
+          '& .MuiDataGrid-row:focus,checked': { color: '#777'},
+          
+          '& .MuiDataGrid-cell:hover,focus': { color: '#ffffff', outline:"none",transparent:"none"}, //limegreen
+          
+          '& .MuiDataGrid-cell':{border:"1px dotted #111",outline:"none"},
+          '& .MuiDataGrid-cell:focus':{border:"1px dotted #111",outline:"none"},
+          '& .MuiDataGrid-row:hover': { backgroundColor: '#222' }, 
+          '& .Mui-row-selected:selected': {
             color: '#00000',
+            border:"none",
             backgroundColor: '#ffffff',
             '&:hover': {
               backgroundColor: '#fffff'
@@ -407,6 +423,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
           '& .Mui-hover': {
             color: '#ffffff', // Set the color when checkboxes are checked
             // Add other styles as needed
+            backgroundColor:"#000"
           },
 
           '&. MuiPopper-root': {
@@ -476,7 +493,6 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
             </h6>
             <Stack direction="row" spacing={10} style={{ width: "100%", padding: 0 }}>
               <Button sx={{ backgroundColor: "Transparent", color: "#fff", width: "100%", ":hover": { backgroundColor: "red" } }} onClick={() => { handleDeleteAll() }}>Delete</Button>
-
             </Stack>
           </Stack>
         </DialogContent>

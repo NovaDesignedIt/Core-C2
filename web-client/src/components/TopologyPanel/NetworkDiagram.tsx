@@ -307,8 +307,42 @@ const networkDiagram = () => {
           <div style={{ flexDirection: "row", display: "flex", borderRadius: "10px", width: "100%", height: "100%", backgroundColor: "transparent" }}>
 
             {/* //          border: "1px solid #7ff685", */}
-            <div style={{ width: "100%", margin: "auto" }}>
-              <Button onClick={HandleSetConfig}
+            <div style={{ width: "30%", marginBottom: "auto" }}>
+                <p style={{margin:"0"}}>Edge Connections:</p>
+                <FormControl sx={{height:"50%"}}>
+
+                  <RadioGroup
+                    onChange={(e) => { }}
+                    defaultValue="female"
+                    aria-labelledby="demo-customized-radios"
+                    name="customized-radios"
+                  >
+                    <FormControlLabel value="straight" control={<Radio sx={{
+                      fontFamily: '"Ubuntu Mono", monospace',
+                      color: "#fff",
+                      '&.Mui-checked': {
+                        color: "#fff",
+                      }   
+                    }} />} label="straight" /> 
+                    <FormControlLabel value="step" control={<Radio sx={{
+                      color: "#fff",
+                      '&.Mui-checked': {
+                        color: "#fff",
+                      },
+                    }} />} label="step" />
+                    <FormControlLabel value="curl" control={<Radio sx={{
+                      color: "#fff",
+                      '&.Mui-checked': {
+                        color: "#fff",
+                      },
+                    }} />} label="curl" />
+
+                  </RadioGroup>
+                </FormControl>
+
+
+
+              {/* <Button onClick={HandleSetConfig}
                 sx={{
                   marginTop: "auto",
                   maxHeight: "30px",
@@ -322,7 +356,7 @@ const networkDiagram = () => {
                     color: '#fff'
                   }
                 }}>{edgeTypes}
-              </Button>
+              </Button> */}
 
 
             </div>
