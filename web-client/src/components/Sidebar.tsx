@@ -30,11 +30,10 @@ import { Typography } from '@material-ui/core';
 {/*sx={{color:"#21fd0a"}}*/ }
 const data = [
   // { icon: <People />, index: 1, text: "User" },
-  
-  { icon: <StorageIcon />, index: 3, text: "Instances view" },
   { icon: <FolderIcon />, index: 2, text: "File view" },
   // { icon: <Public />, index: 4, text: "Map view" },
   { icon: <PiShareNetwork />, index: 7, text: "Topology View" },
+  { icon: <StorageIcon />, index: 3, text: "Instances view" },
 ];
 
 const FireNav = styled(List)<{ component?: React.ElementType }>({
@@ -128,7 +127,7 @@ const CustomizedList =  ( ) => {
             palette: {
               mode: 'dark',
               primary: { main: 'rgba(255,255,255,0.8)' },
-              background: { paper: 'rgb(17,22,19)' },
+              background: { paper: '#111' },
             },
           })}
         >
@@ -213,7 +212,8 @@ const CustomizedList =  ( ) => {
               <Box
                 key={873}
                 sx={{
-                  bgcolor: open ? 'rgba(32,44,34)' : null,
+                  //MAJOR BGCOLOR 1 
+                  bgcolor: open ? "#000" : null,
                   pb: open ? 2 : 0,
 
                 }}
@@ -230,12 +230,13 @@ const CustomizedList =  ( ) => {
                   }}
                 >
                   <ListItemText
-                    primary="Interface"
+                    primary="Dash"
                     primaryTypographyProps={{
                       fontSize: 15,
                     
                     }}
-                    secondary="login to view your core instance"
+                    secondary={core?._core_id !== '' ? "Manage, interact, visualize, configure" : "login to view your core instance"}
+                   
                     secondaryTypographyProps={{
                       noWrap: true,
                       fontSize: 12,
@@ -282,7 +283,8 @@ const CustomizedList =  ( ) => {
                                       <ListItemButton
                                           key={item_instance._id}
                                           selected={selectedInstance?._instance_id === item_instance?._instance_id}
-                                          sx={{ py: 0.5, minHeight: 32, pl: 4, backgroundColor: "#405742", ':hover,  :selected': { backgroundColor: "#111 " } }}
+                                                            //MAJOR BGCOLOR 2
+                                          sx={{ py: 0.5, minHeight: 32, pl: 4,borderRadius:"10px",margin:"auto",width:"80%" , backgroundColor: "#010101", ':hover,  :selected': { backgroundColor: "#010101 " } }}
                                           onClick={() => HandleInstanceSelection(item_instance)}
                                         >
                                           <FaDatabase style={{fontSize:'10px',marginRight:"5px"}} />

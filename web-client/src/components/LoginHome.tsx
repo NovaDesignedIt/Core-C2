@@ -234,7 +234,7 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
             <div style={{
                 height: "100vh",
                 width: "100%",
-                backgroundColor: "#2f4131",
+                backgroundColor: "#040404",
                 justifyContent: 'center',
                 alignItems: 'center',
                 display: 'flex'
@@ -251,11 +251,11 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
                     <div id='Login-panel'
                         onKeyDown={(e) => { handleEnterKeyPress(e) }}
                         style={{
-                            borderRadius: "2px",
-                            backgroundColor: '#628565',
+                            borderRadius: "7px",
+                            border:"1px solid #333",
+                            backgroundColor: '#111',
                             height: '40%',
                             width: '100%',
-                            borderColor: color,
                             justifyContent: 'center',
                             alignItems: 'center',
                             display: 'flex',
@@ -504,16 +504,20 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
                                     </div>
                                 </>
                             }
-                            <div style={{ marginBottom: 10, width: "80%" }}>
+                            <div style={{ alignItems:"center",display:"flex",flexDirection:"column",marginBottom: 10, width: "100%"}}>
                                 {!IsCreating &&
                                     <Button
                                         onClick={login}
-                                        sx={themebutton}
-                                        style={{
-                                            width: '100%', marginBottom: 10,
-                                            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.7)'
-                                        }} >
-                                        login
+                                        sx={{
+                                            width:"50%",                                            border: "1px solid #7ff685",
+                                            color: '#fff',
+                                            backgroundColor: "#111",
+                                            ":hover": {
+                                                backgroundColor: '#32f13b'
+                                            }
+                                        }}
+                                    >
+                                        Login
                                     </Button>
                                 }
                                 <Button

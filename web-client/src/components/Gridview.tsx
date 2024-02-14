@@ -151,7 +151,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
       <GridToolbarContainer sx={{ width: "100%", wordWrap: "nowrap" }}>
 
         <button style={buttonstyle} onClick={(e) => {
-          e.preventDefault();
+
           handleSelectedAction(1);
 
         }}>
@@ -162,7 +162,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
         </button>
 
         <button style={buttonstyle} onClick={(e) => {
-          e.preventDefault();
+       
           setPrompt(true);
 
         }}>
@@ -202,8 +202,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
 
         <button style={buttonstyle} onClick={(e) => {
           e.preventDefault();
-          alert('I HAZ NO IMPLANTZ 4 U')
-          alert('kidding. this is a demo Instance and should probably not unleash these things in the wild.')
+          alert('demo only')
         }}>
           <span style={{ marginRight: '5px' }}>
             <SatelliteAltIcon style={{ fontSize: "15px" }} />
@@ -273,11 +272,6 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
           setOpen2(true);
           return;
         }
-
-        //const rowsWithIds = instance["_targets"].map( (row: any, index: number) => ({ ...row, id: index + 1 }));
-
-
-        // Now you can use 'result' as the mapped array
       } else {
         // Handle the case when data is a string
         console.error("Data is a string. Unable to use map.");
@@ -294,9 +288,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
   };
 
   useEffect(() => {
-
     const socks: Socket = io(`http://${core._url}`);
-
     if (socks !== undefined) {
       socks.on(
         'rtgrid/' + SelectedInstance._instance_id,
@@ -306,14 +298,9 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
           dispatch(SetInstanceTargets({targets:payload}))
         });
     }
-
-   
-
     setInterval(() => {
       socks.emit('rtgrid', { "isid": `${SelectedInstance._instance_id}` });
-    }, 50);
-
-
+    }, 300);
      return () => {socks.disconnect()};
   }, [SelectedInstance]);
 
@@ -365,7 +352,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
 
           boxShadow: 0,
           color: 'rgb(255,255,255)',
-          backgroundColor: '#202c22',
+          backgroundColor: '#080808',
           border: 2,
           padding: 0,
           '&. MuiTablePagination-root': {
@@ -381,7 +368,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
               color: '#ffffff',
               typography: { color: '#ffffff' }
             },
-            backgroundColor: '#202c22', // Set the background color for the toolbar container
+            backgroundColor: '#222', // Set the background color for the toolbar container
             padding: 0,
             typography: {
               color: '#ffffff',
@@ -391,11 +378,11 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
           },
 
           '& .MuiDataGrid-columnHeaders': {
-            backgroundColor: '#111613'
+            backgroundColor: '#333'
           },
-          '& .MuiDataGrid-columnHeader': { color: '#ffffff', backgroundColor: '#111613' },
+          '& .MuiDataGrid-columnHeader': { color: '#ffffff', backgroundColor: '#333' },
           '& .MuiDataGrid-check:checked': { color: '#21fd0a', backgroundColor: '#00000' },
-          '& .MuiDataGrid-row:focus': { color: '#405777' },
+          '& .MuiDataGrid-row:focus': { color: '#777' },
           '& .MuiDataGrid-cell:hover': { color: '#ffffff', }, //limegreen
           '& .MuiDataGrid-row:hover': { color: '#ffffff', }, //limegreen
 

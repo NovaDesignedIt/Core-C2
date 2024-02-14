@@ -379,8 +379,8 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
             autoCapitalize='off'
             placeholder="cmd>"
             InputLabelProps={{ sx: { color: "#7ff685", fontSize: '5px' } }}
-            inputProps={{ sx: { color: "#7ff685", fontFamily: 'Ubuntu Mono, monospace' } }}
-            sx={{...themeTextBlack,maxWidth:"98%"}}
+            inputProps={{ sx: { color: "#ddd", fontFamily: 'Ubuntu Mono, monospace' } }}
+            sx={{...themeTextBlack,maxWidth:"98%",borderRadius:"5px"}}
           >
           </TextField>
 }

@@ -12,7 +12,7 @@ import CustomPanelConfiguration from './CustomPanelConfiguration';
 import { Config, Core, CoreC, File as Files, Instance, Listeners, User, dumpTargets } from '../api/apiclient';
 import { useAppDispatch,useAppSelector } from '../store/store';
 import { adjustSizes } from '../Utilities/Utilities'
-
+import { FaGithub } from "react-icons/fa";
 import {BuildStateManagement} from  '../store/features/CoreSlice';
 import  NetworkDiagram from './TopologyPanel/NetworkDiagram'
 
@@ -103,7 +103,7 @@ const Frame = () => {
         <Splitter direction={SplitDirection.Horizontal}
           onResizeFinished={handleResize}
           initialSizes={sizes}>
-          <Stack sx={{ height: "100%", bgcolor: "#172219" }} overflow={"hidden"}>
+          <Stack sx={{ height: "100%", bgcolor: "#010101" }} overflow={"hidden"}>
             <Sidebar/>
           </Stack>
           <Stack direction="column" height="100%" width="100%" maxWidth={"100"} overflow="hidden" >
@@ -121,7 +121,12 @@ const Frame = () => {
           Logged Out
         </Alert >
       </Snackbar>
-      <footer style={{ position: "fixed", paddingTop: 0, bottom: 0, width: "100%", minHeight: "10vh", backgroundColor: 'rgb(17,22,19)' }}></footer>
+      <footer style={{ position: "fixed", paddingTop: 0, bottom: 0, width: "100%", minHeight: "6vh", backgroundColor: '#040404' }}>
+        <div style={{ gap:"5px",padding:"10px",justifyContent:"center", width: "100%", height: "100%",display:"flex",flexDirection:"row" }}>
+          <FaGithub style={{cursor:"pointer" }}/>
+          <a style={{color:"#fff"}} target='_blank' href='https://github.com/NovaDesignedIt/CoreC2'>github.com/NovaDesignedIt/CoreC2</a>
+        </div>
+      </footer>
     </Box>
   );
 }

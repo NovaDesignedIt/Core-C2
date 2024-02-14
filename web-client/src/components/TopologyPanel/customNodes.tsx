@@ -160,8 +160,8 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
                                             data["type"] === 'proxy' &&
                                             <div style={{ display: "flex", flexDirection: "column", margin: "auto", width: "100%",height:"100%", alignItems: "center" ,gap:"5px"}}>
-                                                <p style={{ margin: "auto" }}> outbound {data['value']._listener_name}</p>
-                                                <p style={{ margin: "auto" }}> outbound: instancesName </p>
+                                                <p style={{ margin: "auto",cursor:"pointer" }}> outbound {data['value']._listener_name}</p>
+                                                <p style={{ margin: "auto",cursor:"pointer" }}> outbound: instancesName </p>
                                                 <GoArrowSwitch fontSize={"30px"} />
                                                 <p style={{ margin: "auto" }}> incomming</p>
                                                     <div style={{ paddingTop:"5px",gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "100%", alignItems: "center", backgroundColor: "#000", overflow: "scroll", borderRadius: "3px", padding: "3px" }}>
