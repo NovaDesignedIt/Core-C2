@@ -25,32 +25,11 @@ const StoreComponent = () => {
     }
 
     return (
-
-        <Stack
-            component="form"
-            direction="column"
-            sx={{
-                width: "100%", height: "100vh",
-                '& .MuiTextField-root': { m: 1, width: '25ch' },
-                backgroundColor: "#111",
-            }}
-            spacing={1}
-            autoComplete="off"
-        >
-            <Splitter direction={SplitDirection.Vertical}
-                onResizeFinished={handleResize}
-                initialSizes={sizes}
-            >
-                <div style={{ height: "100%" }}>
-                    <Files  file={file}/>
-                </div>
-
-                <div style={{ height: "100%" }}>
-                    <DirStruct onFileSelected={onFileSelected} />
-                </div>
-            </Splitter>
-        </Stack>
-
+        <div style={{height:"100%", padding:"1%",flexDirection:"row",display:"flex",gap:"1%"}}>
+               <DirStruct onFileSelected={onFileSelected} />
+            <Files file={file} />
+         
+        </div>      
     );
 }
 export default StoreComponent;

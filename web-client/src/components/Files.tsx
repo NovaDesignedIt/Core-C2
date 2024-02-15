@@ -13,7 +13,7 @@ const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.tif
 const themeTextBlack = {
   height: "100%",
   color: "#fff",
-  overflow: 'scroll',
+  overflow: 'auto',
   backgroundColor: "#000",
   "&:Hover,focus": {
     backgroundColor: "#000"
@@ -89,14 +89,14 @@ const Files: React.FC<FileViewerProp> = ({  file }) => {
 
 
   return (
-    <Stack sx={{ height: "100%", width: "100%", backgroundColor: "#000" }}>
+    <Stack sx={{ height: "90%", width: "100%", maxWidth:"70%", backgroundColor: "#000", border:"1px solid #333",borderRadius:"5px" }}>
       <Stack
-        sx={{ padding: '1%', flexDirection: 'row', minWidth: "100%",minHeight: "60px",maxHeight: "60px", height: "15%", width: "100%", boxShadow: '0px 2px 7px rgba(0, 0, 0, 0.8)', backgroundColor: "#202c22" }}>
+        sx={{ padding: '1%', flexDirection: 'row', minHeight: "60px",maxHeight: "60px", height: "100%", width: "100%", boxShadow: '0px 2px 7px rgba(0, 0, 0, 0.8)', backgroundColor: "#111" }}>
         <label style={{ fontSize: 20, color: "#fff" }}>{file !== undefined ? file?._name : ''}</label>
       </Stack>
 
       <Stack
-        sx={{ display: "flex", flexDirection: "row", height: "100%", width: "100%", justifyContent: "center", overflow: "scroll" }}>
+        sx={{ display: "flex", flexDirection: "row",justifyContent:"center", height: "100%", width: "100%",  overflow: "auto" }}>
 
         {
         imageExtensions.includes(file?._extension !== undefined ? file?._extension : '') ?
@@ -119,7 +119,7 @@ const Files: React.FC<FileViewerProp> = ({  file }) => {
             placeholder=""
             InputLabelProps={{ sx: { color: "#7ff685", fontSize: '5px', height: '100%' } }}
             inputProps={{ sx: { color: "#7ff685", fontFamily: 'Ubuntu Mono, monospace' } }}
-            sx={themeTextBlack}
+            sx={{...themeTextBlack}}
           >
           </TextField>
         }

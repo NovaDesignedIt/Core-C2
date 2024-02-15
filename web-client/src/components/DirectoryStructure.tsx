@@ -138,15 +138,17 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
 
 
   return (
-    <div style={{ height: "100%" }}>
-      <div style={{ gap:"90%", padding:"1%", flexDirection: 'row', justifyContent: 'Left', display: 'flex', backgroundColor: '#202c22' }}>
+    <div style={{ height: "70%",border:"1px solid #333" ,borderRadius:"5px",overflow:"auto"}}>
+
+      <div style={{ width:"100%", padding:"1%", flexDirection: 'row', justifyContent: 'Left', display: 'flex', backgroundColor: '#111' }}>
         <h3 style={{ color: '#fff' }}>Files</h3>
        
     
           <DownloadIcon  sx={{
             fontSize: '40px',
+            marginLeft:"auto",
             cursor:"pointer",
-            ":Hover,selected": { color: "#7ff685" },
+            ":Hover,selected": { color: "#555" },
             color: '#fff',
           }}
           onClick={() => {DownloadSelectedFile(SelectedFiles)}}
@@ -154,13 +156,14 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
 
       </div>
     
-      <TableContainer component={Paper} sx={{ boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.7)', height: "50%", borderRadius: 0, backgroundColor: "#202c22", }} >
+      <TableContainer component={Paper} sx={{ height: "100%", backgroundColor: "#000"}} >
         <Table size="small" sx={{
+       
           borderStyle: 'dotted',
           borderWidth: '1px',
           borderColor: '#111',
 
-          minWidth: 650, backgroundColor: "#202c22",
+          minWidth: 650, backgroundColor: "#111",
           "& .MuiTableCell-root": {
             color: "#fff",
     
@@ -178,7 +181,7 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
          
           },
           "& .MuiTableRow-root.Mui-selected": {
-            backgroundColor: "#4D6A52",
+            backgroundColor: "#555",
             opacity: '1'
           }
         }} aria-label="simple table">
@@ -219,9 +222,9 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
                     }}
                     control={<Checkbox onChange={(e) => { handleCheckboxChange(e, f) }} />}
                   /></TableCell>
-                <TableCell align="left" sx={{ width: "30px",margin:"0",height:"10px" }}>{f._name}</TableCell>
-                <TableCell align="left" sx={{ width: "10px",margin:"0",height:"10px" }}>{f._extension}</TableCell>
-                <TableCell align="left" sx={{margin:"0",height:"10px"}}>{f._size}</TableCell>
+                <TableCell align="left" sx={{ width: "200px",margin:"0",height:"10px", }}>{f._name}</TableCell>
+                <TableCell align="left" sx={{ width: "200px",margin:"0",height:"10px" }}>{f._extension}</TableCell>
+                <TableCell align="left"  sx={{ width: "250px",margin:"0",height:"10px" }}>{f._size}</TableCell>
               </TableRow>
             ))}
           </TableBody>
