@@ -19,6 +19,7 @@ import { useAppDispatch, useAppSelector } from '../store/store';
 import { BuildStateManagement, SetInstanceTargets, SetSelectedTargets } from '../store/features/CoreSlice';
 import { Socket, io } from 'socket.io-client';
 import { DynamicAlert } from './AlertFeedbackComponent';
+import { getStateLabel } from '../Utilities/Utilities';
 
 
 
@@ -57,8 +58,8 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
   const Targets = useAppSelector(state => state.core.targetObjects);
   const SelectedTargets = useAppSelector(state => state.core.selectedTargets);
   const SelectedContent = useAppSelector(state => state.core.SelectedContent);
+  const proxies = useAppSelector(state=> state.core.listenerObjects);
   const SelectedInstance = useAppSelector(state => state.core.SelectedInstances);
-
 
 
 
@@ -242,23 +243,9 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
     if (Array.isArray(filteredRows)) {
       const result = filteredRows.map((item: any) => {
         // Your map logic hereRefresh
-        var statusText = '';
-        switch (item._st) {
-          case 0:
-            statusText = "Task";
-            break;
-          case 1:
-            statusText = "Sleep";
-            break;
-          case 2:
-            statusText = "dropped";
-            break;
-          case 3:
-            statusText = "Listen";
-            break;
-          default:
-            statusText = "awaiting";
-        }
+        var statusText = getStateLabel(item._st);
+
+        item._proxy = 
         item._zzz += ' seconds'
         item._st = statusText;
         return item;
