@@ -7,6 +7,7 @@ import { returnStateColor, themeTextBlack, getStateLabel } from "../Utilities/Ut
 import RemoveIcon from '@mui/icons-material/Remove';
 import BedtimeIcon from '@mui/icons-material/Bedtime';
 import { IoTrashOutline } from "react-icons/io5";
+import {SetCommand } from '../api/apiclient';
 
 const ObjectView = () => {
 
@@ -17,12 +18,23 @@ const ObjectView = () => {
     const targets = useAppSelector(state => state.core.targetObjects)
     const currentTargs = targets ?? [];
     const [open, setOpen] = React.useState(false);
-    const [SelectedObject, setSelectedObject] = React.useState<number[]>([-1]);
+    const [SelectedObject, setSelectedObject] = React.useState<number>();
+    const [inputValue, setInputValue] = React.useState('');
 
     const HandleObjectClick = (index: number) => {
-        setSelectedObject(self => self.includes(index) && self.filter(x => x !== index) || [...self, index])
+        
+        setSelectedObject(self => self !== index ?  index : -1 )
     }
 
+
+    const HandleObjectEnter = (item: any, cmd: string) => {
+        const targ = item as Target;
+        SetCommand(url, core, instance,
+            targ,
+            cmd);
+        setInputValue('')
+        return true
+    }
 
     return (
         <Box sx={{ color: '#fff', minHeight: "100%", height: "100%"  }}>
@@ -51,7 +63,7 @@ const ObjectView = () => {
                     (
 
                         <Stack
-                            onClick={() => { HandleObjectClick(index) }}
+                           
                             key={item._id}
                             sx={{
                                 "&:hover":{backgroundColor:"#555"},  borderRadius: '4px', marginBottom: '1%', backgroundColor: '#222', gap: '1px', padding: "10px"
@@ -61,13 +73,15 @@ const ObjectView = () => {
                             <div>
                                 <div style={{ flexDirection: "column", display: "flex", height: "100%" }}>
 
-                                    <div style={{ gap: "5px", flexDirection: "row", display: "flex" }}>
+                                    <div
+                                     onClick={() => { HandleObjectClick(index) }}
+                                    style={{ gap: "5px", flexDirection: "row", display: "flex" }}>
 
 
                                         <p  style={{ color: "#fff", margin: "0", cursor: "pointer", width: "100%",fontSize:"11px" }} >  {item._n} </p>
-                                        {!SelectedObject.includes(index) && <p style={{ borderRadius: "5px", color: "#fff", fontSize:"11px", backgroundColor: returnStateColor(item._st), padding: "3px", width: "50%", marginRight: "auto" }} > {getStateLabel(item._st)} </p>}
+                                        { SelectedObject !== index  && <p style={{ borderRadius: "5px", color: "#fff", fontSize:"11px", backgroundColor: returnStateColor(item._st), padding: "3px", width: "50%", marginRight: "auto" }} > {getStateLabel(item._st)} </p>}
                                     </div>
-                                    {SelectedObject.includes(index) && <>
+                                    {SelectedObject === index  && <>
 
 
                                         <div style={{ flexDirection: "row", display: "flex", padding: "5px",gap:"10px" }}>
@@ -97,7 +111,9 @@ const ObjectView = () => {
                                             //weird behavior.... ._st is supposed to be 0:int not 'Task':string works but why?
                                             item._st.toString() !== "Task" && item._st.toString() !== "dropped" && item._st.toString() !== "Sleep" &&
                                             <TextField
-                                                onKeyDown={(e) => { e.key === 'Enter' && typeof e.preventDefault() === "undefined" && alert(item._st) }}
+                                                onKeyDown={(e) => { e.key === 'Enter' && typeof e.preventDefault() === "undefined" && HandleObjectEnter(item,inputValue) }}
+                                                onChange={(e) => setInputValue(e.target.value)} // Update the input value in state
+                                                value={inputValue}
                                                 required
                                                 maxRows={5}
                                                 multiline={true}
@@ -107,8 +123,8 @@ const ObjectView = () => {
                                                 autoCorrect='off'
                                                 autoCapitalize='off'
                                                 placeholder="cmd>"
-                                                InputLabelProps={{ sx: { color: "#7ff685", fontSize: '5px' } }}
-                                                inputProps={{ sx: { color: "#7ff685", fontFamily: 'Ubuntu Mono, monospace' } }}
+                                                InputLabelProps={{ sx: { color: "#ddd"} }}
+                                                inputProps={{ sx: { color: "#ddd", fontFamily: 'Ubuntu Mono, monospace' } }}
                                                 sx={{ ...themeTextBlack, maxWidth: "100%", height: "50%", borderRadius: "5px", overflow: "hidden" }}
                                             >
                                             </TextField>
@@ -118,9 +134,10 @@ const ObjectView = () => {
                                             //weird behavior.... ._st is supposed to be 0:int not 'Task':string works but why?
                                             item._st.toString() === "Task" && item._st.toString() !== "Listen" &&
                                             <TextField
-                                                onKeyDown={(e) => { e.key === 'Enter' && typeof e.preventDefault() === "undefined" && alert(item._st) }}
+                                                onKeyDown={(e) => { e.key === 'Enter' && typeof e.preventDefault() === "undefined" && HandleObjectEnter(item,inputValue) }}
                                                 required
-                                                value={item._in}
+                                                onChange={(e) => setInputValue(e.target.value)} // Update the input value in state
+                                                value={inputValue}
                                                 maxRows={5}
                                                 multiline={true}
                                                 size='small'

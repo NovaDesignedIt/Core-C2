@@ -118,7 +118,7 @@ const Files: React.FC<FileViewerProp> = ({  file }) => {
             autoCapitalize='off'
             placeholder=""
             InputLabelProps={{ sx: { color: "#7ff685", fontSize: '5px', height: '100%' } }}
-            inputProps={{ sx: { color: "#7ff685", fontFamily: 'Ubuntu Mono, monospace' } }}
+            inputProps={{ sx: { color: "#DDD", fontFamily: 'Ubuntu Mono, monospace' } }}
             sx={{...themeTextBlack}}
           >
           </TextField>
