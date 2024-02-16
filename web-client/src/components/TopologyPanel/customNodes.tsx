@@ -12,9 +12,11 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import BedtimeIcon from '@mui/icons-material/Bedtime';
 import { GoArrowSwitch } from "react-icons/go";
 import { useAppSelector } from '../../store/store';
-import { Target } from  '../../api/apiclient';
+import { Target } from '../../api/apiclient';
 import { Directions } from '@mui/icons-material';
 import { IoTrashOutline } from "react-icons/io5";
+import {SetCommand } from '../../api/apiclient';
+
 
 interface NodeProps {
     data: any, isConnectable: boolean
@@ -24,7 +26,7 @@ interface NodeProps {
 const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
     const [selected, SetIsSelected] = React.useState(false)
-
+    const [Command, SetCommandText] = React.useState('');
     const targetsObjects: Target[] = useAppSelector(state => state.core.targetObjects);
 
     const onChange = useCallback((evt: { target: { value: any; }; }) => {
@@ -35,6 +37,20 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
         SetIsSelected(id)
     }
 
+    const handleCommandChange = (cmd: string) => {
+        SetCommandText(cmd);
+
+    }
+
+    const HandleObjectEnter = (item: Target, cmd: string) => {
+        const targ = item as Target;
+        // SetCommand(url, core, item,
+        //     targ,
+        //     cmd);
+        alert('disabled from topology view')
+        SetCommandText('')
+        return true
+    }
     const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -159,37 +175,38 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                                         {
 
                                             data["type"] === 'proxy' &&
-                                            <div style={{ display: "flex", flexDirection: "column", margin: "auto", width: "100%",height:"100%", alignItems: "center" ,gap:"5px"}}>
-                                                <p style={{ margin: "auto",cursor:"pointer" }}> outbound {data['value']._listener_name}</p>
-                                                <p style={{ margin: "auto",cursor:"pointer" }}> outbound: instancesName </p>
+                                            <div style={{ display: "flex", flexDirection: "column", margin: "auto", width: "100%", height: "100%", alignItems: "center", gap: "5px" }}>
+                                                <p style={{ margin: "auto", cursor: "pointer" }}> outbound {data['value']._listener_name}</p>
+                                                <p style={{ margin: "auto", cursor: "pointer" }}> outbound: instancesName </p>
                                                 <GoArrowSwitch fontSize={"30px"} />
                                                 <p style={{ margin: "auto" }}> incomming</p>
-                                                    <div style={{ paddingTop:"5px",gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "100%", alignItems: "center", backgroundColor: "#000", overflow: "scroll", borderRadius: "3px", padding: "3px" }}>
+                                                <div style={{ paddingTop: "5px", gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "100%", alignItems: "center", backgroundColor: "#000", overflow: "scroll", borderRadius: "3px", padding: "3px" }}>
 
 
-                                                        {  targetsObjects.filter(x => x._ip.toString() === data["value"]._id.toString()).map((item:any, index) => (
-                                                            <Stack
-                                                             
-                                                            onClick={()=>alert()} 
-                                                            sx={{ ":Hover":
-                                                                    { backgroundColor:"#555",border:"1px solid white"},
-                                                            cursor:"pointer", 
-                                                            backgroundColor: "#111", 
-                                                            width: "98%",
-                                                            minHeight:"30px", 
-                                                            padding: "3px",
-                                                            borderRadius:"5px",
-                                                            flexDirection:'row',
-                                                            display:"flex"
-                                                             }}
-                                                            
-                                                             >
-                                                                <p style={{width:"100%"}}> {item._n}</p>
-                                                                <p style={{ borderRadius: "5px", color: "#fff", backgroundColor: returnStateColor(item._st),width:"50%", padding: "3px",height:"100%", margin: "auto",marginLeft:"auto" }} > {getStateLabel(item._st)} </p>
-                                                  
-                                                            </Stack>
-                                                        ))}
-                                                    </div>
+                                                    {targetsObjects.filter(x => x._ip.toString() === data["value"]._id.toString()).map((item: any, index) => (
+                                                        <Stack
+
+                                                            onClick={() => alert()}
+                                                            sx={{
+                                                                ":Hover":
+                                                                    { backgroundColor: "#555", border: "1px solid white" },
+                                                                cursor: "pointer",
+                                                                backgroundColor: "#111",
+                                                                width: "98%",
+                                                                minHeight: "30px",
+                                                                padding: "3px",
+                                                                borderRadius: "5px",
+                                                                flexDirection: 'row',
+                                                                display: "flex"
+                                                            }}
+
+                                                        >
+                                                            <p style={{ width: "100%" }}> {item._n}</p>
+                                                            <p style={{ borderRadius: "5px", color: "#fff", backgroundColor: returnStateColor(item._st), width: "50%", padding: "3px", height: "100%", margin: "auto", marginLeft: "auto" }} > {getStateLabel(item._st)} </p>
+
+                                                        </Stack>
+                                                    ))}
+                                                </div>
                                             </div>
                                         }
 
@@ -197,7 +214,12 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
                                         {
                                             data["type"] === 'instance' &&
-                                            <p>{data['value']._instance_name}</p>
+                                            <div onMouseLeave={() => { handleClose() }} style={{ flexDirection: "column", display: "flex", height: "100%" }}>
+                                                <div style={{ flexDirection: "row", display: "flex" }}>
+                                                    <h6 style={{ color: "#999" }} >  name: </h6>
+                                                    <h6 style={{ color: "#fff" }} >{data['value']._instance_name} </h6>
+                                                </div>
+                                            </div>
                                         }
 
                                         {
@@ -221,58 +243,64 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
                                         {
                                             data["type"] === 'target' &&
-                                            <div onMouseLeave={() => { handleClose() }} style={{ flexDirection: "column", display: "flex", height: "100%"}}>
-                                                <h6 style={{ color: "#fff" }} >  target Name : {data['value']._n} </h6>
+                                            <div onMouseLeave={() => { handleClose() }} style={{ flexDirection: "column", display: "flex", height: "100%" }}>
+                                                <div style={{flexDirection:"row",display:"flex"}}>
+                                                <h6 style={{ color: "#999" }} >  name: </h6>
+                                                <h6 style={{ color: "#fff" }} >{data['value']._n} </h6>
+                                                </div>
 
-
-                                                <div style={{ flexDirection: "row", display: "flex", padding: "5px"}}>
+                                                <div style={{ flexDirection: "row", display: "flex", padding: "5px" }}>
                                                     <p style={{ borderRadius: "5px", color: "#fff", backgroundColor: returnStateColor(data['value']._st), padding: "3px", width: "50%", marginRight: "0" }} > {getStateLabel(data['value']._st)} </p>
                                                     {(data['value']._st.toString() !== "2" && data['value']._st.toString() !== "1") &&
-                                                    <BedtimeIcon onClick={() => { alert(`sleeping: ${data['value']._n}`) }}
-                                                        sx={{
-                                                            width:"40px",
-                                                            marginLeft: "auto",
-                                                            margin:"0",
-                                                            cursor: "pointer",
-                                                            "&:hover": {
-                                                                color: "#7ff685"
-                                                            },
-                                                            fontSize:17,
-                                                        }} />
+                                                        <BedtimeIcon onClick={() => { alert(`sleeping: ${data['value']._n}`) }}
+                                                            sx={{
+                                                                width: "40px",
+                                                                marginLeft: "auto",
+                                                                margin: "0",
+                                                                cursor: "pointer",
+                                                                "&:hover": {
+                                                                    color: "#7ff685"
+                                                                },
+                                                                fontSize: 17,
+                                                            }} />
                                                     }
 
-                                                        <IoTrashOutline style={{ cursor:"pointer",
-                                                        margin:"0",width:"20px"}} />
-                                              
+                                                    <IoTrashOutline style={{
+                                                        cursor: "pointer",
+                                                        margin: "0", width: "20px"
+                                                    }} />
+
 
                                                 </div>
-                                                    {data['value']._st.toString() === "1" &&
-                                                        <p style={{ opacity: "0.5",margin:"0" }}>
-                                                            Will Execute on wake.
-                                                        </p>
-                                                    }
+                                                {data['value']._st.toString() === "1" &&
+                                                    <p style={{ opacity: "0.5", margin: "0" }}>
+                                                        Will Execute on wake.
+                                                    </p>
+                                                }
 
 
-                                                    {data['value']._st.toString() !== "2" &&
-                                                        <TextField
-                                                            // value={CommandText}
-                                                            // onChange={HandleCommandChange}
-                                                            required
-                                                            maxRows={5}
-                                                            multiline={true}
-                                                            size='small'
-                                                            spellCheck={false}  // Disable spell checking
-                                                            autoComplete='off'
-                                                            autoCorrect='off'
-                                                            autoCapitalize='off'
-                                                            placeholder="cmd>"
-                                                            InputLabelProps={{ sx: { color: "#7ff685", fontSize: '5px' } }}
-                                                            inputProps={{ sx: { color: "#7ff685", fontFamily: 'Ubuntu Mono, monospace' } }}
-                                                            sx={{ ...themeTextBlack, maxWidth: "100%", height: "50%", borderRadius: "5px", overflow: "hidden" }}
-                                                        >
-                                                        </TextField>
-                                                     
-                                                    }
+                                                {data['value']._st.toString() !== "2" &&
+                                                    <TextField
+                                                        // value={CommandText}
+                                                        onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault() === undefined && HandleObjectEnter(data['value'], Command) }}
+                                                        onChange={(e) => { handleCommandChange(e.target.value) }}
+                                                        value={Command}
+                                                        required
+                                                        maxRows={5}
+                                                        multiline={true}
+                                                        size='small'
+                                                        spellCheck={false}  // Disable spell checking
+                                                        autoComplete='off'
+                                                        autoCorrect='off'
+                                                        autoCapitalize='off'
+                                                        placeholder="cmd>"
+                                                        InputLabelProps={{ sx: { color: "#ddd", fontSize: '5px' } }}
+                                                        inputProps={{ sx: { color: "#ddd", fontFamily: 'Ubuntu Mono, monospace' } }}
+                                                        sx={{ ...themeTextBlack, maxWidth: "100%", height: "50%", borderRadius: "5px", overflow: "hidden" }}
+                                                    >
+                                                    </TextField>
+
+                                                }
 
                                             </div>
                                         }
