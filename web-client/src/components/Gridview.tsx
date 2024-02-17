@@ -129,8 +129,8 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
 
 
   const handleExportDump = async () => {
-    const result = await ExportDumpToFile(core._url, SelectedInstance, core);
-    if (result == 200){
+    const result  = await  ExportDumpToFile(core._url, SelectedInstance, core);
+    if ( result === 200){
       ToggleAlertComponent('success', `Exported Check your store`, true);
     }else{
       ToggleAlertComponent('error', `Error while exporting Dump`, true);
@@ -153,7 +153,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
       <GridToolbarContainer sx={{ width: "100%", wordWrap: "nowrap" }}>
 
         <button style={buttonstyle} onClick={(e) => {
-
+   e.preventDefault();
           handleSelectedAction(1);
 
         }}>
@@ -164,7 +164,7 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
         </button>
 
         <button style={buttonstyle} onClick={(e) => {
-       
+          e.preventDefault();
           setPrompt(true);
 
         }}>
@@ -175,7 +175,8 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
         </button>
 
         <button style={buttonstyle} onClick={(e) => {
-          handleExportDump()
+          e.preventDefault();
+          handleExportDump();
         }}>
           <span style={{ marginRight: '5px' }}>
             <ArchiveIcon fontSize='small' /> {/* Add the Dump Icon */}
