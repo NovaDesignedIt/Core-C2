@@ -311,7 +311,11 @@ const networkDiagram = () => {
           <div style={{ flexDirection: "row", display: "flex", borderRadius: "10px", width: "100%", height: "100%", gap: "10px", backgroundColor: "transparent" }}>
 
             {/* //          border: "1px solid #7ff685", */}
-            <div style={{ width: "15%" }}>
+            <div style={{ flexDirection: "column", display: "flex", borderRadius: "10px", width: "100%", height: "50%", gap: "10px", backgroundColor: "transparent" }}>
+           
+           <div style={{ flexDirection: "row", display: "flex", borderRadius: "10px", width: "100%", height: "100%", gap: "10px", backgroundColor: "transparent" }}>
+
+            <div style={{ width: "100%",height:"50%" }}>
               <h6 style={{ margin: "auto", color: "#999" }}>Edge Connections:</h6>
               <FormControl sx={{ height: "100%" }}>
 
@@ -322,6 +326,7 @@ const networkDiagram = () => {
                   name="customized-radios"
                 >
                   <FormControlLabel value="straight" control={<Radio sx={{
+              
                     fontFamily: '"Ubuntu Mono", monospace',
                     color: "#fff",
                     '&.Mui-checked': {
@@ -345,13 +350,16 @@ const networkDiagram = () => {
               </FormControl>
 
             </div>
+            
             <Divider orientation='vertical' variant="fullWidth" sx={{ backgroundColor: "#fff", height: "100%" }} flexItem />
-            <div style={{ width: "15%" }}>
-              <h6 style={{ margin: "auto", color: "#999" }}>Display Nodes:</h6>
+          
+          
+            <div style={{ width: "50%" }}>
+              <h6 style={{ margin: "0", color: "#999" }}>Display Nodes:</h6>
 
-              <p style={{ margin: "auto", color: "#999" }}>(disabled)</p>
-              <div style={{ display: "flex", width: "100%", justifyContent: 'space-between' }}>
-                <p style={{ marginRight: "auto" }}>Home server</p>
+              <p style={{ margin: "0", color: "#999" }}>(disabled)</p>
+              <div style={{ display: "flex", width: "100%", justifyContent: 'space-between',margin:"0" }}>
+                <p style={{ margin: "0" }}>Home server</p>
                 <Checkbox checked={true} sx={{
                   color: "#fff",
                   '&.Mui-checked': {
@@ -359,8 +367,8 @@ const networkDiagram = () => {
                   }
                 }} />
               </div>
-              <div style={{ width: "100%", display: "flex", justifyContent: 'space-between' }}>
-                <p style={{ marginRight: "auto" }}> Instances</p>
+              <div style={{ width: "100%", display: "flex", justifyContent: 'space-between',margin:"0" }}>
+                <p style={{ margin: "0" }}> Instances</p>
                 <Checkbox checked={true} sx={{
                   color: "#fff",
                   '&.Mui-checked': {
@@ -368,8 +376,8 @@ const networkDiagram = () => {
                   }
                 }} />
               </div>
-              <div style={{ display: "flex", width: "100%", justifyContent: 'space-between' }}>
-                <p style={{ marginRight: "auto" }}> Proxy</p>
+              <div style={{ display: "flex", width: "100%", justifyContent: 'space-between',margin:"0" }}>
+                <p style={{ margin: "0" }}> Proxy</p>
                 <Checkbox checked={true} sx={{
                   color: "#fff",
                   '&.Mui-checked': {
@@ -377,21 +385,26 @@ const networkDiagram = () => {
                   }
                 }} />
               </div>
-              <div style={{ display: "flex", width: "100%", justifyContent: 'space-between' }}>
-                <p style={{ marginRight: "auto" }}> Target</p>
+              <div style={{ display: "flex", width: "100%", justifyContent: 'space-between',margin:"0" }}>
+                <p style={{ margin: "0" }}> Target</p>
                 <Checkbox checked={true} sx={{
+                 color: "#fff",
+                  '&.Mui-checked': {
+                    color: '#555',
+                  }
+                }} />
+              </div>
 
-                  color: "#fff",
-                  '&.Mui-checked': {
-                    color: '#555',
-                  }
-                }} />
-              </div>
+
+
 
             </div>
 
-            <Divider orientation='vertical' variant="fullWidth" sx={{ backgroundColor: "#fff", height: "100%" }} flexItem />
-            <div style={{ width: "30%" }}>
+
+
+            </div>
+
+ <div style={{ width: "100%" }}>
               <h6 style={{ margin: "auto", color: "#999" }}>Display Format</h6>
               <p style={{ margin: "auto", color: "#999" }}>(disabled)</p>
               <FormControl sx={{ height: "50%" }}>
@@ -433,8 +446,15 @@ const networkDiagram = () => {
 
             </div>
 
+            </div>
+
+
+            
+          
+           
             <Divider orientation='vertical' variant="fullWidth" sx={{ backgroundColor: "#fff", height: "100%" }} flexItem />
-            <div style={{ flexDirection: "column", display: "flex", width: "40%", padding: "5px" }}>
+         
+            <div style={{ flexDirection: "column", display: "flex", width: "80%", padding: "5px" }}>
 
 
               <div style={{ flexDirection: "row", display: "flex", width: "100%", height: "100%", overflow: "hidden" }}>
@@ -546,12 +566,9 @@ const networkDiagram = () => {
 
             <Divider orientation='vertical' variant="fullWidth" sx={{ backgroundColor: "#fff", height: "100%" }} flexItem />
 
-            <div style={{ width: "30%", visibility: "hidden" }}>
-              <Shell />
+            <div style={{ width: "100%",}}>
+             <div style={{backgroundColor:"#000",width:"100%",height:"100%",borderRadius:"5px",border:"1px solid #333"}}></div>
             </div>
-
-
-
           </div>
         </div>
       }
