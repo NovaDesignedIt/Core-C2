@@ -237,6 +237,12 @@ const networkDiagram = () => {
     }
   }
 
+  const [selectedObjects, SetSelectedObjects] = React.useState<number[]>([]);
+
+  const handleItemClick = (id: number) => {
+    SetSelectedObjects(self => self.includes(id) ? self.filter(x => x !== id) : [...self, id])
+
+  }
 
   const getNextThreadType = (currentType: string): string => {
     const currentIndex = threadTypes.indexOf(currentType);
@@ -342,10 +348,10 @@ const networkDiagram = () => {
             <Divider orientation='vertical' variant="fullWidth" sx={{ backgroundColor: "#fff", height: "100%" }} flexItem />
             <div style={{ width: "15%" }}>
               <h6 style={{ margin: "auto", color: "#999" }}>Display Nodes:</h6>
-           
+
               <p style={{ margin: "auto", color: "#999" }}>(disabled)</p>
               <div style={{ display: "flex", width: "100%", justifyContent: 'space-between' }}>
-                <p style={{ margin: "auto" }}>Home server</p>
+                <p style={{ marginRight: "auto" }}>Home server</p>
                 <Checkbox checked={true} sx={{
                   color: "#fff",
                   '&.Mui-checked': {
@@ -354,7 +360,7 @@ const networkDiagram = () => {
                 }} />
               </div>
               <div style={{ width: "100%", display: "flex", justifyContent: 'space-between' }}>
-                <p style={{ margin: "auto" }}> Instances</p>
+                <p style={{ marginRight: "auto" }}> Instances</p>
                 <Checkbox checked={true} sx={{
                   color: "#fff",
                   '&.Mui-checked': {
@@ -363,7 +369,7 @@ const networkDiagram = () => {
                 }} />
               </div>
               <div style={{ display: "flex", width: "100%", justifyContent: 'space-between' }}>
-                <p style={{ margin: "auto" }}> Proxy</p>
+                <p style={{ marginRight: "auto" }}> Proxy</p>
                 <Checkbox checked={true} sx={{
                   color: "#fff",
                   '&.Mui-checked': {
@@ -372,8 +378,9 @@ const networkDiagram = () => {
                 }} />
               </div>
               <div style={{ display: "flex", width: "100%", justifyContent: 'space-between' }}>
-                <p style={{ margin: "auto" }}> Target</p>
+                <p style={{ marginRight: "auto" }}> Target</p>
                 <Checkbox checked={true} sx={{
+
                   color: "#fff",
                   '&.Mui-checked': {
                     color: '#555',
@@ -427,44 +434,118 @@ const networkDiagram = () => {
             </div>
 
             <Divider orientation='vertical' variant="fullWidth" sx={{ backgroundColor: "#fff", height: "100%" }} flexItem />
-            <div style={{flexDirection:"column",display:"flex",width:"40%"}}>
-             
-             <div style={{borderRadius:"0px",backgroundColor:"#000",flexDirection:"row",display:"flex",height:"10%",width:"50%"}}>
-             <Button  disableTouchRipple disableRipple disableFocusRipple style={{width:"100%",height:"100%",color:"#fff"}}> Targets </Button> 
-             <Button disableTouchRipple disableRipple disableFocusRipple style={{width:"100%",height:"100%",color:"#fff"}}> Filter</Button>
-             </div>
+            <div style={{ flexDirection: "column", display: "flex", width: "40%", padding: "5px" }}>
 
-              <div style={{ paddingTop: "10px", gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "50%", alignItems: "center",backgroundColor: "#000", overflow: "auto", borderRadius: "0px", padding: "10px" }}>
 
-                {targetsObjects.map((item: Target, index) => (
-                  <Stack
+              <div style={{ flexDirection: "row", display: "flex", width: "100%", height: "100%", overflow: "hidden" }}>
+                <div style={{ flexDirection: "column", display: "flex", overflow: "hidden", borderRadius: "4px", width: "50%", border: "1px solid #333" }}>
 
-                    onClick={() => {console.log(item._id)}}
-                    sx={{
-                      ":Hover":
-                        { backgroundColor: "#555", border: "1px solid white" },
-                      cursor: "pointer",
-                      backgroundColor: "#111",
-                      width: "98%",
-                      minHeight: "30px",
-                      padding: "3px",
-                      borderRadius: "5px",
-                      flexDirection: 'row',
-                      display: "flex"
-                    }}
 
-                  >
-                    <p style={{ width: "100%" }}> {item._n}</p>
-                    <p style={{ borderRadius: "5px", color: "#fff", backgroundColor: returnStateColor(item._st), width: "50%", padding: "3px", height: "100%", margin: "auto", marginLeft: "auto" }} > {getStateLabel(item._st)} </p>
+                  <div style={{ borderRadius: "0px", backgroundColor: "#000", flexDirection: "row", display: "flex", height: "10%", width: "100%" }}>
+                    <Button disableTouchRipple disableRipple disableFocusRipple style={{ width: "100%", height: "100%", color: "#fff" }}> Targets </Button>
+                    <Button disableTouchRipple disableRipple disableFocusRipple style={{ width: "100%", height: "100%", color: "#fff" }}> Filter</Button>
+                  </div>
 
-                  </Stack>
-                ))}
-                
+                  <div style={{ paddingTop: "10px", gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "100%", alignItems: "center", backgroundColor: "#000", overflow: "auto", borderRadius: "4px", padding: "5px" }}>
+
+                    {targetsObjects.map((item: Target, index) => (
+                      <Stack
+
+                        onDoubleClick={() => { handleItemClick(item._id) }}
+                        sx={{
+                          border: selectedObjects.includes(item._id) ? "1px solid white" : "1px solid #111",
+                          backgroundColor: selectedObjects.includes(item._id) ? "#555" : "#111",
+                          ":Hover":
+                            { backgroundColor: "#555", border: "1px solid white" },
+                          cursor: "pointer",
+                          width: "98%",
+                          minHeight: "30px",
+                          padding: "3px",
+                          borderRadius: "5px",
+                          flexDirection: 'row',
+                          display: "flex"
+                        }}
+
+                      >
+                        <p style={{ width: "25%", fontSize: "10px", color: "#999" }}> name:</p>
+                        <p style={{ width: "100%" }}> {item._n}</p>
+
+                        <p style={{ borderRadius: "15px", color: "#fff", backgroundColor: returnStateColor(item._st), width: "15%", padding: "5px", height: "100%" }} > {getStateLabel(item._st)[0]} </p>
+
+                      </Stack>
+                    ))}
+
+                  </div>
+
+
+                </div>
+
+                <div style={{ width: "50%", height: "100%", padding: "1%", gap: "5px", flexDirection: "column", display: "flex" }}>
+                  <div style={{ flexDirection: "row", display: "flex" }}>
+                    <p style={{ width: "50%", fontSize: "10px", color: "#999", margin: "auto" }}> targets Selected:</p>
+                    <p style={{ width: "60%", margin: "auto" }}> {selectedObjects.length}</p>
+                  </div>
+
+                  <div style={{ flexDirection: "row", display: "flex", height: "100%", width: "100%",overflow:"auto"}}>
+                    <div style={{ flexDirection: "column", display: "flex", height: "100%", width: "60%", gap: "5%", padding: "5px" }}>
+                      <Button disableFocusRipple disableTouchRipple disableRipple
+                        onClick={() => { SetSelectedObjects([]) }}
+                        sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#222", border: "1px solid #555", height: "10%", width: "100%", color: "#fff", fontSize: "10px" }}>clear </Button>
+
+                      <Button disableFocusRipple disableTouchRipple disableRipple
+                        sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#222", border: "1px solid #555", height: "10%", width: "100%", color: "#fff", fontSize: "10px" }}>repoint</Button>
+
+                      <Button disableFocusRipple disableTouchRipple disableRipple
+                        sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#222", border: "1px solid #555", height: "10%", width: "100%", color: "#fff", fontSize: "10px" }}>migrate</Button>
+                    </div>
+
+                    <div style={{ border: "1px solid #333", borderRadius: "5px",gap:"5px", flexDirection: "column", display: "flex", height: "100%", width: "100%", backgroundColor: "#000",padding:"5px",overflow:"auto"}}>
+                      {listener.map((item: Listeners, index: number) => (
+                        <Stack
+
+
+                          sx={{
+                            border: selectedObjects.includes(item._id) ? "1px solid white" : "1px solid #111",
+                            backgroundColor: selectedObjects.includes(item._id) ? "#555" : "#111",
+                            ":Hover":
+                              { backgroundColor: "#555", border: "1px solid white" },
+                            cursor: "pointer",
+                            width: "98%",
+                            minHeight: "30px",
+                            maxHeight:"50px",
+                            padding: "3px",
+                            borderRadius: "5px",
+                            flexDirection: 'column',
+                            display: "flex"
+                          }}
+
+                        >
+                          <div style={{flexDirection:"row",justifyContent:"space-between",display:"flex",overflow:"hidden",width:"100%"}}>
+                          <p style={{ width: "30%", fontSize: "10px", color: "#999",margin:"0" }}> name:</p>
+                          <p style={{ width: "70%" ,fontSize: "12px",margin:"0", textOverflow:"ellipsis"}}> {item._listener_name}</p>
+                          </div>
+
+                          <div style={{flexDirection:"row",display:"flex"}}> 
+                          <p style={{ width: "20%", fontSize: "10px", color: "#999",margin:"0" }}>  ip:</p>
+                          <p style={{ width: "80%" ,fontSize: "12px",margin:"0", textOverflow:"ellipsis"}}> {item._ipaddress}</p>
+                          </div>
+                          
+                        </Stack>
+                      ))}
+                    </div>
+                  </div>
+
+
+                </div>
+
               </div>
-              </div>
 
-              <Divider orientation='vertical' variant="fullWidth" sx={{ backgroundColor: "#fff", height: "100%" }} flexItem />
-            
+
+
+            </div>
+
+            <Divider orientation='vertical' variant="fullWidth" sx={{ backgroundColor: "#fff", height: "100%" }} flexItem />
+
             <div style={{ width: "30%", visibility: "hidden" }}>
               <Shell />
             </div>

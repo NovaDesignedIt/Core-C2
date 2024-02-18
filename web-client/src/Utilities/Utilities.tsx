@@ -35,9 +35,9 @@ export function getStateLabel(state: number | string) {
   let statusText = 'error';
   statusText = state === 0 || state === 'Task' ? "Task" : statusText
   statusText = state === 1 || state === 'Sleep' ? "Sleep" : statusText
-  statusText = state === 2 || state === 'dropped' ? "dropped" : statusText
+  statusText = state === 2 || state === 'dropped' ? "Dropped" : statusText
   statusText = state === 3 || state === 'Listen' ? "Listen" : statusText
-  statusText = state === -1 || state === 'awaiting' ? "awaiting" : statusText
+  statusText = state === -1 || state === 'awaiting' ? "Awaiting" : statusText
   return statusText
 
 }
