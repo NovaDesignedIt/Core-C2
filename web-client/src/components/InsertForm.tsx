@@ -208,7 +208,7 @@ const insertForm: React.FC<DataGridComponents> = ({ closePanel }) => {
 
     if (_n !== '') {
       if (targetData !== undefined && targetData.length > 0) {
-        const target = targetData?.findLast((element) => element._n == _n)
+        const target = targetData?.find((element:Target) => element._n == _n)
         if (target !== undefined) {
           record._n += targetData.length
         }

@@ -293,7 +293,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
 
                                         {
                                             data["type"] === 'target' &&
-                                            <div onMouseLeave={() => { handleClose() }} style={{ flexDirection: "column", display: "flex", height: "100%" }}>
+                                            <div onMouseLeave={() => { handleClose() }} style={{ flexDirection: "column", display: "flex", height: "100%" ,minWidth:"200px",width:"100%"}}>
 
                                                 <LabelWithValue label="name:" value={data['value']._n} fontSize="15px" />
 

@@ -124,7 +124,7 @@ const Frame = () => {
       <footer style={{ position: "fixed", paddingTop: 0, bottom: 0, width: "100%", minHeight: "6vh", backgroundColor: '#040404' }}>
         <div style={{ gap:"5px",padding:"10px",justifyContent:"center", width: "100%", height: "100%",display:"flex",flexDirection:"row" }}>
           <FaGithub style={{cursor:"pointer" }}/>
-          <a style={{color:"#fff"}} target='_blank' href='https://github.com/NovaDesignedIt/CoreC2'>github.com/NovaDesignedIt/CoreC2</a>
+          <a style={{color:"#fff"}} target='_blank' href='https://github.com/NovaDesignedIt/Core-C2'>github.com/NovaDesignedIt/CoreC2</a>
         </div>
       </footer>
     </Box>
