@@ -7,7 +7,7 @@ import { PiComputerTower } from "react-icons/pi";
 import { GrDatabase } from "react-icons/gr";
 import { LuBox } from "react-icons/lu";
 import { RiComputerLine } from "react-icons/ri";
-import { themeTextBlack, getStateLabel, returnStateColor } from '../../Utilities/Utilities'
+import { themeTextBlack, getStateLabel, returnStateColor,themeText } from '../../Utilities/Utilities'
 import RemoveIcon from '@mui/icons-material/Remove';
 import BedtimeIcon from '@mui/icons-material/Bedtime';
 import { GoArrowSwitch } from "react-icons/go";
@@ -15,8 +15,9 @@ import { useAppSelector } from '../../store/store';
 import { Target } from '../../api/apiclient';
 import { Directions } from '@mui/icons-material';
 import { IoTrashOutline } from "react-icons/io5";
-import {SetCommand } from '../../api/apiclient';
-
+import { SetCommand } from '../../api/apiclient';
+import Shell from '../Shell';
+import LabelWithValue from '../../CustomUIComponents/LabelWValue';
 
 interface NodeProps {
     data: any, isConnectable: boolean
@@ -168,19 +169,19 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                                     }}>
 
                                     <div
-                                        onMouseLeave={() => { handleClose() }} style={{ padding: "5px", border: "1px solid #333", height: "250px", width: "250px" }}>
+                                        onMouseLeave={() => { handleClose() }} style={{ padding: "5px", border: "1px solid #333",  }}>
 
 
 
                                         {
 
                                             data["type"] === 'proxy' &&
-                                            <div style={{ display: "flex", flexDirection: "column", margin: "auto", width: "100%", height: "100%", alignItems: "center", gap: "5px" }}>
+                                            <div style={{ display: "flex", flexDirection: "column", margin: "auto", width: "100%", height: "300px", alignItems: "center", gap: "5px" }}>
                                                 <p style={{ margin: "auto", cursor: "pointer" }}> outbound {data['value']._listener_name}</p>
                                                 <p style={{ margin: "auto", cursor: "pointer" }}> outbound: instancesName </p>
                                                 <GoArrowSwitch fontSize={"30px"} />
                                                 <p style={{ margin: "auto" }}> incomming</p>
-                                                <div style={{ paddingTop: "5px", gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "100%", alignItems: "center", backgroundColor: "#000", overflow: "scroll", borderRadius: "3px", padding: "3px" }}>
+                                                <div style={{  border:"1px solid #333",gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "100%", alignItems: "center", backgroundColor: "#000", overflow: "auto", borderRadius: "3px", padding: "3px" }}>
 
 
                                                     {targetsObjects.filter(x => x._ip.toString() === data["value"]._id.toString()).map((item: any, index) => (
@@ -190,9 +191,10 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                                                             sx={{
                                                                 ":Hover":
                                                                     { backgroundColor: "#555", border: "1px solid white" },
+                                                                border: "1px solid #333",
                                                                 cursor: "pointer",
                                                                 backgroundColor: "#111",
-                                                                width: "98%",
+                                                                width: "100%",
                                                                 minHeight: "30px",
                                                                 padding: "3px",
                                                                 borderRadius: "5px",
@@ -215,9 +217,50 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                                         {
                                             data["type"] === 'instance' &&
                                             <div onMouseLeave={() => { handleClose() }} style={{ flexDirection: "column", display: "flex", height: "100%" }}>
-                                                <div style={{ flexDirection: "row", display: "flex" }}>
-                                                    <h6 style={{ color: "#999" }} >  name: </h6>
-                                                    <h6 style={{ color: "#fff" }} >{data['value']._instance_name} </h6>
+                                                <LabelWithValue label="instance id:" value={data['value']._instance_id} fontSize="15px" />
+
+                                                <div
+                                                    onMouseLeave={() => { handleClose() }}
+                                                    style={{ flexDirection: "column", display: "flex", padding: "1px", gap: "5px", width: "100%", height: "100%" }}>
+                                                    <LabelWithValue label="name:" value={data['value']._instance_name} fontSize="15px" />
+                                                    <LabelWithValue label="hosted:" value={data['value']._instance_url} fontSize="15px" />
+
+                                                    <div style={{ flexDirection: "row", display: "flex" }}>
+                                                            <Button disableFocusRipple disableTouchRipple disableRipple
+                                                                sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#444", borderRadius: "0", border: "1px solid #555", height: "100%", width: "100%", color: "#fff", fontSize: "10px" }}>sleep</Button>
+                                                            <Button disableFocusRipple disableTouchRipple disableRipple
+                                                                sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#444", borderRadius: "0", border: "1px solid #555", height: "100%", width: "100%", color: "#fff", fontSize: "10px" }}>interval</Button>
+                                                            <Button disableFocusRipple disableTouchRipple disableRipple
+                                                                sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#444", borderRadius: "0", border: "1px solid #555", height: "100%", width: "100%", color: "#fff", fontSize: "10px" }}>repoint</Button>
+                                                            <Button disableFocusRipple disableTouchRipple disableRipple
+                                                                sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#444", borderRadius: "0", border: "1px solid #555", height: "100%", width: "100%", color: "#fff", fontSize: "10px" }}>migrate</Button>
+                                                            <Button disableFocusRipple disableTouchRipple disableRipple
+                                                                sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#444", borderRadius: "0", border: "1px solid #555", height: "100%", width: "100%", color: "#fff", fontSize: "10px" }}>Drop</Button>
+                                                            <Button disableFocusRipple disableTouchRipple disableRipple
+                                                                sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#444", borderRadius: "0", border: "1px solid #555", height: "100%", width: "100%", color: "#fff", fontSize: "10px" }}>script</Button>
+                                                        </div>
+                                                    <p style={{ margin: "0", cursor: "pointer",color:"#555"}}>  </p>
+                                                    <TextField
+                                                        required
+
+                                                        id="portcc filled-required"
+                                                        placeholder="Sleep"
+                                                        fullWidth={true}
+
+                                                        InputLabelProps={{ sx: { color: "#777" } }}
+                                                        inputProps={{ sx: { color: "#fff" } }}
+                                                        size='small'
+                                                        sx={{
+                                                            ...themeText,
+                                                            border: "1px solid #111",
+                                                            input: {
+                                                                //color: titlecc === '' ? 'pink' : '#fff',
+                                                                color: '#fff',
+                                                            }
+                                                        }}></TextField>
+                                                         <Button disableFocusRipple disableTouchRipple disableRipple
+                                                                sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#444", borderRadius: "5px", border: "1px solid #555", height: "100%", width: "100%", color: "#fff", fontSize: "10px" }}>Drop file</Button>
+
                                                 </div>
                                             </div>
                                         }
@@ -226,28 +269,33 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                                             data["type"] === 'mother' &&
                                             <div
                                                 onMouseLeave={() => { handleClose() }}
-                                                style={{ flexDirection: "column", display: "flex", padding: "5px", gap: "20px" }}>
-                                                <p style={{ fontSize: "10px", color: "#777" }}> {data['value']['core']._core_id} </p>
+                                                style={{ flexDirection: "column", display: "flex", padding: "1px", gap: "5px", width: "300px", height: "300px" }}>
+                                                <p style={{ fontSize: "10px", color: "#999", margin: "0" }}> {data['value']['core']._core_id} </p>
+                                                <LabelWithValue label="hosted:" value={data['value']['config']._ip_address} fontSize="15px" />
 
-                                                hosted @ : {data['value']['config']._ip_address}
+                                                <div style={{ flexDirection: "row", display: "flex" }}>
+                                                    <Button disableFocusRipple disableTouchRipple disableRipple
+                                                        sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#444", borderRadius: "0", border: "1px solid #555", height: "100%", width: "100%", color: "#fff", fontSize: "10px" }}>sleep</Button>
 
-                                                <Button
-                                                    onClick={() => { alert('sleeping all') }}
-                                                    sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}> sleep</Button>
-                                                <Button
-                                                    onClick={() => { alert('purge all') }}
-                                                    sx={{ backgroundColor: "#000", color: "#fff", height: "100%", }}> purge </Button>
+                                                    <Button disableFocusRipple disableTouchRipple disableRipple
+                                                        sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#444", borderRadius: "0", border: "1px solid #555", height: "100%", width: "100%", color: "#fff", fontSize: "10px" }}>interval</Button>
 
+                                                    <Button disableFocusRipple disableTouchRipple disableRipple
+                                                        sx={{ ":hover": { backgroundColor: "#333" }, backgroundColor: "#444", borderRadius: "0", border: "1px solid #555", height: "100%", width: "100%", color: "#fff", fontSize: "10px" }}>Drop</Button>
+                                                 
+                                                </div>
+                                                <p style={{ fontSize: "10px", color: "#999", margin: "0" }}>for example: core, help() </p>
+                                                <div style={{ height: "100%", overflow:"auto" }}>
+                                                    <Shell />
+                                                </div>
                                             </div>
                                         }
 
                                         {
                                             data["type"] === 'target' &&
                                             <div onMouseLeave={() => { handleClose() }} style={{ flexDirection: "column", display: "flex", height: "100%" }}>
-                                                <div style={{flexDirection:"row",display:"flex"}}>
-                                                <h6 style={{ color: "#999" }} >  name: </h6>
-                                                <h6 style={{ color: "#fff" }} >{data['value']._n} </h6>
-                                                </div>
+
+                                                <LabelWithValue label="name:" value={data['value']._n} fontSize="15px" />
 
                                                 <div style={{ flexDirection: "row", display: "flex", padding: "5px" }}>
                                                     <p style={{ borderRadius: "5px", color: "#fff", backgroundColor: returnStateColor(data['value']._st), padding: "3px", width: "50%", marginRight: "0" }} > {getStateLabel(data['value']._st)} </p>
@@ -340,7 +388,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                     </div>
                 </div>
 
-                
+
                 {/* 7ff685 */}
             </Typography>
         </div>

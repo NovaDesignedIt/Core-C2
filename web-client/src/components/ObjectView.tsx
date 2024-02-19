@@ -18,7 +18,7 @@ const ObjectView = () => {
     const targets = useAppSelector(state => state.core.targetObjects)
     const currentTargs = targets ?? [];
     const [open, setOpen] = React.useState(false);
-    const [SelectedObject, setSelectedObject] = React.useState<number>();
+    const [SelectedObject, setSelectedObject] = React.useState<number>(-1);
     const [inputValue, setInputValue] = React.useState('');
 
     const HandleObjectClick = (index: number) => {

@@ -3,7 +3,6 @@ import React, { useCallback, useRef, useState } from 'react';
 import ReactFlow, { Position, useNodesState, useEdgesState, addEdge, Connection, Edge, OnConnect, OnEdgesChange, OnNodesChange, applyEdgeChanges, applyNodeChanges, Node, NodeTypes } from 'reactflow';
 import 'reactflow/dist/style.css';
 import CustomNode from './customNodes';
-import Shell from '../Shell';
 import { Button, Typography, ButtonGroup, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox, Divider, Stack, Chip } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { CoreC, Instance, Listeners, Config, Target, dumpTargets } from '../../api/apiclient';
@@ -316,14 +315,9 @@ const networkDiagram = () => {
 
         }}>
           <div style={{ flexDirection: "row", display: "flex", borderRadius: "10px", width: "100%", height: "100%", gap: "10px", backgroundColor: "transparent" }}>
-
-            {/* //          border: "1px solid #7ff685", */}
-            <div style={{ flexDirection: "column", display: "flex", borderRadius: "10px", width: "100%", height: "50%", gap: "10px", backgroundColor: "transparent" }}>
-
-              <div style={{ flexDirection: "row", display: "flex", borderRadius: "10px", width: "100%", height: "100%", gap: "10px", backgroundColor: "transparent" }}>
-
-                <div style={{ width: "100%", height: "50%" }}>
-                  <h6 style={{ margin: "auto", color: "#999" }}>Edge Connections:</h6>
+              <div style={{ flexDirection: "row", display: "flex", borderRadius: "10px", width: "100%", height: "50%", gap: "10px", backgroundColor: "transparent", margin: "0" }}>
+                <div style={{ width: "30%", height: "100%" }}>
+                  <p style={{ margin: "0", color: "#999", fontSize: "12px" }}>Edge Connections:</p>
                   <FormControl sx={{ height: "100%" }}>
 
                     <RadioGroup
@@ -357,14 +351,51 @@ const networkDiagram = () => {
                   </FormControl>
 
                 </div>
+                <div style={{ width: "30%", height: "100%" }}>
+                  <p style={{ margin: "0", color: "#999", fontSize: "12px" }}>Display Format (disabled)</p>
 
-                <Divider orientation='vertical' variant="fullWidth" sx={{ backgroundColor: "#fff", height: "100%" }} flexItem />
+                  <FormControl sx={{ height: "50%" }}>
+
+                    <RadioGroup
+                      row={true}
+                      onChange={(e) => { }}
+                      defaultValue="female"
+                      aria-labelledby="demo-customized-radios"
+                      name="customized-radios"
+                    >
+                      <FormControlLabel value="Explosion" control={<Radio checked={true} sx={{
+                        fontFamily: '"Ubuntu Mono", monospace',
+                        color: "#fff",
+                        '&.Mui-checked': {
+                          color: "#fff",
+                        }
+                      }} />} label="Explosion" />
+                      <FormControlLabel value="Pyramid" control={<Radio checked={false} sx={{
+                        color: "#fff",
+                        '&.Mui-checked': {
+                          color: "#fff",
+                        },
+                      }} />} label="Pyramid" />
+                      <FormControlLabel value="row" control={<Radio checked={false} sx={{
+                        color: "#fff",
+                        '&.Mui-checked': {
+                          color: "#fff",
+                        },
+                      }} />} label="row" />
+
+                    </RadioGroup>
+                  </FormControl>
 
 
-                <div style={{ width: "50%" }}>
-                  <h6 style={{ margin: "0", color: "#999" }}>Display Nodes:</h6>
 
-                  <p style={{ margin: "0", color: "#999" }}>(disabled)</p>
+
+
+
+                </div>
+                <div style={{ width: "30%", height: "100%" }}>
+                  <p style={{ margin: "0", color: "#999", fontSize: "12px" }}>Display Nodes: (disabled)</p>
+
+
                   <div style={{ display: "flex", width: "100%", justifyContent: 'space-between', margin: "0" }}>
                     <p style={{ margin: "0" }}>Home server</p>
                     <Checkbox checked={true} sx={{
@@ -406,64 +437,9 @@ const networkDiagram = () => {
 
 
                 </div>
-
-
-
               </div>
-
-              <div style={{ width: "100%" }}>
-                <h6 style={{ margin: "auto", color: "#999" }}>Display Format</h6>
-                <p style={{ margin: "auto", color: "#999" }}>(disabled)</p>
-                <FormControl sx={{ height: "50%" }}>
-
-                  <RadioGroup
-                    row={true}
-                    onChange={(e) => { }}
-                    defaultValue="female"
-                    aria-labelledby="demo-customized-radios"
-                    name="customized-radios"
-                  >
-                    <FormControlLabel value="Explosion" control={<Radio checked={true} sx={{
-                      fontFamily: '"Ubuntu Mono", monospace',
-                      color: "#fff",
-                      '&.Mui-checked': {
-                        color: "#fff",
-                      }
-                    }} />} label="Explosion" />
-                    <FormControlLabel value="Pyramid" control={<Radio checked={false} sx={{
-                      color: "#fff",
-                      '&.Mui-checked': {
-                        color: "#fff",
-                      },
-                    }} />} label="Pyramid" />
-                    <FormControlLabel value="row" control={<Radio checked={false} sx={{
-                      color: "#fff",
-                      '&.Mui-checked': {
-                        color: "#fff",
-                      },
-                    }} />} label="row" />
-
-                  </RadioGroup>
-                </FormControl>
-
-
-
-
-
-
-              </div>
-
-            </div>
-
-
-
-
-
             <Divider orientation='vertical' variant="fullWidth" sx={{ backgroundColor: "#fff", height: "100%" }} flexItem />
-
-            <div style={{ flexDirection: "column", display: "flex", width: "80%", padding: "5px" }}>
-
-
+            <div style={{ flexDirection: "column", display: "flex", width: "100%", padding: "5px" }}>
               <div style={{ flexDirection: "row", display: "flex", width: "100%", height: "100%", overflow: "hidden" }}>
                 <div style={{ flexDirection: "column", display: "flex", overflow: "hidden", borderRadius: "4px", width: "50%", border: "1px solid #333" }}>
 
@@ -478,7 +454,7 @@ const networkDiagram = () => {
                     {targetsObjects.map((item: Target, index) => (
                       <Stack
 
-                        onDoubleClick={() => { handleItemClick(item._id) }}
+                        onClick={() => { handleItemClick(item._id) }}
                         sx={{
                           border: selectedObjects.includes(item._id) ? "1px solid white" : "1px solid #333",
                           backgroundColor: selectedObjects.includes(item._id) ? "#555" : "#111",
@@ -533,7 +509,7 @@ const networkDiagram = () => {
                         <Stack
                           onClick={() => { HandleListenerClick(item._id) }}
                           sx={{
-                            border: selectedListeners === item._id ? "1px solid white" : "1px solid #111",
+                            border: selectedListeners === item._id ? "1px solid white" : "1px solid #333",
                             backgroundColor: selectedListeners === item._id ? "#555" : "#111",
                             ":Hover":
                               { backgroundColor: "#555", border: "1px solid white" },

@@ -10,6 +10,31 @@ export function generateRandomNumber() {
   return randomNumber;
 };
 
+export const themeText = {
+  borderRadius: "3px",
+  backgroundColor: "#333",
+  "&:Hover,focus": {
+      backgroundColor: "#555"
+  },
+  // OUTLINE
+  "& .MuiOutlinedInput-root": {
+      ":Hover,focus,selected,fieldset, &:not(:focus)": {
+          "& > fieldset": { borderColor: "transparent", borderRadius: 0, },
+      },
+      "& > fieldset": { borderColor: "transparent", borderRadius: 0 },
+      borderColor: "transparent", borderRadius: 0,
+  },
+  "& .root": { color: "#fff" },
+  "& .MuiInputLabel-root": { display: 'none' },
+  "& .MuiInput-root": { ":focused, selected": { color: '#fff' } },
+  input: { color: '#fff' },
+  inputProps: {
+      style: { fontFamily: 'nunito', },
+  },
+  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)'
+}
+
+
 export const themeTextBlack = {
     height: "250px",
     color: "#fff",
@@ -33,11 +58,12 @@ export const themeTextBlack = {
 
 export function getStateLabel(state: number | string) {
   let statusText = 'error';
+  console.log(state," STATE STATE")
   statusText = state === 0 || state === 'Task' ? "Task" : statusText
   statusText = state === 1 || state === 'Sleep' ? "Sleep" : statusText
   statusText = state === 2 || state === 'dropped' ? "Dropped" : statusText
   statusText = state === 3 || state === 'Listen' ? "Listen" : statusText
-  statusText = state === -1 || state === 'awaiting' ? "Awaiting" : statusText
+  statusText = state === -1 || state === 'Awaiting' ? "Awaiting" : statusText
   return statusText
 
 }
