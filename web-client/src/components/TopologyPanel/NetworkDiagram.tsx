@@ -299,8 +299,8 @@ const networkDiagram = () => {
       </Typography>
 
       {
-        // SettingsEdit &&
-        true &&
+         SettingsEdit &&
+       // true &&
 
         <div style={{
           border: "1px solid #333",

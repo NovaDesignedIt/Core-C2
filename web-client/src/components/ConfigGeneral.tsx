@@ -62,6 +62,7 @@ const ConfigGeneralComp = () => {
   const HandleClearLogs = async () => {
     const result: number | string | void = await ClearLogs(core._url, core)
     if (result !== 401 && result !== undefined) {
+      //need to add updater here after logs are cleared.
       ToggleAlertComponent('success', `${result} entries deleted`, true);
     } else {
       ToggleAlertComponent('error', 'session over', true);
