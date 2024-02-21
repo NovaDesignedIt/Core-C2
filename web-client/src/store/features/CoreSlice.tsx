@@ -1,5 +1,5 @@
 
-import { Core, Instance, Config, Target, File, CoreC,Listeners,User} from '../../api/apiclient';
+import { Core, Instance, Config, Target, File, CoreC, Listeners, User, LogMetrics } from '../../api/apiclient';
 import { createSlice, configureStore, PayloadAction } from '@reduxjs/toolkit'
 
 const emptyCoreInstance = new Core();
@@ -10,19 +10,21 @@ const emptyinstanceobject: Instance[] = [];
 const emptyselectedtargets: number[] = [];
 const emptyListener: Listeners[] = [];
 const emptySelectedInstances = new Instance();
-const emptyUsers:User[] = [];
+const emptyUsers: User[] = [];
+const emptyStorage: LogMetrics = {_file_count:0,_byte_size:0,_record_count:0};
 
 interface CoreState {
   coreObject: CoreC
   instanceObjects: Instance[]
   configObject: Config
   fstoreObject: File[]
-  SelectedInstances:Instance
+  SelectedInstances: Instance
   selectedTargets: number[]
   targetObjects: Target[]
   listenerObjects: Listeners[]
-  SelectedContent:number
-  Users:User[] 
+  SelectedContent: number
+  Users: User[]
+  LogMet: LogMetrics
 }
 
 const initialState: CoreState = {
@@ -30,12 +32,13 @@ const initialState: CoreState = {
   configObject: emptyConfigInstance,
   fstoreObject: emptyFilestore,
   instanceObjects: emptyinstanceobject,
-  SelectedInstances:emptySelectedInstances,
+  SelectedInstances: emptySelectedInstances,
   selectedTargets: emptyselectedtargets,
   targetObjects: emptytargetObject,
-  listenerObjects:emptyListener,
-  Users:emptyUsers,
-  SelectedContent: -1,  
+  listenerObjects: emptyListener,
+  Users: emptyUsers,
+  SelectedContent: -1,
+  LogMet: emptyStorage
 }
 
 export const CoreSlice = createSlice({
@@ -43,7 +46,7 @@ export const CoreSlice = createSlice({
   initialState,
   reducers: {
     BuildStateManagement:
-      (state, action: PayloadAction<{ core: CoreC, config: Config, fstore: File[], instances: Instance[], listeners:Listeners[],users:User[]}>) => {
+      (state, action: PayloadAction<{ core: CoreC, config: Config, fstore: File[], instances: Instance[], listeners: Listeners[], users: User[] }>) => {
         state.coreObject = action.payload.core
         state.configObject = action.payload.config
         state.fstoreObject = action.payload.fstore
@@ -51,19 +54,19 @@ export const CoreSlice = createSlice({
         state.listenerObjects = action.payload.listeners
         state.Users = action.payload.users
       },
-      SetListener:
+    SetListener:
       (state, action: PayloadAction<{ listenerid: Listeners[] }>) => {
         state.listenerObjects = action.payload.listenerid
       },
-      DeleteListener:
+    DeleteListener:
       (state, action: PayloadAction<{ listenerid: number }>) => {
         state.listenerObjects = state.listenerObjects.filter(i => i._id !== action.payload.listenerid);
       },
-      addlisteners:
+    addlisteners:
       (state, action: PayloadAction<{ listener: Listeners }>) => {
         state.listenerObjects.push(action.payload.listener);
       },
-      SetSelectedContent:
+    SetSelectedContent:
       (state, action: PayloadAction<{ content: number }>) => {
         state.SelectedContent = action.payload.content;
       },
@@ -96,26 +99,30 @@ export const CoreSlice = createSlice({
         state.configObject = action.payload.configuration;
       },
     SetInstanceTargets:
-    (state,action:PayloadAction<{targets:any[]}>) =>{
-      state.targetObjects = action.payload.targets as unknown as Target[]
-    },
+      (state, action: PayloadAction<{ targets: any[] }>) => {
+        state.targetObjects = action.payload.targets as unknown as Target[]
+      },
     SetUsers:
-    (state,action:PayloadAction<{users:User[]}>) =>{
-      state.Users  = action.payload.users
-    },
+      (state, action: PayloadAction<{ users: User[] }>) => {
+        state.Users = action.payload.users
+      },
     SetFileList:
-    (state, action:PayloadAction<{files:File[]}>) => {
-      state.fstoreObject = action.payload.files
-    }
-    
- 
+      (state, action: PayloadAction<{ files: File[] }>) => {
+        state.fstoreObject = action.payload.files
+      },
+    SetLogMet:
+      (state, action: PayloadAction<{ logmet: LogMetrics }>) => {
+        state.LogMet = action.payload.logmet
+      }
+
+
   }
 
 });
 
 export default CoreSlice.reducer;
 
-export const { 	SetCore,
+export const { SetCore,
   DeleteListener,
   addlisteners,
   SetInstanceTargets,
@@ -129,5 +136,6 @@ export const { 	SetCore,
   SetSelectedContent,
   SetListener,
   SetUsers,
-  SetFileList
+  SetFileList,
+  SetLogMet
 } = CoreSlice.actions;

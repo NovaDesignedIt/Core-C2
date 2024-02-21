@@ -1,6 +1,6 @@
 import { Alert, AlertColor, Avatar, Button, Checkbox, List, ListItem, ListItemText, Snackbar, Stack, Switch, TextField, ThemeProvider, createTheme, styled } from '@mui/material';
 import React, { SetStateAction } from 'react'
-import { ClearLogs, Config, CoreC, setconfigurations } from '../api/apiclient';
+import { ClearLogs, Config, CoreC, setconfigurations,LogMetrics } from '../api/apiclient';
 import InstanceConfiguration from "./InstancesConfiguration";
 import ListenerComponent from "./Listeners";
 import Users from './userForm'
@@ -25,6 +25,7 @@ const ConfigGeneralComp = () => {
   const configurationObject: Config = useAppSelector(state => state.core.configObject)
   const corid = useAppSelector(state => state.core.configObject._core_id)
   const core: CoreC = useAppSelector(state => state.core.coreObject)
+  const logmet : LogMetrics = useAppSelector(state => state.core.LogMet)
   const sessionLength: number = configurationObject._session_len !== undefined ? configurationObject._session_len : 0
   const DaysRetLog: number = configurationObject?._log_ret_days !== undefined ? configurationObject?._log_ret_days : 0
   //populate from store
@@ -406,15 +407,15 @@ const HandleExportButton = () =>{
             onChange={(e) => { HandleDaysretChanged(e) }}
             sx={{ ...themeText, width: "40%", borderRadius: "5px" }} ></TextField>
 
-          <div style={{ padding: "10px" }} >
+          <div  style={{ padding: "10px" }} >
             <p style={{ color: "#fff", margin: "0" }}>
-              files: 3 files
+              files: {logmet._file_count} files
             </p>
             <p style={{ color: "#fff", margin: "0" }}>
-              total space: 250mb
+              total space: {logmet._byte_size}
             </p>
             <p style={{ color: "#fff", margin: "0" }}>
-              Log records: 22453 rows
+              Log records: {logmet._record_count} rows
             </p>
           </div>
           <Button

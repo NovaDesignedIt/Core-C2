@@ -6,7 +6,11 @@ export interface CoreInterface {
   core: Core;
 }
 
-
+export interface LogMetrics { 
+  _record_count : number ;
+  _byte_size: number;
+  _file_count :number;
+}
 
 export class Target {
 
@@ -1330,4 +1334,30 @@ export async function dumpTargets(url: string, core: CoreC){
 
 }
 
+/**
+ * Export to Dump
+ *
+ * @async
+ * @function
+ * @param {string} url - The URL.
+ * @param {coreId} string - The Core object.
 
+ * @returns {json} - body of the metrics
+ */
+export async function GetMetrics(url:string,core:CoreC){
+  try {
+    const apiUrl = `http://${url}/metrics/${core._core_id}`
+    
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'authtok': core._sessiontoken,
+      }
+    }).then(data => { return  data.json() }).catch(error => console.log(error));
+    return response;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+
+
+}

@@ -2297,9 +2297,9 @@ def get_directory_structure(_core_id):
     DirectoryStructur = Utility.BuildStorageObjects(_core_id)
     return DirectoryStructur
 
-@app.route('/metrics/<_core_id>')    
+@app.route('/metrics/<_core_id>',methods=["GET"])    
 @orm.db_session
-def get_storage_matrics(_core_id):
+def get_storage_metrics(_core_id):
     DirectoryStructur = Utility.BuildStorageObjects(_core_id)
     files = json.loads(DirectoryStructur)
     count = len(files["_files"])
@@ -2313,7 +2313,7 @@ def get_storage_matrics(_core_id):
     else: 
         recNumber = '0'
 
-    metricData = {"count" : count, "recordNumber": recNumber,"TotalBytes":100}
+    metricData = {"_file_count" : count, "_record_count": recNumber,"_byte_size":100}
     return jsonify(metricData)
 
 

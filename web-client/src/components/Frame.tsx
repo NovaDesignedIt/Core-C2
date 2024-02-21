@@ -9,11 +9,11 @@ import react from 'react';
 import LoginHome from './LoginHome';
 import FileStorage from './FileStorage';
 import CustomPanelConfiguration from './CustomPanelConfiguration';
-import { Config, Core, CoreC, File as Files, Instance, Listeners, User, dumpTargets } from '../api/apiclient';
+import { LogMetrics,GetMetrics,Config, Core, CoreC, File as Files, Instance, Listeners, User, dumpTargets } from '../api/apiclient';
 import { useAppDispatch,useAppSelector } from '../store/store';
 import { adjustSizes } from '../Utilities/Utilities'
 import { FaGithub } from "react-icons/fa";
-import {BuildStateManagement} from  '../store/features/CoreSlice';
+import {BuildStateManagement,SetLogMet} from  '../store/features/CoreSlice';
 import  NetworkDiagram from './TopologyPanel/NetworkDiagram'
 
 
@@ -77,10 +77,12 @@ const Frame = () => {
     const fst: Files[] = CORE?._rootdir?._files ?? [];
     const listener: Listeners[] = CORE?._listeners ?? [];
     const usrs: User[] = CORE?._users ?? [];
+    const metrics:LogMetrics = await GetMetrics(co._url,co)
+
     if (CORE !== undefined) {
       const payload = await dumpTargets(co?._url, co); // Call dumpTargets function with core._url and core
-
-      
+      console.log(metrics)
+      dispatch(SetLogMet({logmet:metrics}))
       dispatch(BuildStateManagement({core:co,config:con,instances:ins,fstore:fst,listeners:listener,users:usrs}));
       setSelectedCore(CORE);
     }
