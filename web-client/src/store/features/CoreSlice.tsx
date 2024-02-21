@@ -102,7 +102,12 @@ export const CoreSlice = createSlice({
     SetUsers:
     (state,action:PayloadAction<{users:User[]}>) =>{
       state.Users  = action.payload.users
+    },
+    SetFileList:
+    (state, action:PayloadAction<{files:File[]}>) => {
+      state.fstoreObject = action.payload.files
     }
+    
  
   }
 
@@ -123,5 +128,6 @@ export const { 	SetCore,
   SetSelectedInstance,
   SetSelectedContent,
   SetListener,
-  SetUsers
+  SetUsers,
+  SetFileList
 } = CoreSlice.actions;

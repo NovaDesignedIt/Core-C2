@@ -12,7 +12,10 @@ import ArticleIcon from '@mui/icons-material/Article';
 import { ListItem, ListItemText } from '@material-ui/core';
 import DownloadIcon from '@mui/icons-material/Download';
 import { Download } from '@mui/icons-material';
-import { useAppSelector } from '../store/store';
+import { useAppDispatch, useAppSelector } from '../store/store';
+import { SetFileList } from '../store/features/CoreSlice';
+
+
 interface DirectoryStructureProp {
   onFileSelected: (file: File) => void;
 }
@@ -28,7 +31,11 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
   const [SelectedFiles, SetSelectedFiles] = React.useState<File[]>([]);
 
   //console.log(core?._rootdir?._files)
+  const dispatch = useAppDispatch();
 
+
+
+  const filelist = useAppSelector(state => state.core.fstoreObject);
   const CoreC = useAppSelector(state => state.core.coreObject) 
   const config = useAppSelector(state => state.core.configObject) 
 
@@ -79,7 +86,9 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
       CoreC?._sessiontoken !== undefined ? CoreC?._sessiontoken : '',
       config?._title !== undefined ? config?._title : '',
     )
-    SetRoot(r._files);
+
+    dispatch(SetFileList({files:r._files}))
+  
   }
 
   React.useEffect(() => {
@@ -89,6 +98,7 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
 
 
   const handleCheckboxChange = (event: any, f: File) => {
+
     SelectedFiles.length === 0
       ? SetSelectedFiles([f])
       : SetSelectedFiles((prevSelectedFiles) => {
@@ -109,8 +119,11 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
       const list: string[] = files.map((item: File) => item._name);
       deleteFiles(CoreC._url, list, CoreC);
       const newFileList: File[] = SelectedFiles.filter((item: File) => !list.includes(item._name))
-      SetSelectedFiles(newFileList);      
-
+      
+      console.log("NewFileList =>>>",newFileList);
+      dispatch(SetFileList({files:newFileList}))     
+      SetSelectedFiles([])
+      onFileSelected(new File())
 
     }
   }
@@ -202,7 +215,7 @@ const DirectoryStructureComponent: React.FC<DirectoryStructureProp> = ({  onFile
           </TableHead>
           <TableBody>
 
-            {(root !== undefined ? root : []).map((f: File, index: number) => (
+            {(filelist).map((f: File, index: number) => (
 
               <TableRow
                 key={index}
