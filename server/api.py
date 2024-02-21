@@ -1650,7 +1650,6 @@ def ClearLogs(_core_id):
 
 
 """ ATHENTICATION MANAGER OPERATIONS """
-
 @app.route('/<_core_id>/usrmgr/<int:operation>', methods=['POST'])
 @orm.db_session
 def usrmgr(_core_id,operation):
@@ -1816,6 +1815,10 @@ def create_core():
                         "{\"msg\":\"create_core(): 500 "+"\"}",coreid) #LOGGER
         print(e)
         return "500" , 500
+
+
+
+
 
 @app.route('/<_core_id>/c/u', methods=['POST'])
 @orm.db_session
@@ -2293,7 +2296,28 @@ def get_directory_structure(_core_id):
         
     DirectoryStructur = Utility.BuildStorageObjects(_core_id)
     return DirectoryStructur
-        
+
+@app.route('/metrics/<_core_id>')    
+@orm.db_session
+def get_storage_matrics(_core_id):
+    DirectoryStructur = Utility.BuildStorageObjects(_core_id)
+    files = json.loads(DirectoryStructur)
+    count = len(files["_files"])
+
+    #Count bytes here
+    
+    recNumber = 0
+    test = orm.select(i for i in Utility.Log if i._core_id == _core_id)
+    if test :
+        recNumber =len(test)
+    else: 
+        recNumber = '0'
+
+    metricData = {"count" : count, "recordNumber": recNumber,"TotalBytes":100}
+    return jsonify(metricData)
+
+
+
 
 @app.route('/upl/<_core_id>/<filename>', methods=['GET']) 
 def getfilecontent(_core_id,filename):
