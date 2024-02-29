@@ -119,7 +119,7 @@ const networkDiagram = () => {
   ));
 
 
-  const EdgesProxyToinstances = instancenodes.reduce((result: any[], node: Node) => {
+  const EdgesProxyToinstances = (instancenodes !== undefined ? instancenodes : []).reduce((result: any[], node: Node) => {
     const proxyId = node.data.value._proxy
     const proxy = proxyNodes.find(x => x.data.value._id === proxyId)
     if (proxyId && proxy) {
@@ -155,7 +155,7 @@ const networkDiagram = () => {
 
   const alltargets: any = targetsObjects;
 
-  const groupedPayload: any[] = alltargets.reduce((groups: any[], item: any) => {
+  const groupedPayload: any[] = (alltargets !== undefined ? alltargets : []).reduce((groups: any[], item: any) => {
     const isid = item._isid;
     if (!groups[isid]) {
       groups[isid] = [];
@@ -195,7 +195,7 @@ const networkDiagram = () => {
     tempnodes.push(...newNodes)
     Count = Count + newNodes.length
 
-    const EdgesTargetsToProxy: Edge[] = newNodes.reduce((result: any[], node: Node) => {
+    const EdgesTargetsToProxy: Edge[] = (newNodes !== undefined ? newNodes : []).reduce((result: any[], node: Node) => {
       const targetproxyid = node.data.value._ip
       const proxy: any = proxyNodes.find(x => `${x.data.value._id}` === targetproxyid)
 
