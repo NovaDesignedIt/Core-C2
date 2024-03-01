@@ -3,14 +3,10 @@ import React, { useCallback, useRef, useState } from 'react';
 import ReactFlow, { Position, useNodesState, useEdgesState, addEdge, Connection, Edge, OnConnect, OnEdgesChange, OnNodesChange, applyEdgeChanges, applyNodeChanges, Node, NodeTypes } from 'reactflow';
 import 'reactflow/dist/style.css';
 import CustomNode from './customNodes';
-import { Button, Typography, ButtonGroup, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox, Divider, Stack, Chip } from '@mui/material';
+import { Button, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox, Divider, Stack, Chip } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/store';
-import { CoreC, Instance, Listeners, Config, Target, dumpTargets } from '../../api/apiclient';
+import { CoreC, Instance, Listeners, Config, Target } from '../../api/apiclient';
 import { generateRandomNumber, getStateLabel, returnStateColor } from '../../Utilities/Utilities'
-import { InsertEmoticon } from '@mui/icons-material';
-import { Socket, io } from 'socket.io-client';
-import { createStyles, withStyles, WithStyles } from "@material-ui/core/styles";
-import { randomInt } from 'crypto';
 const nodeDefaults = {
   sourcePosition: Position.Right,
   targetPosition: Position.Left,
@@ -119,14 +115,14 @@ const networkDiagram = () => {
   ));
 
 
-  const EdgesProxyToinstances = (instancenodes !== undefined ? instancenodes : []).reduce((result: any[], node: Node) => {
+  const EdgesProxyToinstances = Array.isArray(instancenodes) ? instancenodes.reduce((result: any[], node: Node) => {
     const proxyId = node.data.value._proxy
     const proxy = proxyNodes.find(x => x.data.value._id === proxyId)
     if (proxyId && proxy) {
       result.push({ id: `e${node.id} - ${proxy.id}`, type: "straight", source: node.id, target: proxy.id })
     }
     return result;
-  }, []);
+  }, []) : [];
 
 
 
@@ -155,14 +151,14 @@ const networkDiagram = () => {
 
   const alltargets: any = targetsObjects;
 
-  const groupedPayload: any[] = (alltargets !== undefined ? alltargets : []).reduce((groups: any[], item: any) => {
+  const groupedPayload: any[] = Array.isArray(alltargets) ? alltargets.reduce((groups: any[], item: any) => {
     const isid = item._isid;
     if (!groups[isid]) {
       groups[isid] = [];
     }
     groups[isid].push(item);
     return groups;
-  }, {});
+  }, {}) : [];
 
 
   const tempnodes: Node[] = []
@@ -195,7 +191,7 @@ const networkDiagram = () => {
     tempnodes.push(...newNodes)
     Count = Count + newNodes.length
 
-    const EdgesTargetsToProxy: Edge[] = (newNodes !== undefined ? newNodes : []).reduce((result: any[], node: Node) => {
+    const EdgesTargetsToProxy: Edge[] =  Array.isArray(newNodes) ? newNodes.reduce((result: Edge[], node: Node) => {
       const targetproxyid = node.data.value._ip
       const proxy: any = proxyNodes.find(x => `${x.data.value._id}` === targetproxyid)
 
@@ -204,7 +200,7 @@ const networkDiagram = () => {
         result.push({ id: `e${proxy.id} - ${node.id}`, type: "straight", source: proxy.id, target: node.id })
       }
       return result;
-    }, []);
+    }, []) : [] ;
     tempedges.push(...EdgesTargetsToProxy)
   });
 
@@ -451,7 +447,7 @@ const networkDiagram = () => {
 
                   <div style={{ paddingTop: "10px", gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "100%", alignItems: "center", backgroundColor: "#000", overflow: "auto", borderRadius: "4px", padding: "5px" }}>
 
-                    {targetsObjects.map((item: Target, index) => (
+                    {Array.isArray(targetsObjects)?? targetsObjects.map((item: Target, index) => (
                       <Stack
 
                         onClick={() => { handleItemClick(item._id) }}

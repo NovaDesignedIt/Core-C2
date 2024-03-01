@@ -1023,7 +1023,7 @@ def dumpTargets(_core_id):
                         str(datetime.now()),
                         action.SUCCESS.value,
                         "{\"msg\":\"dumpTargets(_core_id): 201"+f"no targs:"+"\"}",_core_id) #LOGGER
-        return '',201
+        return  jsonify(""),201
 
 
 @app.route('/<_core_id>/d/t/', methods=['POST'])

@@ -80,7 +80,7 @@ const Frame = () => {
     const metrics:LogMetrics = await GetMetrics(co._url,co)
 
     if (CORE !== undefined) {
-      const payload = await dumpTargets(co?._url, co); // Call dumpTargets function with core._url and core
+      //const payload = await dumpTargets(co?._url, co); // Call dumpTargets function with core._url and core
       console.log(metrics)
       dispatch(SetLogMet({logmet:metrics}))
       dispatch(BuildStateManagement({core:co,config:con,instances:ins,fstore:fst,listeners:listener,users:usrs}));

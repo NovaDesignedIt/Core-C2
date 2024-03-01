@@ -1091,11 +1091,9 @@ export async function CreateCore(url: string, coreStructure: any) {
       "Content-Type": "application/json", // Specify the content type as JSON
     },
     body: JSON.stringify(coreStructure), // Convert the object to a JSON string
-  }).then(
-    (data) => {
-      return data.status
-    }
-  ).catch((error: Error) => {
+  }).then((data) => {
+      return data.status;
+    }).catch((error: Error) => {
     console.log(error);
   })
 
@@ -1325,8 +1323,12 @@ export async function dumpTargets(url: string, core: CoreC){
       headers: {
         'authtok': core._sessiontoken,
       }
-    }).then(data => { return  data.json() }).catch(error => console.log(error));
+    }).then((data) => { return data.json(); }).catch(error => console.log(error));
+    if (Array.isArray(response) && response.length === 0) {
+      return { status: '201' }; 
+    }
     return response;
+    
   } catch (error) {
     console.error('Error:', error);
   }
