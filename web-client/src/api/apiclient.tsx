@@ -1083,7 +1083,7 @@ export async function ClearLogs(url: string, coreC: CoreC) {
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the deletion is complete.
  */
-export async function CreateCore(url: string, coreStructure: any) :number {
+export async function CreateCore(url: string, coreStructure: any) {
 
   const response = await fetch(`http://${url}/cc`, {
     method: "POST",
@@ -1099,7 +1099,7 @@ export async function CreateCore(url: string, coreStructure: any) :number {
     console.log(error);
   })
 
-  console.log(response);
+  return response;
 
 }
 
