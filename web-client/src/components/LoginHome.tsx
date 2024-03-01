@@ -108,13 +108,13 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
 
         for (const field of fields) {
             if (field.value === '') {
-                console.log(field.message);
+                //console.log(field.message);
                 return;
             }
         }
 
         if (confirmcc !== passwordcc) {
-            console.log('Password and Confirm Password do not match');
+           // console.log('Password and Confirm Password do not match');
             return;
         }
 
@@ -128,7 +128,8 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
             "_confirm": confirmcc
         }
 
-        const result = await CreateCore(hostnamecc, JSON.stringify(CoreRequest));
+        const result = await CreateCore(hostnamecc, CoreRequest);
+        console.log(result,"wtf")
 
         SetIsCreating(false)
         // setPassword('')

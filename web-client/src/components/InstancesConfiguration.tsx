@@ -229,7 +229,7 @@ const instanceConfiguration = () => {
                                                 InputLabelProps={{ sx: { color: "#fff" } }}
                                                 inputProps={{ sx: { color: "#fff" } }}
                                                 size='small'
-                                                onWheel={handleScroll}                                                
+                                                onWheel={()=> listeners.length > 0 && handleScroll()}                                                
                                                 value={proxyName}
                                                 sx={{ ...themeText, width: "100%", borderRadius: "5px" }} ></TextField>
                                        

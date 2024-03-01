@@ -141,8 +141,10 @@ const ListenersComponent = () => {
                     }} />
            
                 <RemoveIcon
+                
                     onClick={() => { HandleDeleteListener() }}
                     sx={{
+                        visibility: listeners.length > 1 ?  "display" :"hidden",
                         "&:hover": {
                             color: "#7ff685"
                         }

@@ -1001,8 +1001,8 @@ def dumpTargets(_core_id):
                                     'invalid session',
                                     action.DELETE.value,
                                     str(datetime.now()),
-                                    action.FAILED.value,
-                                    "{\"msg\":\"deletemultirecords(_core_id): 401"+"\"}",_core_id) #LOGGER
+                                    action.SUCCESS.value,
+                                    "{\"msg\":\"dumpTargets(_core_id): 401"+"\"}",_core_id) #LOGGER
         return '200', 200
     target = []
     instance = orm.select(i for i in Utility.Instance if i._core_id == _core_id )
@@ -1012,16 +1012,18 @@ def dumpTargets(_core_id):
             if record :
                 target += record
         records_data = [record.to_dict() for record in target]
-        
-        return jsonify(records_data), 200
+        if records_data :
+            return jsonify(records_data), 200
+        else : 
+            return jsonify(""),201
     else :
         Utility.Log.insert_log(f"{request}",
                         f'coreid:{_core_id}',
                         action.DELETE.value,
                         str(datetime.now()),
-                        action.ERROR.value,
-                        "{\"msg\":\"deletemultirecords(_core_id): 500"+f"Error: {e}"+"\"}",_core_id) #LOGGER
-        return '',500
+                        action.SUCCESS.value,
+                        "{\"msg\":\"dumpTargets(_core_id): 201"+f"no targs:"+"\"}",_core_id) #LOGGER
+        return '',201
 
 
 @app.route('/<_core_id>/d/t/', methods=['POST'])
@@ -1780,7 +1782,7 @@ def create_core():
             coreid = Utility.Guid()
 
             Utility.Core.insert_core(coreid)
-            Utility.Instance.insert_instance(Utility.generate_random_string(10),"default",data["_address"],data["_hostname"],0,coreid)
+            Utility.Instance.insert_instance(Utility.generate_random_string(10),"default",None,data["_hostname"],0,coreid)
             Utility.Configuration.insert_Configuration(30,0,data["_title"],data["_hostname"],data["_address"],data["_port"],"3453453453",coreid,30,0,0,0,0,0,0,0,30)
             
             if not Utility.create_user(usr,password,coreid,randstring):

@@ -1083,17 +1083,16 @@ export async function ClearLogs(url: string, coreC: CoreC) {
  * @param {core} - An optional Core object.
  * @returns A Promise that resolves when the deletion is complete.
  */
-export async function CreateCore(url: string, coreStructure: string) {
+export async function CreateCore(url: string, coreStructure: any) :number {
 
   const response = await fetch(`http://${url}/cc`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json", // Specify the content type as JSON
     },
-    body: coreStructure, // Convert the object to a JSON string
+    body: JSON.stringify(coreStructure), // Convert the object to a JSON string
   }).then(
     (data) => {
-      console.log(data.text())
       return data.status
     }
   ).catch((error: Error) => {
