@@ -265,7 +265,7 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.09 }}
                 >
-                <Alert severity="info"> please visit  <a style={{color:"blue"}} target='_blank' href='https://github.com/NovaDesignedIt/Core-C2'>github.com/NovaDesignedIt/CoreC2</a> github for more information </Alert>
+                <Alert severity="info"> please visit  <a style={{color:"blue"}} target='_blank' href='https://github.com/NovaDesignedIt/Core-C2'>github.com/NovaDesignedIt/CoreC2</a> github for more information or for demo credentials or questions Core-C2@proton.me </Alert>
               
                 </motion.div>
 
