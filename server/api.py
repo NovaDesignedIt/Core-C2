@@ -133,7 +133,7 @@ def insertinstance(_core_id):
         # Create a new Instance object and insert it into the database
         instance = Utility.Instance(_instance_id=instance_id,
                                 _instance_name=instance_name,
-                                _proxy=int(_proxy),
+                                _proxy=_proxy,
                                 _instance_url=instance_url,
                                 _Instance_count=instance_count,
                                 _core_id=core_id)
@@ -158,7 +158,6 @@ def insertinstance(_core_id):
                                 "{\"msg\":\"def getListeners(_core_id): 200"+"\"}",_core_id) #LOGGER
         return t , 200  # Return success message and status code 201 (Created)
     except Exception as e:
-        
         Utility.Log.insert_log(f"{request}",
                                'None',
                                action.INSERT.value,

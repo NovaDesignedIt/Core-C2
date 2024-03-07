@@ -66,7 +66,7 @@ const ConfigGeneralComp = () => {
       //need to add updater here after logs are cleared.
       const metrics:LogMetrics = await GetMetrics(core._url,core)
       dispatch(SetLogMet({logmet:metrics}))
-      setLogMetrics(LogDataStorage)
+      setLogMetrics(metrics)
       ToggleAlertComponent('success', `${result} entries deleted`, true);
     } else {
       ToggleAlertComponent('error', 'session over', true);
