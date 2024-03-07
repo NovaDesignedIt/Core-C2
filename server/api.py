@@ -133,7 +133,7 @@ def insertinstance(_core_id):
         # Create a new Instance object and insert it into the database
         instance = Utility.Instance(_instance_id=instance_id,
                                 _instance_name=instance_name,
-                                _proxy=_proxy,
+                                _proxy=int(_proxy),
                                 _instance_url=instance_url,
                                 _Instance_count=instance_count,
                                 _core_id=core_id)
@@ -1493,25 +1493,41 @@ def deleteListener(_core_id,id):
                                     action.FAILED.value,
                                     "{\"msg\":\"def deleteListener(_core_id,id): 401"+"\"}",_core_id) #LOGGER
             return '200', 200
-        
+        g = jsonify('')
         with orm.db_session:
             listener = Utility.Listeners.get(_id=id)
             # Check if the record exists
-            if listener:
-                # Delete the record from the database
-                listener.delete()
-        listeners = orm.select(i for i in Utility.Listeners if i._core_id == _core_id )  
-        records_data = [record.to_dict() for record in listeners]
-        t = jsonify(records_data)
-        Utility.Log.insert_log(f"{request}",
-                                'getallisteners',
-                                action.INSERT.value,
-                                str(datetime.now()),
-                                action.SUCCESS.value,
-                                "{\"msg\":\"def getListeners(_core_id): 200"+"\"}",_core_id) #LOGGER
-        print(t)
-        return  t, 200
-        
+
+            Instance = orm.select(i for i in Utility.Instance if i._proxy ==  listener._id)
+            if not Instance :
+                print(f'{Utility.RED}100{Utility.RESET}'*100)
+                if listener:
+                    # Delete the record from the database   
+                    listener.delete()
+                    listeners = orm.select(i for i in Utility.Listeners if i._core_id == _core_id )  
+                    records_data = [record.to_dict() for record in listeners]
+                    g = jsonify(records_data)
+                    Utility.Log.insert_log(f"{request}",
+                                            'getallisteners',
+                                            action.INSERT.value,
+                                            str(datetime.now()),
+                                            action.SUCCESS.value,
+                                            "{\"msg\":\"def getListeners(_core_id): 200"+"\"}",_core_id) #LOGGER
+                    #print(t)
+                    return  g, 200
+            else : 
+                listeners = orm.select(i for i in Utility.Listeners if i._core_id == _core_id )  
+                records_data = [record.to_dict() for record in listeners]
+                g = jsonify(records_data)
+
+                Utility.Log.insert_log(f"{request}",
+                                        'getallisteners',
+                                        action.INSERT.value,
+                                        str(datetime.now()),
+                                        action.SUCCESS.value,
+                                        "{\"msg\":\"def getListeners(_core_id): 200"+"\"}",_core_id) #LOGGER
+                return g, 201
+        return  g, 400
     except Exception as e:
         
         Utility.Log.insert_log(f"{request}",
@@ -2011,7 +2027,7 @@ def allowed_file(filename):
     return False
 
 @app.route('/<_core_id>/upl/ph/<filename>')
-
+@orm.db_session
 def get_image(_core_id,filename):
     Utility.Log.insert_log("",
                     'get_image():',
@@ -2201,9 +2217,17 @@ def delete_files(_core_id):
                     action.GET.value,
                     str(datetime.now()),
                     action.ERROR.value,
-                    errorstr)
-                return '500', 500
-    return '200', 200
+                    "{\"msg\":\"def delete_files(_core_id):"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
+                return '201', 201
+        return '200', 200
+    else :
+        Utility.Log.insert_log("",
+                    'delete_files():',
+                    action.GET.value,
+                    str(datetime.now()),
+                    action.ERROR.value,
+                    "error no files selected.")
+        return '500', 500
 
 
 def ping(host):
@@ -2278,6 +2302,7 @@ def receive_ping():
 
 #icci
 @app.route('/<_core_id>/dir',methods=['GET'])
+@orm.db_session
 def get_directory_structure(_core_id):
     if not Utility.Sessions.session_valid(request.headers.get('authtok')) :
         Utility.Log.insert_log(f"{request}",
@@ -2295,9 +2320,12 @@ def get_directory_structure(_core_id):
                     str(datetime.now()),
                     action.SUCCESS.value,
                     "{\"msg\":\"def get_directory_structure(_core_id):"+"\"}",_core_id) #LOGGE,_core_idR #LOGGER
-        
-    DirectoryStructur = Utility.BuildStorageObjects(_core_id)
-    return DirectoryStructur
+    with orm.db_session :     
+        DirectoryStructur = Utility.BuildStorageObjects(_core_id)
+        if DirectoryStructur : 
+            return DirectoryStructur
+    return '200', 200
+
 
 @app.route('/metrics/<_core_id>',methods=["GET"])    
 @orm.db_session
@@ -2313,7 +2341,7 @@ def get_storage_metrics(_core_id):
     if test :
         recNumber =len(test)
     else: 
-        recNumber = '0'
+        recNumber =  '0'
 
     metricData = {"_file_count" : count, "_record_count": recNumber,"_byte_size":100}
     return jsonify(metricData)
@@ -2429,34 +2457,34 @@ if '__main__' == __name__:
 
     print(f'{authortext}{text.strip()}\n\n\n\n')
     # Call the create_target_table function to create the Target table if it does not exist
-    print(f'{Utility.YELLOW}* CONFIGURING HOST{Utility.RESET}')
+
     if len(sys.argv) > 1 :
-        connob = host, port = Utility.gethostname(f'{sys.argv[1]}')
+        print(f' *{Utility.LIGHT_YELLOW} [INITIALIZATION] {Utility.RESET}')
+        connob = Utility.gethostname(f'{sys.argv[1]}')
         if connob: 
             host, port = connob
         else:
-            print(f'{Utility.RED}* ERROR HOST OR PORT NULL: check config.xml?')
+            print(f' *{Utility.RED} [ERROR] HOST OR PORT NULL: check config.xml?{Utility.RESET}')
+            print(f' *{Utility.DARK_YELLOW} [WARNING]: do you want to add a host to your config?:{Utility.RESET}')
+            
             exit(-1)
     else:
         connob = Utility.gethostname('default')
         if connob: 
             host, port = connob 
         else:
-            print(f'{Utility.RED}* ERROR HOST OR PORT NULL: {Utility.LIGHT_RED} your config.xml must empty.{Utility.YELLOW}\n Try adding this .. in the <api> tags \n\t <host name="default" ip="localhost" port="8000"></host> ')
+            print(f' *{Utility.RED} ERROR HOST OR PORT NULL: {Utility.LIGHT_RED} your config.xml must empty.{Utility.YELLOW}\n Try adding this .. in the <api> tags \n\t <host name="default" ip="localhost" port="8000"></host> ')
             exit(-1)
 
-    
-    print(f'{Utility.CYAN}* hosted @ {Utility.LIGHT_YELLOW}{host} {Utility.CYAN} \n* port: {Utility.LIGHT_YELLOW}{port}')
-    print(f'{Utility.GREEN}* START{Utility.RESET}')
 
-    icmp_packet = create_icmp_echo_request()
+    print(f' *{Utility.CYAN} [SETUP] HOST: {host} PORT:{port} {Utility.RESET}')
+    print(f' *{Utility.CYAN} [SETUP] YOUR LISTENERS/PROXIES WILL POINT HERE. {Utility.RESET}')
+    print(f' *{Utility.GREEN} [START] {Utility.RESET}')
 
-
-
-    # # Example usage
-    # with socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP) as s:
-    #     s.sendto(icmp_packet, ('192.168.2.196', 0))
-    # receive_ping()
-
+    #icmp_packet = create_icmp_echo_request()
+    #Example usage
+    #with socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP) as s:
+    # s.sendto(icmp_packet, ('192.168.2.196', 0))
+    #receive_ping()
     #socketio.run(app,host=host, port=port,debug=True)
     socketio.run(app,host=host, port=port,debug=True)

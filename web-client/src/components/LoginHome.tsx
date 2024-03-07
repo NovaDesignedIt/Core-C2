@@ -1,7 +1,7 @@
 import { Alert, Button, Snackbar, TextField, Typography } from '@mui/material';
 import { SetStateAction, useState } from 'react';
 import { LogMetrics,Core, Config, Instance, Root, getRootDirectory, User, CreateCore, CoreC, Listeners } from '../api/apiclient';
-
+import  { CiCircleInfo } from "react-icons/ci";
 import { motion } from "framer-motion";
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -238,10 +238,37 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
                 backgroundColor: "#040404",
                 justifyContent: 'center',
                 alignItems: 'center',
-                display: 'flex'
+                display: 'flex',
+                flexDirection:"column",
+                gap:"2%"
+
+
 
             }}
             >
+                  <motion.div
+                    className="box"
+                    style={{height:"5%",width:"45%"}}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.09 }}
+                >
+                <Alert severity="warning">Demo Client, many features are disabled because of instability and/or security issues.</Alert>
+              
+                </motion.div>
+
+                <motion.div
+                    className="box"
+
+                    style={{height:"5%",width:"45%"}}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.09 }}
+                >
+                <Alert severity="info"> please visit  <a style={{color:"blue"}} target='_blank' href='https://github.com/NovaDesignedIt/Core-C2'>github.com/NovaDesignedIt/CoreC2</a> github for more information </Alert>
+              
+                </motion.div>
+
                 <motion.div
                     className="box"
                     style={{width:"45%"}}

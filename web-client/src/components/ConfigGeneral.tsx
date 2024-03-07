@@ -1,12 +1,12 @@
 import { Alert, AlertColor, Avatar, Button, Checkbox, List, ListItem, ListItemText, Snackbar, Stack, Switch, TextField, ThemeProvider, createTheme, styled } from '@mui/material';
 import React, { SetStateAction } from 'react'
-import { ClearLogs, Config, CoreC, setconfigurations,LogMetrics } from '../api/apiclient';
+import { ClearLogs, Config, CoreC, setconfigurations,LogMetrics, GetMetrics} from '../api/apiclient';
 import InstanceConfiguration from "./InstancesConfiguration";
 import ListenerComponent from "./Listeners";
 import Users from './userForm'
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { DeleteListener, SetListener, addlisteners, BuildStateManagement, SetConfiguration } from '../store/features/CoreSlice';
+import { DeleteListener, SetListener, addlisteners, BuildStateManagement, SetConfiguration, SetLogMet } from '../store/features/CoreSlice';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import { DynamicAlert } from './AlertFeedbackComponent';
 import { motion } from "framer-motion";
@@ -25,7 +25,7 @@ const ConfigGeneralComp = () => {
   const configurationObject: Config = useAppSelector(state => state.core.configObject)
   const corid = useAppSelector(state => state.core.configObject._core_id)
   const core: CoreC = useAppSelector(state => state.core.coreObject)
-  const logmet : LogMetrics = useAppSelector(state => state.core.LogMet)
+  const LogDataStorage : LogMetrics = useAppSelector(state => state.core.LogMet)
   const sessionLength: number = configurationObject._session_len !== undefined ? configurationObject._session_len : 0
   const DaysRetLog: number = configurationObject?._log_ret_days !== undefined ? configurationObject?._log_ret_days : 0
   //populate from store
@@ -38,6 +38,7 @@ const ConfigGeneralComp = () => {
   const configLogDelete: boolean = configurationObject?._log_delete === 1 ? true : false
   const configInactivityTimeout: boolean = configurationObject?._inactivitytimeout === 1 ? true : false
   //values
+  const [logmetr,setLogMetrics] = React.useState<LogMetrics>(LogDataStorage)
   const [daysretLog, setDaysretLog] = React.useState<number>(DaysRetLog);
   const [sessionlen, setsessionlen] = React.useState<number>(sessionLength);
   const [chckdmp, setChkdmp] = React.useState(configredirectDump);
@@ -63,6 +64,9 @@ const ConfigGeneralComp = () => {
     const result: number | string | void = await ClearLogs(core._url, core)
     if (result !== 401 && result !== undefined) {
       //need to add updater here after logs are cleared.
+      const metrics:LogMetrics = await GetMetrics(core._url,core)
+      dispatch(SetLogMet({logmet:metrics}))
+      setLogMetrics(LogDataStorage)
       ToggleAlertComponent('success', `${result} entries deleted`, true);
     } else {
       ToggleAlertComponent('error', 'session over', true);
@@ -241,10 +245,10 @@ const ConfigGeneralComp = () => {
   });
 
 
-      // Inspired by blueprintjs
+// Inspired by blueprintjs
 const HandleExportButton = () =>{
-  //hit here to download.
-  alert(`http://${core._url}/${corid}/cex/${Format}`);
+  //alert(`http://${core._url}/${corid}/cex/${Format}`);
+  alert('exporting core.')
 }
     
 
@@ -326,7 +330,7 @@ const HandleExportButton = () =>{
             backgroundColor: "#111",
 
           }}>
-            <p style={{ opacity: "0.5", margin: "0" }}> Log target Creations,Deletion,commands or last known ping </p>
+              <p style={{ opacity: "0.5", margin: "0" }}> Log target Creations,Deletion,commands or last known ping </p>
             <div style={{ display: "flex", justifyContent: 'space-between' }}>
               create
               <Checkbox sx={{
@@ -410,13 +414,13 @@ const HandleExportButton = () =>{
 
           <div  style={{ padding: "10px" }} >
             <p style={{ color: "#fff", margin: "0" }}>
-              files: {logmet._file_count} files
+              files: {logmetr._file_count} files
             </p>
             <p style={{ color: "#fff", margin: "0" }}>
-              total space: {logmet._byte_size}
+              total space: {logmetr._byte_size}
             </p>
             <p style={{ color: "#fff", margin: "0" }}>
-              Log records: {logmet._record_count} rows
+              Log records: {logmetr._record_count} rows
             </p>
           </div>
           <Button

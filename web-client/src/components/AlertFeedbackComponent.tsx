@@ -22,7 +22,7 @@ export const DynamicAlert: React.FC<AlertProp> = ({ open, msg, type,closeParent}
         
     }
     return (
-        <Snackbar open={isopen} autoHideDuration={2500} onClose={handleClose} sx={{ width:"10%"}}>
+        <Snackbar open={isopen} autoHideDuration={2500} onClose={handleClose} sx={{ width:"20%"}}>
             <Alert onClose={handleClose} variant="filled" severity={type} sx={{ width: '100%' }}>
                 {msg}
             </Alert >

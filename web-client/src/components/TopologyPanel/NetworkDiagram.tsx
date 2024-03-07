@@ -350,7 +350,7 @@ const networkDiagram = () => {
                 <div style={{ width: "30%", height: "100%" }}>
                   <p style={{ margin: "0", color: "#999", fontSize: "12px" }}>Display Format (disabled)</p>
 
-                  <FormControl sx={{ height: "50%" }}>
+                  <FormControl sx={{ height: "100%" }}>
 
                     <RadioGroup
                       row={true}
@@ -447,7 +447,7 @@ const networkDiagram = () => {
 
                   <div style={{ paddingTop: "10px", gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "100%", alignItems: "center", backgroundColor: "#000", overflow: "auto", borderRadius: "4px", padding: "5px" }}>
 
-                    {Array.isArray(targetsObjects)?? targetsObjects.map((item: Target, index) => (
+                    {Array.isArray(targetsObjects) && targetsObjects.map((item: Target, index:number) => (
                       <Stack
 
                         onClick={() => { handleItemClick(item._id) }}
@@ -505,10 +505,10 @@ const networkDiagram = () => {
                         <Stack
                           onClick={() => { HandleListenerClick(item._id) }}
                           sx={{
-                            border: selectedListeners === item._id ? "1px solid white" : "1px solid #333",
-                            backgroundColor: selectedListeners === item._id ? "#555" : "#111",
+                            border: selectedListeners === item._id ? "1px solid white" : "1px solid #555",
+                            backgroundColor: selectedListeners === item._id ? "#333" : "#222",
                             ":Hover":
-                              { backgroundColor: "#555", border: "1px solid white" },
+                              { backgroundColor: "#333", border: "1px solid white" },
                             cursor: "pointer",
                             width: "98%",
                             minHeight: "30px",

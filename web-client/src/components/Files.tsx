@@ -48,7 +48,7 @@ const Files: React.FC<FileViewerProp> = ({  file }) => {
 
   const fetchFileContent = async () => {
     try {
-      if (file?._extension !== undefined && !imageExtensions.includes(file._extension)) {
+      if (file?._extension && !imageExtensions.includes(file._extension)) {
         const response = await fetch(`http://${CoreC._url}/upl/${CoreC?._core_id}_files/${file !== undefined ? file._name : ''}`,{
           method: 'GET',
           headers: {
@@ -76,6 +76,7 @@ const Files: React.FC<FileViewerProp> = ({  file }) => {
             .catch(error => console.error('Error fetching image URL:', error));
       }
     } catch (error: any) {
+      console.log(error.message)
       console.error('Error:', error.message);
     }
   };

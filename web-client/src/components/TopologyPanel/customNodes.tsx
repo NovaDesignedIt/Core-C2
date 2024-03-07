@@ -184,7 +184,7 @@ const CustomNode: React.FC<NodeProps> = ({ data, isConnectable }) => {
                                                 <div style={{  border:"1px solid #333",gap: "3px", display: "flex", flexDirection: "column", height: "100%", width: "100%", alignItems: "center", backgroundColor: "#000", overflow: "auto", borderRadius: "3px", padding: "3px" }}>
 
 
-                                                    {targetsObjects.filter(x => x._ip.toString() === data["value"]._id.toString()).map((item: any, index) => (
+                                                    { Array.isArray(targetsObjects) && targetsObjects.filter(x => x._ip.toString() === data["value"]._id.toString()).map((item: any, index:number) => (
                                                         <Stack
 
                                                             onClick={() => alert()}

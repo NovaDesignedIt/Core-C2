@@ -1146,7 +1146,7 @@ export async function deleteListener(url: string, core: CoreC, id: number) {
     }
   }).then(
     (data) => {
-      return data.json()
+      return data
     }
   ).catch((error: Error) => {
     console.log(error);

@@ -64,12 +64,16 @@ const ListenersComponent = () => {
     const HandleDeleteListener = async () => {
         if (selectedListener !== undefined) {
             const result = await deleteListener(core._url, core, selectedListener)
-            if (result !== undefined &&  result !== 401) {
+            if (result !== undefined &&  result.status !== 401) {
                 console.log(result.body)
-                const listeners: Listeners[] = result as unknown as Listeners[]
+                const listeners: Listeners[] = await result.json() as unknown as Listeners[]
                 dispatch(SetListener({ listenerid: listeners }))
                 SetSelectedListener(-1)
-                ToggleAlertComponent('success','Listener Deleted',true);
+                if (result.status === 201) {
+                    ToggleAlertComponent('warning', 'Active Instance is using this.', true);
+                } else {
+                    ToggleAlertComponent('success', 'Listener Deleted', true);
+                }
             }else {
                 ToggleAlertComponent('error','error',true);
             }
@@ -142,7 +146,7 @@ const ListenersComponent = () => {
            
                 <RemoveIcon
                 
-                    onClick={() => { HandleDeleteListener() }}
+                    onClick={() => { selectedListener !== -1 ? HandleDeleteListener() : alert('no selected Listeners') }}
                     sx={{
                         visibility: listeners.length > 1 ?  "display" :"hidden",
                         "&:hover": {
@@ -150,7 +154,7 @@ const ListenersComponent = () => {
                         }
                     }} />
             </div>
-            <div style={{ padding: "10px", overflow: "hidden", width: "100%", gap: "10px", height: "100%", flexDirection: "column", display: "flex" }}>
+            <div style={{ padding: "3px", overflow: "hidden", width: "100%", gap: "10px", height: "100%", flexDirection: "column", display: "flex" }}>
 
                 {newlistener &&
                     //newlist
@@ -188,7 +192,7 @@ const ListenersComponent = () => {
                 }
                 <div style={{ padding: "1px", overflow: "hidden", gap: "10px", width: "100%", height: "100%", flexDirection: "row", display: "flex" }}>
 
-                    <Box sx={{ padding: '1%', borderRadius: 4, cursor: "pointer",  backgroundColor: "#000", width: '100%', height: '100%' }} >
+                    <Box sx={{ padding: '3px', borderRadius: "4px", cursor: "pointer",  backgroundColor: "#000", width: '100%', height: '100%' }} >
                         <List style={{  flexDirection: "column", display: "flex", gap: "10px", overflow:"auto", maxHeight: "100%",height:"100%",backgroundColor:"transparent"}}>
                             {
                                 listeners.map((listener: Listeners, index: number) => (
