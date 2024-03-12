@@ -4,6 +4,7 @@ import { LogMetrics,Core, Config, Instance, Root, getRootDirectory, User, Create
 import  { CiCircleInfo } from "react-icons/ci";
 import { motion } from "framer-motion";
 import CloseIcon from '@mui/icons-material/Close';
+import { SetInstanceTargets } from '../store/features/CoreSlice';
 
 
 
@@ -54,7 +55,7 @@ export default function LoginHome({ onSetCore = (core: Core) => { } }) {
             const user: string = current_user !== undefined ? current_user._username : "";
             const corec = new CoreC(sessiontok, corid, user, address);
             const c = new Core(corec, sessiontok, corid, configuration, instances, listeners, rdir, users, user, address);
-        
+          
             onSetCore(c);
         };
 

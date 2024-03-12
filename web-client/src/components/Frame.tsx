@@ -13,7 +13,7 @@ import { LogMetrics,GetMetrics,Config, Core, CoreC, File as Files, Instance, Lis
 import { useAppDispatch,useAppSelector } from '../store/store';
 import { adjustSizes } from '../Utilities/Utilities'
 import { FaGithub } from "react-icons/fa";
-import {BuildStateManagement,SetLogMet} from  '../store/features/CoreSlice';
+import {BuildStateManagement,SetInstanceTargets,SetLogMet} from  '../store/features/CoreSlice';
 import  NetworkDiagram from './TopologyPanel/NetworkDiagram'
 
 
@@ -84,6 +84,8 @@ const Frame = () => {
       console.log(metrics)
       dispatch(SetLogMet({logmet:metrics}))
       dispatch(BuildStateManagement({core:co,config:con,instances:ins,fstore:fst,listeners:listener,users:usrs}));
+      const payload = await dumpTargets(CORE._url, CORE); // Call dumpTargets function with core._url and core
+      dispatch(SetInstanceTargets({targets :payload}))
       setSelectedCore(CORE);
     }
   };

@@ -90,13 +90,6 @@ const CustomizedList =  ( ) => {
   }
 
   const handleItemClick = async (index: number) => {
-
-    if (index == 7 ){
-
-      const payload = await dumpTargets(core._url, core); // Call dumpTargets function with core._url and core
-      dispatch(SetInstanceTargets({targets :payload}))
-    } 
-
     dispatch(SetSelectedContent({content:index}))
   };
 

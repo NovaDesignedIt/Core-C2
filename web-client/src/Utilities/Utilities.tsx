@@ -58,7 +58,7 @@ export const themeTextBlack = {
 
 export function getStateLabel(state: number | string) {
   let statusText = 'error';
-  console.log(state," STATE STATE")
+  ///console.log(state," STATE STATE")
   statusText = state === 0 || state === 'Task' ? "Task" : statusText
   statusText = state === 1 || state === 'Sleep' ? "Sleep" : statusText
   statusText = state === 2 || state === 'dropped' ? "Dropped" : statusText

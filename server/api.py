@@ -5,6 +5,7 @@ import subprocess
 import socket
 import struct
 import time
+import eventlet
 import os
 import Utility
 from flask      import Flask,request,abort, send_file, send_from_directory,session,jsonify,redirect,render_template,url_for
@@ -987,10 +988,36 @@ def fetchInstance(message):
             print(f'Error parsing JSON: {e}')
             return
 
-    records = orm.select(i for i in Utility.Target if i._isid == data['isid'] )
-    records_data = [record.to_dict() for record in records]
-    socketio.emit('rtgrid/'+data['isid'], records_data)
+    
+@socketio.on('rtgrid')
+@orm.db_session
+def fetchInstance(message):
+    data=''
+    timeout=1
+    if isinstance(message, dict):
+        # If message is already a dictionary
+        data = message
+    else:
+        try:
+            data = json.loads(message)
+        except json.JSONDecodeError as e:
+            print(f'Error parsing JSON: {e}')
+            socketio.emit('rtgrid/'+data['isid'], '')
+            return
+        
+    def callback():
+        # This function will be called if the server does not respond within the timeout period
+        socketio.emit('rtgrid/'+data['isid'], '')
 
+    with eventlet.Timeout(timeout):
+        # Emit the event with data and specify the callback function
+        records = orm.select(i for i in Utility.Target if i._isid == data['isid'] )
+        records_data = [record.to_dict() for record in records]
+        socketio.emit('rtgrid/'+data['isid'], records_data,callback=callback)
+
+
+
+   
 
 @app.route('/<_core_id>/dmptargs', methods=['GET'])
 @orm.db_session

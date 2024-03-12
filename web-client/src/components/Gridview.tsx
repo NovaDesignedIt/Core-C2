@@ -292,14 +292,14 @@ const MuiDataGrid: React.FC<gridViewProp> = ({ GetAction }) => {
         (data: any) => {
           const payload =  data !== undefined ? data : [{}].filter((row: any) => row._isid === SelectedInstance._instance_id ? SelectedInstance?._instance_id : new Instance()._instance_id);
           setData(payload);
+          console.log(payload)
           dispatch(SetInstanceTargets({targets:payload}))
         });
     }
     setInterval(() => {
-      
       on ? socks.emit('rtgrid', { "isid": `${SelectedInstance._instance_id}` }) : undefined;
-    }, 100);
-     return () => {socks.disconnect()};
+    }, 500);
+     return () => { socks.disconnect(); socks.close()};
   }, [SelectedInstance,on]);
 
 
